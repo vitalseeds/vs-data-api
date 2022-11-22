@@ -38,6 +38,13 @@ def update_stock(ctx):
     stock.update_wc_stock_from_batch(fmdb, wcapi)
 
 
+@cli.command()
+@click.pass_context
+def stock_count(ctx):
+    wcapi = ctx.parent.obj["wcapi"]
+    stock.get_wp_product_by_sku(wcapi)
+
+
 # @cli.command()
 # @click.argument("sql", type=click.STRING)
 # @click.pass_context

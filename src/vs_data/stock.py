@@ -7,6 +7,8 @@ These will be run (via shell commands) from FM scripts
 from rich import print
 from vs_data.utils.cli import display_table
 
+WC_MAX_API_RESULT_COUNT = 100
+
 
 def get_batches_awaiting_upload(fmdb):
     table = "Packeting Batches"
@@ -26,11 +28,11 @@ def get_batches_awaiting_upload(fmdb):
         "Batch Number",
         "Packets",
         "To pack",
-        "SKUFK",
+        "SKU",
     ]
     # columns = [f"{table}.{c}" for c in columns]
     field_list = ",".join([f'"{f}"' for f in columns])
-    print(field_list)
+    # print(field_list)
     where = "Awaiting_upload='yes'"
     sql = f'SELECT {field_list} FROM "{table}" WHERE {where}'
     # sql = 'SELECT "Awaiting_upload","Batch Number","Packets","To pack" FROM "Packeting Batches" WHERE Awaiting_upload=\'yes\' '
@@ -40,8 +42,28 @@ def get_batches_awaiting_upload(fmdb):
     return columns, fmdb.execute(sql).fetchall()
 
 
-def get_wp_stock(wcapi):
-    print(wcapi.get("products"))
+def get_wp_product_by_sku(wcapi):
+    """
+    Unfortunately most products don't seem to have a sku in WC
+    May need to fetch them all and write to db? Otherwise map to product ID
+    Believe currently link_db stores the map of product id to SKU
+    """
+    # sku = "ChTr"
+    # products = wcapi.get("products", params={"sku": sku})
+    products = wcapi.get(
+        "products",
+        params={"stock_status": "instock", "per_page": WC_MAX_API_RESULT_COUNT},
+    )
+    # products = wcapi.get("products")
+
+    import json
+
+    products = products.json()
+    # product_stock = {p["id"]: p["stock_quantity"] for p in products}
+
+    # print(products)
+    # print(product_stock)
+    print(len(products))
 
 
 # def get_seed_lot(fmdb):
@@ -72,8 +94,7 @@ def get_wp_stock(wcapi):
 
 
 def update_wc_stock_from_batch(fmdb, wcapi=None):
-    print("Updating stock")
+    # print("Updating stock")
     headers, batches = get_batches_awaiting_upload(fmdb)
-    get_wp_stock(wcapi)
     # print(headers, batches)
-    # display_table(headers, batches)
+    display_table(headers, batches)
