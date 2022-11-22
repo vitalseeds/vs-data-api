@@ -1,4 +1,11 @@
-"""Command-line interface."""
+"""
+Command-line interface to interact with Vital Seeds database.
+"""
+# TODO: consider using an orm
+# eg sqlalchemy
+# https://stackoverflow.com/questions/4493614/sqlalchemy-equivalent-of-pyodbc-connect-string-using-freetds
+# https://stackoverflow.com/questions/39955521/sqlalchemy-existing-database-query
+# https://docs.sqlalchemy.org/en/14/core/reflection.html
 import click
 from vs_data.utils.fm import db
 from rich import print
