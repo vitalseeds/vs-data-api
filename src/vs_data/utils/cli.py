@@ -30,7 +30,8 @@ def display_table(headers, rows, title=None, float_to_int=True):
 
     for row in rows:
         if float_to_int:
-            row = [int(v) for v in row if isinstance(v, float)]
+            row = [int(v) if isinstance(v, float) else v for v in row]
+
         row = [str(v) for v in row]
         # table.add_row(*rows)
         table.add_row(*row)
