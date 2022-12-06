@@ -11,7 +11,7 @@ from vs_data.utils.fm import db
 from vs_data.utils.wc import api
 from rich import print
 from vs_data import stock
-from vs_data.utils import cli
+from vs_data.utils.cli import display_product_table
 
 
 @click.group()
@@ -42,7 +42,16 @@ def update_stock(ctx):
 @click.pass_context
 def stock_count(ctx):
     wcapi = ctx.parent.obj["wcapi"]
-    stock.get_wp_product_by_sku(wcapi)
+    products = stock.get_products_in_stock(wcapi).json()
+    print([p["id"] for p in products])
+
+
+@cli.command()
+@click.pass_context
+def products(ctx):
+    wcapi = ctx.parent.obj["wcapi"]
+    ids = [43121, 10691, 10411, 10350, 10351, 10279, 10272, 10273, 10274, 10275]
+    display_product_table(stock.get_products_by_id(wcapi, ids))
 
 
 # @cli.command()

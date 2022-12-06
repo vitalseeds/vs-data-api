@@ -42,3 +42,14 @@ def display_table(headers, rows, title=None, float_to_int=True):
 
     console = Console()
     console.print(table)
+
+
+def display_product_table(products, fields=["id", "sku", "stock_quantity"]):
+    if hasattr(products, "json"):
+        products = products.json()
+
+    rows = []
+    for product in products:
+        rows.append([product[f] for f in fields])
+
+    display_table(fields, rows)
