@@ -12,6 +12,7 @@ from vs_data.utils.wc import api
 from rich import print
 from vs_data import stock
 from vs_data.utils.cli import display_product_table
+import os
 
 
 @click.group()
@@ -52,6 +53,19 @@ def products(ctx):
     wcapi = ctx.parent.obj["wcapi"]
     ids = [43121, 10691, 10411, 10350, 10351, 10279, 10272, 10273, 10274, 10275]
     display_product_table(stock.get_products_by_id(wcapi, ids))
+
+
+@cli.command()
+@click.pass_context
+def test_fm_call(ctx):
+    # Append-adds at last
+    if not os.path.exists(os.path.expanduser("~/.vs-data")):
+        os.mkdir(os.path.expanduser("~/.vs-data"))
+    file_path = os.path.expanduser("~/.vs-data/test_output.txt")
+    with open(file_path, "a") as file:
+        file.write("FM ran cli command")
+        print(f"wrote to {file_path}")
+        file.close()
 
 
 # @cli.command()
