@@ -11,10 +11,10 @@ WC_MAX_API_RESULT_COUNT = 10
 
 
 def get_batches_awaiting_upload(fmdb):
-    table = "Packeting Batches"
-    columns = ["Awaiting_upload", "Batch Number", "Packets", "To pack"]
+    table = "packeting_batches"
+    columns = ["awaiting_upload", "batch_number", "packets", "to_pack"]
     field_list = ",".join([f'"{f}"' for f in columns])
-    where = "Awaiting_upload='yes'"
+    where = "awaiting_upload='yes'"
     sql = f'SELECT {field_list} FROM "{table}" WHERE {where}'
     print(sql)
     return columns, fmdb.execute(sql).fetchall()
