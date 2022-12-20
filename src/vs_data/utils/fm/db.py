@@ -1,3 +1,10 @@
+"""
+Filemaker SQL limitations/requirements
+
+- table names must be enclosed in double quotes
+- string values must be enclosed in single quotes
+"""
+
 import pypyodbc as pyodbc
 
 

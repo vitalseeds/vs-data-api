@@ -68,6 +68,19 @@ def test_fm_call(ctx):
         file.close()
 
 
+@cli.command()
+@click.argument("file", required=False)
+@click.pass_context
+def runsql(ctx, file):
+    fmdb = ctx.parent.obj["fmdb"]
+    # wcapi = ctx.parent.obj["wcapi"]
+    file = file or "example"
+    sql_file_path = f"src/vs_data/utils/fm/queries/{file}.sql"
+    with open(sql_file_path, "r") as sqlfile:
+        query = sqlfile.read()
+        print(fmdb.execute(query).fetchall())
+
+
 # @cli.command()
 # @click.argument("sql", type=click.STRING)
 # @click.pass_context
