@@ -1,0 +1,14 @@
+.DS_Store
+**/*.pyc
+__pycache__
+.vscode*
+**/.envrc
+
+*.log
+/tmp
+
+.mypy_cache/
+/.coverage
+/.coverage.*
+/.python-version
+/.pytype/
