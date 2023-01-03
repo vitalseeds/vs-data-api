@@ -54,4 +54,4 @@ def connection(connection_string):
         return False
 
     connection = pyodbc.connect(connection_string)
-    return connection.cursor()
+    return connection
