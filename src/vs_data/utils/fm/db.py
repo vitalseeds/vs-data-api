@@ -57,7 +57,7 @@ def connection(connection_string):
     return connection
 
 
-def select_columns(connection, table, columns, where):
+def select_columns(connection, table, columns, where=None):
     """
     Construct SQL statement for a select query and return result.
 
@@ -71,7 +71,7 @@ def select_columns(connection, table, columns, where):
     return columns, rows
 
 
-def select(connection, table, columns, where):
+def select(connection, table, columns, where=None):
     """
     Perform SQL select query and return result as list of dicts
     """
