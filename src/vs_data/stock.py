@@ -13,7 +13,25 @@ WC_MAX_API_RESULT_COUNT = 10
 
 def get_batches_awaiting_upload(fmdb):
     table = "packeting_batches"
-    columns = ["awaiting_upload", "sku", "batch_number", "packets", "to_pack"]
+    columns = ["awaiting_upload", "sku", "skufk", "batch_number", "packets", "to_pack"]
+    where = "awaiting_upload='yes'"
+    # sql = f'SELECT {field_list} FROM "{table}" WHERE {where}'
+    # rows = fmdb.execute(sql).fetchall()
+    # print(sql)
+    batches = fm_select(fmdb, table, columns, where)
+    return batches
+
+
+def get_large_batches_awaiting_upload(fmdb):
+    table = "large_batches"
+    columns = [
+        "awaiting_upload",
+        "sku",
+        "skufk",
+        "batch_number",
+        "packed",  # equivalent of 'packets'
+        "packets",  # equivalent of 'to_pack'
+    ]
     where = "awaiting_upload='yes'"
     # sql = f'SELECT {field_list} FROM "{table}" WHERE {where}'
     # rows = fmdb.execute(sql).fetchall()
@@ -61,9 +79,11 @@ def get_wp_product_by_sku(wcapi, sku):
 def update_wc_stock_from_batch(fmdb, wcapi=None):
     # headers, batches = get_batches_awaiting_upload(fmdb)
     batches = get_batches_awaiting_upload(fmdb)
-    print(type(batches))
     print(batches)
-    display_table(batches)
+    # lg_batches = get_large_batches_awaiting_upload(fmdb)
+    # print(lg_batches)
+
+    # display_table(batches)
 
 
 # def get_seed_lot(fmdb):
