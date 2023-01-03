@@ -6,18 +6,20 @@ These will be run (via shell commands) from FM scripts
 
 from rich import print
 from vs_data.utils.cli import display_table
+from vs_data.utils.fm.db import select as fm_select
 
 WC_MAX_API_RESULT_COUNT = 10
 
 
 def get_batches_awaiting_upload(fmdb):
     table = "packeting_batches"
-    columns = ["awaiting_upload", "batch_number", "packets", "to_pack"]
-    field_list = ",".join([f'"{f}"' for f in columns])
+    columns = ["awaiting_upload", "sku", "batch_number", "packets", "to_pack"]
     where = "awaiting_upload='yes'"
-    sql = f'SELECT {field_list} FROM "{table}" WHERE {where}'
-    print(sql)
-    return columns, fmdb.execute(sql).fetchall()
+    # sql = f'SELECT {field_list} FROM "{table}" WHERE {where}'
+    # rows = fmdb.execute(sql).fetchall()
+    # print(sql)
+    batches = fm_select(fmdb, table, columns, where)
+    return batches
 
 
 def get_products_in_stock(wcapi):
@@ -57,8 +59,11 @@ def get_wp_product_by_sku(wcapi, sku):
 
 
 def update_wc_stock_from_batch(fmdb, wcapi=None):
-    headers, batches = get_batches_awaiting_upload(fmdb)
-    display_table(headers, batches)
+    # headers, batches = get_batches_awaiting_upload(fmdb)
+    batches = get_batches_awaiting_upload(fmdb)
+    print(type(batches))
+    print(batches)
+    display_table(batches)
 
 
 # def get_seed_lot(fmdb):

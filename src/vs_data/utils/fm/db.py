@@ -55,3 +55,26 @@ def connection(connection_string):
 
     connection = pyodbc.connect(connection_string)
     return connection
+
+
+def select_columns(connection, table, columns, where):
+    """
+    Construct SQL statement for a select query and return result.
+
+    Returns columns, rows.
+    """
+    field_list = ",".join([f'"{f}"' for f in columns])
+    where_clause = f"WHERE {where}" if where else ""
+    sql = f'SELECT {field_list} FROM "{table}" {where_clause}'
+    rows = connection.cursor().execute(sql).fetchall()
+    print(sql)
+    return columns, rows
+
+
+def select(connection, table, columns, where):
+    """
+    Perform SQL select query and return result as list of dicts
+    """
+    columns, rows = select_columns(connection, table, columns, where)
+    objects = [dict(zip(columns, r)) for r in rows]
+    return objects

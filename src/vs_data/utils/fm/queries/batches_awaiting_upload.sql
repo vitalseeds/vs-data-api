@@ -5,6 +5,7 @@ SELECT
     B.batch_number,
     B.packets,
     B.to_pack,
+    B.sku,
     L.seed_lot_id
 FROM
     "packeting_batches" B -- LEFT JOIN "seed_lots" L ON B.seed_lot_fk = L.seed_lot_id

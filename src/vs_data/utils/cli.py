@@ -15,8 +15,23 @@ COLOURS = (
 RAINBOW = True
 
 
-def display_table(headers, rows, title=None, float_to_int=True):
+def display_table(rows, headers=None, title=None, float_to_int=True):
+    """
+    Display a rich table.
+
+    Aimed at SQL query results.
+    Accepts either:
+    - list of rows and list of columns
+    - list of dicts with column names as keys
+    """
     table = Table(title=title)
+
+    if not rows:
+        return
+
+    if not headers:
+        headers = rows[0].keys()
+        rows = [r.values() for r in rows]
 
     for i, header in enumerate(headers):
         if RAINBOW:
@@ -52,4 +67,4 @@ def display_product_table(products, fields=["id", "sku", "stock_quantity"]):
     for product in products:
         rows.append([product[f] for f in fields])
 
-    display_table(fields, rows)
+    display_table(rows, fields)

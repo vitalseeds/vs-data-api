@@ -27,7 +27,7 @@ def cli(ctx, fmdb, wc_url, wc_key, wc_secret):
     Parent to all the commands, sets up FM connection and WC api instance
     """
     ctx.ensure_object(dict)
-    ctx.obj["fmdb"] = db.connection(fmdb).cursor()
+    ctx.obj["fmdb"] = db.connection(fmdb)
     ctx.obj["wcapi"] = api.get_api(wc_url, wc_key, wc_secret)
 
 
