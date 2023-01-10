@@ -81,11 +81,11 @@ def _select_columns(
 
     Returns columns, rows.
     """
-    columns = [constants.fname(table, c) for c in columns]
-    table = constants.tname(table)
-    field_list = ",".join([f'"{f}"' for f in columns])
+    fm_columns = [constants.fname(table, c) for c in columns]
+    fm_table = constants.tname(table)
+    field_list = ",".join([f'"{f}"' for f in fm_columns])
     where_clause = f"WHERE {where}" if where else ""
-    sql = f'SELECT {field_list} FROM "{table}" {where_clause}'
+    sql = f'SELECT {field_list} FROM "{fm_table}" {where_clause}'
     rows = connection.cursor().execute(sql).fetchall()
     if debug:
         print(sql)

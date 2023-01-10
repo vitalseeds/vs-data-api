@@ -91,29 +91,15 @@ def get_acquisitions_sku_map_from_vsdb(connection):
     return products
 
 
-#
-# def get_seed_lot(connection):
-#     # table = "Packeting Batches"
-#     # table_alias = "p"
-#     columns = [
-#         "Awaiting_upload",
-#         "Batch Number",
-#         "Packets",
-#         "To pack",
-#         "SKU",
-#         "Cost of seed",
-#     ]
-#     # columns = [f"{table_alias}.{c}" for c in columns]
-#     # field_list = ",".join([f'"{f}"' for f in columns])
-#     # where = "Awaiting_upload='yes'"
-#     # sql = f'SELECT {field_list} FROM "{table}" as {table_alias} WHERE {where}'
-#     # sql = 'SELECT "Awaiting_upload","Batch Number","Packets","To pack" FROM "Packeting Batches" WHERE Awaiting_upload=\'yes\' '
-#     # 'UNION SELECT "SKU", "SKU_lrg" FROM Aquisitions'
-#     sql = 'SELECT "Awaiting_upload","Batch Number","Packets","To pack","SKU", "SeedLotFK" FROM "Packeting Batches" JOIN "Seed Lots" ON "Seed Lots"."Lot number"="Packeting Batches"."SeedLotFK" WHERE Awaiting_upload=\'yes\' '
-#     print(sql)
-#     return columns, connection.execute(sql).fetchall()
-
-# From FM 14 pdf
-# SELECT *
-# FROM Salespeople LEFT OUTER JOIN Sales_Data
-# ON Salespeople.Salesperson_ID = Sales_Data.Salesperson_ID
+def update_acquisitions_wc_id(connection, sku_id_map):
+    fm_table = constants.tname("acquisitions")
+    link_wc_id = "link_wc_product_id"
+    wc_id = "wc_product_id"
+    sku_field = constants.fname("acquisitions", "sku")
+    for row in sku_id_map:
+        sql = f"UPDATE {fm_table} SET {wc_id}={row[link_wc_id]} WHERE {sku_field} = '{row['sku']}'"
+        print(sql)
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        print(cursor.rowcount)
+        connection.commit()

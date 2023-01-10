@@ -85,22 +85,17 @@ def runsql(ctx, file):
 @cli.command()
 @click.pass_context
 def push_skus_to_wc(ctx):
-    ctx.parent.params["fmlinkdb"]
-    print(ctx.parent.params["fmlinkdb"])
-    print(type(ctx.parent.params["fmlinkdb"]))
-    # print(db.construct_db_connection_string("link_db", "vs_data", "1234"))
+    wcapi = ctx.parent.obj["wcapi"]
+    fmdb = ctx.parent.obj["fmdb"]
     fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
-    print(type(fmlinkdb))
 
-    from vs_data.woocommerce import (
-        get_product_sku_map_from_linkdb,
-        get_product_variation_sku_map_from_linkdb,
-    )
+    # Get the WC:product_id for each SKU from the link database
+    regular_product_skus = stock.get_product_sku_map_from_linkdb(fmlinkdb)
+    print(regular_product_skus[:10])
 
-    product_skus = get_product_sku_map_from_linkdb(fmlinkdb)
-    print(len(product_skus))
-    variation_skus = get_product_variation_sku_map_from_linkdb(fmlinkdb)
-    print(len(variation_skus))
+    # Get acquisitions from vs_db
+    aquisitions = stock.get_acquisitions_sku_map_from_vsdb(fmdb)
+    print(aquisitions[:10])
 
     print(product_skus[0])
     print(variation_skus[0])
