@@ -44,7 +44,7 @@ def construct_db_connection_string(
     )
 
 
-def connection(connection_string):
+def connection(connection_string: str):
     """
     Return a database connection.
 
@@ -57,7 +57,13 @@ def connection(connection_string):
     return connection
 
 
-def select_columns(connection, table, columns, where=None):
+def select_columns(
+    connection: pyodbc.Connection,
+    table: str,
+    columns: str,
+    where: str = None,
+    debug: bool = False,
+) -> dict:
     """
     Construct SQL statement for a select query and return result.
 
@@ -67,14 +73,24 @@ def select_columns(connection, table, columns, where=None):
     where_clause = f"WHERE {where}" if where else ""
     sql = f'SELECT {field_list} FROM "{table}" {where_clause}'
     rows = connection.cursor().execute(sql).fetchall()
-    print(sql)
+    if debug:
+        print(sql)
     return columns, rows
 
 
-def select(connection, table, columns, where=None):
+def select(
+    connection: pyodbc.Connection,
+    table: str,
+    columns: str,
+    where: str = None,
+    debug: bool = False,
+) -> dict:
     """
     Perform SQL select query and return result as list of dicts
+
+    Accepts
+    - connection, table, columns, where
     """
-    columns, rows = select_columns(connection, table, columns, where)
+    columns, rows = select_columns(connection, table, columns, where, debug)
     objects = [dict(zip(columns, r)) for r in rows]
     return objects
