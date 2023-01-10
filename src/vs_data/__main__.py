@@ -85,6 +85,13 @@ def runsql(ctx, file):
 @cli.command()
 @click.pass_context
 def push_skus_to_wc(ctx):
+
+@cli.command()
+@click.pass_context
+def import_wc_product_ids(ctx):
+    """
+    Query the link db for wc product ids and add to the vs_db acquisitions table (based on sku)
+    """
     wcapi = ctx.parent.obj["wcapi"]
     fmdb = ctx.parent.obj["fmdb"]
     fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
@@ -94,22 +101,11 @@ def push_skus_to_wc(ctx):
     print(regular_product_skus[:10])
 
     # Get acquisitions from vs_db
-    aquisitions = stock.get_acquisitions_sku_map_from_vsdb(fmdb)
-    print(aquisitions[:10])
+    # aquisitions = stock.get_acquisitions_sku_map_from_vsdb(fmdb)
+    # print(aquisitions[:10])
 
-    print(product_skus[0])
-    print(variation_skus[0])
-
-    # overlaps = []
-    # for p in product_skus:
-    #     if match := [v for v in variation_skus if v["SKU"] == p["SKU"]]:
-    #         overlaps.append({"product": p, "variation": match})
-
-    # print("[red]OVERLAPS")
-    # print(overlaps)
-    # print(len(overlaps))
-
-    wcapi = ctx.parent.obj["wcapi"]
+    # Update acquisitions with wc_product_id
+    stock.update_acquisitions_wc_id(fmdb, regular_product_skus)
 
 
 # @cli.command()

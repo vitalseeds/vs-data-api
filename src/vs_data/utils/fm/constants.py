@@ -25,6 +25,10 @@ def parse_db_table_prefix(table_ref: str):
     return vs_tables, table_ref
 
 
+def snake_to_camel(snake_str):
+    return snake_str.title().replace("_", "")
+
+
 def get_table_class(table_ref: str):
     """
     Returns a class representing a FM table schema.
@@ -37,7 +41,7 @@ def get_table_class(table_ref: str):
     then the map for the link database is used rather than the stock database.
     """
     db_table_map, table_ref = parse_db_table_prefix(table_ref)
-    return getattr(db_table_map, table_ref.title())
+    return getattr(db_table_map, snake_to_camel(table_ref))
 
 
 def get_fm_field_name(table_ref: str, field_ref: str) -> str:

@@ -67,13 +67,42 @@ def get_wp_product_by_sku(wcapi, sku):
     return products.json()
 
 
-def update_wc_stock_from_batch(connection, wcapi=None):
+def update_wc_stock_for_new_batches(connection, wcapi=None):
     # headers, batches = get_batches_awaiting_upload(connection)
     batches = get_batches_awaiting_upload(connection)
     print(batches)
+
     # lg_batches = get_large_batches_awaiting_upload(connection)
     # print(lg_batches)
 
+    # ids = [str(id) for id in ids]
+    # comma_separated_ids = ",".join(ids)
+    # products = wcapi.get(
+    #     "products",
+    #     params={"include": comma_separated_ids, "per_page": 100},
+    # )
+    # return products.json() if products else None
+
+    # variations = wcapi.get(
+    #     f"products/{product_skus[2]['_kf_WooCommerceID']}/variations"
+    # ).json()
+
+    # print([{"id": v["id"], "sku": v["sku"]} for v in variations])
+
+    # print(wcapi.get(f"products/{product_skus[0]['_kf_WooCommerceID']}").json())
+
+    # print(wcapi.get(f"products").json())
+
+    # overlaps = []
+    # for p in product_skus:
+    #     if match := [v for v in variation_skus if v["SKU"] == p["SKU"]]:
+    #         overlaps.append({"product": p, "variation": match})
+
+    # print("[red]OVERLAPS")
+    # print(overlaps)
+    # print(len(overlaps))
+
+    # wcapi = ctx.parent.obj["wcapi"]
     # display_table(batches)
 
 
