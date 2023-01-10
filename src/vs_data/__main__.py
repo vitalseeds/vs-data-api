@@ -118,9 +118,20 @@ def push_skus_to_wc(ctx):
 
 
 # @cli.command()
+# @click.pass_context
+# def get_wc_variation_ids(ctx):
+#     """
+#     large_batches
+#     """
+#     wcapi = ctx.parent.obj["wcapi"]
+#     fmdb = ctx.parent.obj["fmdb"]
+#     fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
+
+
+# @cli.command()
 # @click.argument("sql", type=click.STRING)
 # @click.pass_context
-# def sql(ctx, sql):
+# def debug_sql(ctx, sql):
 #     """
 #     has issues with escaping the quoted table/field names in SQL string
 #     """

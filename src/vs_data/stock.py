@@ -15,11 +15,7 @@ def get_batches_awaiting_upload(fmdb):
     table = "packeting_batches"
     columns = ["awaiting_upload", "sku", "skufk", "batch_number", "packets", "to_pack"]
     where = "awaiting_upload='yes'"
-    # sql = f'SELECT {field_list} FROM "{table}" WHERE {where}'
-    # rows = fmdb.execute(sql).fetchall()
-    # print(sql)
-    batches = fm_select(fmdb, table, columns, where)
-    return batches
+    return fm_select(fmdb, table, columns, where)
 
 
 def get_large_batches_awaiting_upload(fmdb):
@@ -33,11 +29,7 @@ def get_large_batches_awaiting_upload(fmdb):
         "packets",  # equivalent of 'to_pack'
     ]
     where = "awaiting_upload='yes'"
-    # sql = f'SELECT {field_list} FROM "{table}" WHERE {where}'
-    # rows = fmdb.execute(sql).fetchall()
-    # print(sql)
-    batches = fm_select(fmdb, table, columns, where)
-    return batches
+    return fm_select(fmdb, table, columns, where)
 
 
 def get_products_in_stock(wcapi):
@@ -63,17 +55,15 @@ def get_wp_product_by_sku(wcapi, sku):
     May need to fetch them all and write to db? Otherwise map to product ID
     Believe currently link_db stores the map of product id to SKU
     """
+    sku = "ChTr"
     if not sku:
         return
-    sku = "ChTr"
-    # products = wcapi.get("products", params={"sku": sku})
     products = wcapi.get(
         "products",
         params={"sku": sku},
     )
-    products = products.json()
     # product_stock = {p["id"]: p["stock_quantity"] for p in products}
-    products
+    return products.json()
 
 
 def update_wc_stock_from_batch(fmdb, wcapi=None):

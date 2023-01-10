@@ -18,8 +18,8 @@ def get_product_sku_map_from_linkdb(fmlinkdb):
     return products
 
 
-def get_product_variation_sku_map_from_linkdb(fmlinkdb):
-    table = "ProductVariations"
-    columns = ["_kf_WooCommerceID", "SKU"]
-    variations = fm_select(fmlinkdb, table, columns)
-    return variations
+# def get_product_variation_sku_map_from_linkdb(fmlinkdb):
+#     table = "ProductVariations"
+#     columns = ["_kf_WooCommerceID", "SKU", "WooCommerceProductVariationJSON"]
+#     variations = fm_select(fmlinkdb, table, columns)
+#     return variations
