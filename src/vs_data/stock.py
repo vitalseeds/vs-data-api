@@ -14,9 +14,30 @@ WC_MAX_API_RESULT_COUNT = 10
 
 def get_batches_awaiting_upload(connection):
     table = "packeting_batches"
-    columns = ["awaiting_upload", "sku", "skufk", "batch_number", "packets", "to_pack"]
-    where = "awaiting_upload='yes'"
+    # columns = ["awaiting_upload", "sku", "skufk", "batch_number", "packets", "to_pack"]
+    columns = ["awaiting_upload", "batch_number", "sku", "packets"]
+    awaiting = constants.fname("packeting_batches", "awaiting_upload")
+    where = f"{awaiting}='yes'"
     return fmdb.select(connection, table, columns, where)
+
+
+def get_batches_awaiting_upload_join_acq(connection):
+    table = "packeting_batches"
+    # columns = ["awaiting_upload", "sku", "skufk", "batch_number", "packets", "to_pack"]
+    columns = ["awaiting_upload", "batch_number", "sku", "packets"]
+    # column_map = {c: constants.fname(table, c) for c in columns}
+    awaiting = constants.fname("packeting_batches", "awaiting_upload")
+    where = f"{awaiting}='yes'"
+
+    sql = (
+        "SELECT B.awaiting_upload,B.batch_number, B.packets, A.sku, A.wc_product_id  "
+        'FROM "packeting_batches" B '
+        'LEFT JOIN "acquisitions" A ON B.sku = A.SKU '
+        "WHERE awaiting_upload='yes' "
+    )
+    print(sql)
+    # objects = [dict(zip(columns, r)) for r in rows]
+    return connection.cursor().execute(sql).fetchall()
 
 
 def get_large_batches_awaiting_upload(connection):
@@ -68,9 +89,11 @@ def get_wp_product_by_sku(wcapi, sku):
 
 
 def update_wc_stock_for_new_batches(connection, wcapi=None):
-    # headers, batches = get_batches_awaiting_upload(connection)
-    batches = get_batches_awaiting_upload(connection)
+    # batches = get_batches_awaiting_upload(connection)[:1]
+    batches = get_batches_awaiting_upload_join_acq(connection)
     print(batches)
+
+    # Update stock_qty for each product
 
     # lg_batches = get_large_batches_awaiting_upload(connection)
     # print(lg_batches)

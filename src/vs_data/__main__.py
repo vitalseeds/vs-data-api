@@ -1,18 +1,23 @@
 """
 Command-line interface to interact with Vital Seeds database.
 """
+import os
+
+import click
+from rich import print
+
+from vs_data import stock
+from vs_data.utils.cli import display_product_table
+from vs_data.utils.fm import constants
+from vs_data.utils.fm import db
+from vs_data.utils.wc import api
+
+
 # TODO: consider using an orm
 # eg sqlalchemy
 # https://stackoverflow.com/questions/4493614/sqlalchemy-equivalent-of-pyodbc-connect-string-using-freetds
 # https://stackoverflow.com/questions/39955521/sqlalchemy-existing-database-query
 # https://docs.sqlalchemy.org/en/14/core/reflection.html
-import click
-from vs_data.utils.fm import db
-from vs_data.utils.wc import api
-from rich import print
-from vs_data import stock
-from vs_data.utils.cli import display_product_table
-import os
 
 
 @click.group()
@@ -37,7 +42,7 @@ def cli(ctx, fmdb, fmlinkdb, wc_url, wc_key, wc_secret):
 def update_stock(ctx):
     fmdb = ctx.parent.obj["fmdb"]
     wcapi = ctx.parent.obj["wcapi"]
-    stock.update_wc_stock_from_batch(fmdb, wcapi)
+    stock.update_wc_stock_for_new_batches(fmdb, wcapi)
 
 
 @cli.command()
@@ -84,7 +89,10 @@ def runsql(ctx, file):
 
 @cli.command()
 @click.pass_context
-def push_skus_to_wc(ctx):
+def get_wc_product_ids(ctx):
+    wcapi = ctx.parent.obj["wcapi"]
+    fmdb = ctx.parent.obj["fmdb"]
+
 
 @cli.command()
 @click.pass_context
