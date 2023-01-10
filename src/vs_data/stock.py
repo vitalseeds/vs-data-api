@@ -8,6 +8,7 @@ from rich import print
 from vs_data.utils.cli import display_table
 from vs_data.utils.fm import db as fmdb
 from vs_data.utils.fm import constants
+from collections import defaultdict
 
 WC_MAX_API_RESULT_COUNT = 10
 
@@ -24,7 +25,7 @@ def get_batches_awaiting_upload(connection):
 def get_batches_awaiting_upload_join_acq(connection):
     table = "packeting_batches"
     # columns = ["awaiting_upload", "sku", "skufk", "batch_number", "packets", "to_pack"]
-    columns = ["awaiting_upload", "batch_number", "sku", "packets"]
+    columns = ["awaiting_upload", "batch_number", "packets", "sku", "wc_product_id"]
     # column_map = {c: constants.fname(table, c) for c in columns}
     awaiting = constants.fname("packeting_batches", "awaiting_upload")
     where = f"{awaiting}='yes'"
@@ -36,8 +37,8 @@ def get_batches_awaiting_upload_join_acq(connection):
         "WHERE awaiting_upload='yes' "
     )
     print(sql)
-    # objects = [dict(zip(columns, r)) for r in rows]
-    return connection.cursor().execute(sql).fetchall()
+    rows = connection.cursor().execute(sql).fetchall()
+    return [dict(zip(columns, r)) for r in rows]
 
 
 def get_large_batches_awaiting_upload(connection):
@@ -57,7 +58,11 @@ def get_large_batches_awaiting_upload(connection):
 def get_products_in_stock(wcapi):
     return wcapi.get(
         "products",
-        params={"stock_status": "instock", "per_page": WC_MAX_API_RESULT_COUNT},
+        params={
+            "stock_status": "instock",
+            "per_page": WC_MAX_API_RESULT_COUNT,
+            "page": 10,
+        },
     )
 
 
@@ -66,7 +71,7 @@ def get_products_by_id(wcapi, ids):
     comma_separated_ids = ",".join(ids)
     products = wcapi.get(
         "products",
-        params={"include": comma_separated_ids, "per_page": WC_MAX_API_RESULT_COUNT},
+        params={"include": comma_separated_ids, "per_page": 100},
     )
     return products.json() if products else None
 
@@ -88,45 +93,71 @@ def get_wp_product_by_sku(wcapi, sku):
     return products.json()
 
 
-def update_wc_stock_for_new_batches(connection, wcapi=None):
+def _total_stock_increments(batches):
+    """
+    Add up stock increments per sku
+    in case there are multiple batches for a single product (sku)
+    """
+    stock_increments = defaultdict(lambda: 0)
+    for batch in batches:
+        stock_increments[batch["wc_product_id"]] += batch["packets"]
+    return stock_increments
+
+
+# TODO: improve performance of lookups from returned data
+# TODO: add tests
+def update_wc_stock_for_new_batches(connection, wcapi=None, debug=False):
     # batches = get_batches_awaiting_upload(connection)[:1]
     batches = get_batches_awaiting_upload_join_acq(connection)
-    print(batches)
+    if debug:
+        print("Batches awaiting upload")
+        print(batches)
 
-    # Update stock_qty for each product
+    # Get current wc stock quantity
+    batch_product_ids = [b["wc_product_id"] for b in batches]
+    products = get_products_by_id(wcapi, batch_product_ids)
+    if debug:
+        print("Current WC product stock")
+        print(
+            [
+                {
+                    "wc_product_id": p["id"],
+                    "sku": p["sku"],
+                    "stock": p["stock_quantity"],
+                }
+                for p in products
+            ]
+        )
 
-    # lg_batches = get_large_batches_awaiting_upload(connection)
-    # print(lg_batches)
+    stock_increments = _total_stock_increments(batches)
+    product_updates = []
+    for product in products:
+        current_stock_quantity = product["stock_quantity"]
+        new_stock_quantity = current_stock_quantity + stock_increments[product["id"]]
+        product_updates.append(
+            {
+                "id": product["id"],
+                "stock_quantity": new_stock_quantity,
+            }
+        )
+    data = {"update": product_updates}
+    response = wcapi.post("products/batch", data).json()
 
-    # ids = [str(id) for id in ids]
-    # comma_separated_ids = ",".join(ids)
-    # products = wcapi.get(
-    #     "products",
-    #     params={"include": comma_separated_ids, "per_page": 100},
-    # )
-    # return products.json() if products else None
+    # Check that the batches have updated correctly on WC
+    # print(response)
+    for product in response["update"]:
+        print(f'{product["id"]}: {product["stock_quantity"]}')
 
-    # variations = wcapi.get(
-    #     f"products/{product_skus[2]['_kf_WooCommerceID']}/variations"
-    # ).json()
-
-    # print([{"id": v["id"], "sku": v["sku"]} for v in variations])
-
-    # print(wcapi.get(f"products/{product_skus[0]['_kf_WooCommerceID']}").json())
-
-    # print(wcapi.get(f"products").json())
-
-    # overlaps = []
-    # for p in product_skus:
-    #     if match := [v for v in variation_skus if v["SKU"] == p["SKU"]]:
-    #         overlaps.append({"product": p, "variation": match})
-
-    # print("[red]OVERLAPS")
-    # print(overlaps)
-    # print(len(overlaps))
-
-    # wcapi = ctx.parent.obj["wcapi"]
-    # display_table(batches)
+    # updated_products = {
+    #     p["id"]: p["stock_quantity"] for p in get_products_by_id(wcapi, batch_product_ids)
+    # }
+    # for product in product_updates:
+    #     if product["stock_quantity"] == :
+    # if debug:
+    #     print("Updated WC product stock")
+    #     print(
+    #         [{"stock": p["stock_quantity"], "sku": p["sku"]} for p in updated_products]
+    #     )
 
 
 def get_product_sku_map_from_linkdb(fmlinkdb):
