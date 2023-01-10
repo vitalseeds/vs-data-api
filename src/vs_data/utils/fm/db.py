@@ -46,7 +46,7 @@ def construct_db_connection_string(
     )
 
 
-def connection(connection_string: str):
+def connection(connection_string: str) -> pyodbc.Connection:
     """
     Return a database connection.
 
@@ -71,6 +71,8 @@ def _select_columns(
 
     Returns columns, rows.
     """
+    table = constants.tname(table)
+    columns = [constants.fname(table, c) for c in columns]
     field_list = ",".join([f'"{f}"' for f in columns])
     where_clause = f"WHERE {where}" if where else ""
     sql = f'SELECT {field_list} FROM "{table}" {where_clause}'
@@ -93,8 +95,6 @@ def select(
     Accepts
     - connection, table, columns, where
     """
-    table = constants.tname(table)
-    columns = [constants.fname(table, c) for c in columns]
     columns, rows = _select_columns(connection, table, columns, where, debug)
     objects = [dict(zip(columns, r)) for r in rows]
     return objects

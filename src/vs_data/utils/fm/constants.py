@@ -3,39 +3,24 @@ Table names etc that are relied on by vs-data.
 
 Some (commented) may need to be created in filemaker.
 """
-from enum import Enum
+
+from . import vs_tables
+from . import link_tables
 
 
-class FilemakerTable(str, Enum):
-    """
-    Enum type to hold filemaker table/field name strings as constants
-    """
-
-    ...
+def get_table_class(table_ref: str, link_db=False):
+    db_table_map = link_tables if link_db else vs_tables
+    return getattr(db_table_map, table_ref.title())
 
 
-class Acquisitions(FilemakerTable):
-    table_name = "Acquisitions"
-
-    SKU = "SKU"
-    crop = "crop"
-    wc_product_id = "wc_product_id"
+def get_fm_field_name(table_ref: str, field_ref: str, linkdb=False) -> str:
+    table_class = get_table_class(table_ref)
+    return getattr(table_class, field_ref)
 
 
-# Accessor functions
-
-
-def get_fm_table_class_name(table_ref: str):
-    return table_ref.title()
-
-
-def get_fm_field_name(table_ref: str, field_ref: str) -> str:
-    table_class = globals()[get_fm_table_class_name(table_ref)]
-    return getattr(table_class, field_ref).value
-
-
-def get_fm_table_name(table_ref: str) -> str:
-    return getattr(globals()[get_fm_table_class_name(table_ref)], "table_name").value
+def get_fm_table_name(table_ref: str, linkdb=False) -> str:
+    table_class = get_table_class(table_ref)
+    return getattr(table_class, "table_name")
 
 
 # Shortened function aliases for brevity
