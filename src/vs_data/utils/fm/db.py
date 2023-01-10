@@ -6,6 +6,7 @@ Filemaker SQL limitations/requirements
 """
 
 import pypyodbc as pyodbc
+from enum import Enum
 
 
 def construct_dsn_connection_string(
@@ -94,3 +95,11 @@ def select(
     columns, rows = select_columns(connection, table, columns, where, debug)
     objects = [dict(zip(columns, r)) for r in rows]
     return objects
+
+
+class FilemakerTable(str, Enum):
+    """
+    Enum type to hold filemaker table/field name strings
+    """
+
+    pass
