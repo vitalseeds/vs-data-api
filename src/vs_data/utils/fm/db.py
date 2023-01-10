@@ -102,4 +102,4 @@ class FilemakerTable(str, Enum):
     Enum type to hold filemaker table/field name strings
     """
 
-    pass
+    ...

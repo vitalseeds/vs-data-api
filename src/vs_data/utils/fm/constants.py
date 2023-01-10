@@ -10,10 +10,25 @@ from vs_data.utils.fm.db import FilemakerTable
 class Acquisitions(FilemakerTable):
     wp_product_id = "wp_product_id"
 
-
-def field_name(table_ref: str, field_ref: str) -> str:
-    return getattr(globals()[table_ref], field_ref)
+    table_name = "Acquisitions"
 
 
-# Shortened alias for field name function
-fname = field_name
+# Accessor functions
+
+
+def get_fm_table_class_name(table_ref: str):
+    return table_ref.title()
+
+
+def get_fm_field_name(table_ref: str, field_ref: str) -> str:
+    return getattr(globals()[get_fm_table_class_name(table_ref)], field_ref)
+
+
+def get_fm_table_name(table_ref: str) -> str:
+    return getattr(globals()[get_fm_table_class_name(table_ref)], "table_name")
+
+
+# Shortened function aliases for brevity
+
+fname = get_fm_field_name
+tname = get_fm_table_name
