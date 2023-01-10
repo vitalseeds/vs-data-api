@@ -6,4 +6,7 @@ class Products(FilemakerTable):
 
     SKU = "SKU"
     crop = "crop"
+    link_wc_product_id = "_kf_WooCommerceID"
+    sku = "SKU"
+    name = "Name"
     # wc_product_id = "wc_product_id"

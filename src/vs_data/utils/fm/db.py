@@ -8,6 +8,10 @@ Filemaker SQL limitations/requirements
 import pypyodbc as pyodbc
 
 from vs_data.utils.fm import constants
+import os
+
+VSDATA_FM_CONNECTION_STRING = os.environ["VSDATA_FM_CONNECTION_STRING"]
+VSDATA_FM_LINK_CONNECTION_STRING = os.environ["VSDATA_FM_LINK_CONNECTION_STRING"]
 
 
 def construct_dsn_connection_string(
@@ -46,6 +50,12 @@ def construct_db_connection_string(
     )
 
 
+def is_link_db(connection):
+    if connection.connectString == VSDATA_FM_LINK_CONNECTION_STRING:
+        return True
+    return False
+
+
 def connection(connection_string: str) -> pyodbc.Connection:
     """
     Return a database connection.
@@ -71,8 +81,8 @@ def _select_columns(
 
     Returns columns, rows.
     """
-    table = constants.tname(table)
     columns = [constants.fname(table, c) for c in columns]
+    table = constants.tname(table)
     field_list = ",".join([f'"{f}"' for f in columns])
     where_clause = f"WHERE {where}" if where else ""
     sql = f'SELECT {field_list} FROM "{table}" {where_clause}'

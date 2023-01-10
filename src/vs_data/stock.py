@@ -78,15 +78,15 @@ def update_wc_stock_from_batch(connection, wcapi=None):
 
 
 def get_product_sku_map_from_linkdb(fmlinkdb):
-    table = "Products"
-    columns = ["_kf_WooCommerceID", "SKU", "Name"]
+    table = "link:Products"
+    columns = ["link_wc_product_id", "sku", "name"]
     products = fmdb.select(fmlinkdb, table, columns)
     return products
 
 
 def get_acquisitions_sku_map_from_vsdb(connection):
     table = "Acquisitions"
-    columns = ["SKU", "crop", "wc_product_id"]
+    columns = ["sku", "crop", "wc_product_id"]
     products = fmdb.select(connection, table, columns)
     return products
 
