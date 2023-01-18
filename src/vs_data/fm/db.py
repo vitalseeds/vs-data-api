@@ -5,10 +5,13 @@ Filemaker SQL limitations/requirements
 - string values must be enclosed in single quotes
 """
 
+import os
+
 import pypyodbc as pyodbc
 
+from vs_data import log
 from vs_data.fm import constants
-import os
+
 
 VSDATA_FM_CONNECTION_STRING = os.environ["VSDATA_FM_CONNECTION_STRING"]
 VSDATA_FM_LINK_CONNECTION_STRING = os.environ["VSDATA_FM_LINK_CONNECTION_STRING"]
@@ -74,7 +77,6 @@ def _select_columns(
     table: str,
     columns: str,
     where: str = None,
-    debug: bool = False,
 ) -> dict:
     """
     Construct SQL statement for a select query and return result.
@@ -87,8 +89,8 @@ def _select_columns(
     where_clause = f"WHERE {where}" if where else ""
     sql = f'SELECT {field_list} FROM "{fm_table}" {where_clause}'
     rows = connection.cursor().execute(sql).fetchall()
-    if debug:
-        print(sql)
+
+    log.debug(sql)
     return columns, rows
 
 
@@ -97,7 +99,6 @@ def select(
     table: str,
     columns: list,
     where: str = None,
-    debug: bool = False,
 ) -> dict:
     """
     Perform SQL select query and return result as list of dicts
@@ -105,6 +106,6 @@ def select(
     Accepts
     - connection, table, columns, where
     """
-    columns, rows = _select_columns(connection, table, columns, where, debug)
+    columns, rows = _select_columns(connection, table, columns, where)
     objects = [dict(zip(columns, r)) for r in rows]
     return objects

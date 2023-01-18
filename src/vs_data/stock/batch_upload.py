@@ -4,11 +4,16 @@ Vital Seeds FM schema specific stock management
 These will be run (via shell commands) from FM scripts
 """
 
-from rich import print
-from vs_data.cli.table import display_table
-from vs_data.fm import db as fmdb
-from vs_data.fm import constants
+import logging
 from collections import defaultdict
+
+from rich import print
+
+from vs_data import log
+from vs_data.cli.table import display_table
+from vs_data.fm import constants
+from vs_data.fm import db as fmdb
+
 
 WC_MAX_API_RESULT_COUNT = 10
 
@@ -52,31 +57,31 @@ def _total_stock_increments(batches):
 
 # TODO: improve performance of lookups from returned data
 # TODO: add tests
-def update_wc_stock_for_new_batches(connection, wcapi=None, debug=False):
+def update_wc_stock_for_new_batches(connection, wcapi=None):
     batches = get_batches_awaiting_upload_join_acq(connection)
     if not batches:
         return False
-    if debug:
-        print("Batches awaiting upload")
-        print(batches)
+
+    log.debug("Batches awaiting upload")
+    log.debug(batches)
 
     # Get current wc stock quantity
     batch_product_ids = [b["wc_product_id"] for b in batches]
     products = get_products_by_id(wcapi, batch_product_ids)
     if not batches:
         return False
-    if debug:
-        print("Current WC product stock")
-        print(
-            [
-                {
-                    "wc_product_id": p["id"],
-                    "sku": p["sku"],
-                    "stock": p["stock_quantity"],
-                }
-                for p in products
-            ]
-        )
+
+    log.debug("Current WC product stock")
+    log.debug(
+        [
+            {
+                "wc_product_id": p["id"],
+                "sku": p["sku"],
+                "stock": p["stock_quantity"],
+            }
+            for p in products
+        ]
+    )
 
     stock_increments = _total_stock_increments(batches)
     product_updates = []
@@ -92,11 +97,14 @@ def update_wc_stock_for_new_batches(connection, wcapi=None, debug=False):
     data = {"update": product_updates}
     response = wcapi.post("products/batch", data).json()
 
-    # Check that the batches have updated correctly on WC
-    # print(response)
-    if debug:
-        for product in response["update"]:
-            print(f'{product["id"]}: {product["stock_quantity"]}')
+    # Check from response that the batches have been updated on WC
+    log.debug(
+        [
+            f'{product["id"]}: {product["stock_quantity"]}'
+            for product in response["update"]
+        ]
+    )
+
     if len(response["update"]):
         return True
 
