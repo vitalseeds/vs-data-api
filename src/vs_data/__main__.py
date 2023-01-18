@@ -47,16 +47,6 @@ def update_stock(ctx):
 
 @cli.command()
 @click.pass_context
-def test_log(ctx):
-    from vs_data import log
-
-    log.debug("DEBUG")
-    log.info("INFO")
-    log.warning("WARNING")
-
-
-@cli.command()
-@click.pass_context
 def import_wc_product_ids(ctx):
     """
     Query the link db for wc product ids and add to the vs_db acquisitions table (based on sku)
