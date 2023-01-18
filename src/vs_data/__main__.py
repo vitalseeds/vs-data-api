@@ -7,7 +7,7 @@ import click
 from rich import print
 
 from vs_data import stock
-from vs_data.cli import display_product_table
+from vs_data.cli.table import display_product_table
 from vs_data.fm import constants
 from vs_data.fm import db
 from vs_data.wc import api

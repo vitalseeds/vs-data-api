@@ -1,5 +1,5 @@
 from woocommerce import API
-from vs_data.cli import display_table
+from vs_data.cli.table import display_table
 
 
 def get_api(url, key, secret):
