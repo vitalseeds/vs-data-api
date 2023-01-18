@@ -7,10 +7,10 @@ import click
 from rich import print
 
 from vs_data import stock
-from vs_data.utils.cli import display_product_table
-from vs_data.utils.fm import constants
-from vs_data.utils.fm import db
-from vs_data.utils.wc import api
+from vs_data.cli import display_product_table
+from vs_data.fm import constants
+from vs_data.fm import db
+from vs_data.wc import api
 
 
 # TODO: consider using an orm
@@ -81,7 +81,7 @@ def runsql(ctx, file):
     fmdb = ctx.parent.obj["fmdb"]
     # wcapi = ctx.parent.obj["wcapi"]
     file = file or "example"
-    sql_file_path = f"src/vs_data/utils/fm/queries/{file}.sql"
+    sql_file_path = f"src/vs_data/fm/queries/{file}.sql"
     with open(sql_file_path, "r") as sqlfile:
         query = sqlfile.read()
         print(fmdb.execute(query).fetchall())

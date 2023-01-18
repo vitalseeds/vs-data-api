@@ -5,9 +5,9 @@ These will be run (via shell commands) from FM scripts
 """
 
 from rich import print
-from vs_data.utils.cli import display_table
-from vs_data.utils.fm import db as fmdb
-from vs_data.utils.fm import constants
+from vs_data.cli import display_table
+from vs_data.fm import db as fmdb
+from vs_data.fm import constants
 from collections import defaultdict
 
 WC_MAX_API_RESULT_COUNT = 10

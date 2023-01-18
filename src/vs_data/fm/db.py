@@ -7,7 +7,7 @@ Filemaker SQL limitations/requirements
 
 import pypyodbc as pyodbc
 
-from vs_data.utils.fm import constants
+from vs_data.fm import constants
 import os
 
 VSDATA_FM_CONNECTION_STRING = os.environ["VSDATA_FM_CONNECTION_STRING"]

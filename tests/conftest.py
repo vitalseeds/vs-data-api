@@ -2,8 +2,8 @@ import os
 
 import pytest
 
-from vs_data.utils.fm import db
-from vs_data.utils.fm.db import pyodbc
+from vs_data.fm import db
+from vs_data.fm.db import pyodbc
 
 
 VSDATA_FM_CONNECTION_STRING = os.environ["VSDATA_TEST_FM_CONNECTION_STRING"]

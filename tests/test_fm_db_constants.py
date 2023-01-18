@@ -1,6 +1,6 @@
 """Test cases for the __main__ module."""
 import pytest
-from vs_data.utils.fm import constants as fm_constants
+from vs_data.fm import constants as fm_constants
 
 
 def test_get_table_name():
