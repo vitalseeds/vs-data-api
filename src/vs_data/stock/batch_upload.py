@@ -21,20 +21,35 @@ WC_MAX_API_RESULT_COUNT = 10
 def get_batches_awaiting_upload_join_acq(connection):
     columns = ["awaiting_upload", "batch_number", "packets", "sku", "wc_product_id"]
     awaiting = constants.fname("packeting_batches", "awaiting_upload")
-    where = f"{awaiting}='yes'"
+    where = f"lower({awaiting})='yes'"
 
     sql = (
         "SELECT B.awaiting_upload,B.batch_number, B.packets, A.sku, A.wc_product_id  "
         'FROM "packeting_batches" B '
         'LEFT JOIN "acquisitions" A ON B.sku = A.SKU '
-        "WHERE awaiting_upload='yes' "
+        "WHERE " + where
     )
-    print(sql)
     rows = connection.cursor().execute(sql).fetchall()
     return [dict(zip(columns, r)) for r in rows]
 
 
-def get_products_by_id(wcapi, ids):
+def unset_awaiting_upload_flag(connection, batch_ids=[]):
+    assert batch_ids
+
+    fm_table = constants.tname("packeting_batches")
+    awaiting_upload = constants.fname("packeting_batches", "awaiting_upload")
+    batch_number = constants.fname("packeting_batches", "batch_number")
+    sql = ""
+    for batch in batch_ids:
+        sql = f"UPDATE {fm_table} SET {awaiting_upload}='no' WHERE {batch_number} = {batch}"
+        cursor = connection.cursor()
+        log.info(sql)
+        cursor.execute(sql)
+        log.info(cursor.rowcount)
+    connection.commit()
+
+
+def get_products_by_id(wcapi: object, ids: dict):
     ids = [str(id) for id in ids]
     comma_separated_ids = ",".join(ids)
     products = wcapi.get(
@@ -97,13 +112,20 @@ def update_wc_stock_for_new_batches(connection, wcapi=None):
     data = {"update": product_updates}
     response = wcapi.post("products/batch", data).json()
 
-    # Check from response that the batches have been updated on WC
-    log.debug(
-        [
-            f'{product["id"]}: {product["stock_quantity"]}'
-            for product in response["update"]
-        ]
-    )
+    # Check response for batches whose products have had stock updated on WC
+    updated_products = [product["id"] for product in response["update"]]
+    log.debug("updated_products:")
+    log.debug(updated_products)
+    uploaded_batches = [
+        int(b["batch_number"])
+        for b in batches
+        if int(b["wc_product_id"]) in updated_products
+    ]
+    log.debug("uploaded_batches:")
+    log.debug(uploaded_batches)
+
+    # Remove 'Awaiting upload' flag
+    unset_awaiting_upload_flag(connection, uploaded_batches)
 
     if len(response["update"]):
         return True
