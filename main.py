@@ -2,12 +2,17 @@
 from functools import lru_cache
 
 from fastapi import Depends, FastAPI
-from vs_data.utils.fm import db
 
-from vs_data.stock import get_batches_awaiting_upload
+
+from vs_data.fm import db
+from vs_data import stock
+from vs_data import wc
+
+
 import config
 
 app = FastAPI()
+
 
 @lru_cache()
 def get_settings():
@@ -36,6 +41,7 @@ async def get_product(product_id, settings: config.Settings = Depends(get_settin
     """
     return {"product": product_id}
 
+
 @app.get("/batch/awaiting_upload")
 async def get_product(settings: config.Settings = Depends(get_settings)):
     """
@@ -43,5 +49,15 @@ async def get_product(settings: config.Settings = Depends(get_settings)):
     """
 
     cursor = db.connection(settings.fm_connection_string)
-    batches = get_batches_awaiting_upload(cursor)
+    batches = stock.get_batches_awaiting_upload(cursor)
+    return {"batches": batches}
+
+
+@app.get("/batch/upload-wc-stock")
+async def upload_wc_stock(settings: config.Settings = Depends(get_settings)):
+    """
+    Increment stock for batches awaiting upload
+    """
+    connection = db.connection(settings.fm_connection_string)
+    batches = stock.update_wc_stock_for_new_batches(connection, settings.wcapi)
     return {"batches": batches}
