@@ -52,11 +52,12 @@ def unset_awaiting_upload_flag(connection, batch_ids=[]):
 def get_products_by_id(wcapi: object, ids: dict):
     ids = [str(id) for id in ids]
     comma_separated_ids = ",".join(ids)
-    products = wcapi.get(
+    response = wcapi.get(
         "products",
         params={"include": comma_separated_ids, "per_page": 100},
     )
-    return products.json() if products else None
+    if response.status_code == 200:
+        return response.json()
 
 
 def _total_stock_increments(batches):
@@ -75,6 +76,7 @@ def _total_stock_increments(batches):
 def update_wc_stock_for_new_batches(connection, wcapi=None):
     batches = get_batches_awaiting_upload_join_acq(connection)
     if not batches:
+        log.debug("No batches awaiting upload")
         return False
 
     log.debug("Batches awaiting upload")
@@ -83,7 +85,9 @@ def update_wc_stock_for_new_batches(connection, wcapi=None):
     # Get current wc stock quantity
     batch_product_ids = [b["wc_product_id"] for b in batches]
     products = get_products_by_id(wcapi, batch_product_ids)
-    if not batches:
+
+    if not products:
+        log.debug("No products found for batches awaiting upload")
         return False
 
     log.debug("Current WC product stock")
@@ -128,7 +132,7 @@ def update_wc_stock_for_new_batches(connection, wcapi=None):
     unset_awaiting_upload_flag(connection, uploaded_batches)
 
     if len(response["update"]):
-        return True
+        return response["update"]
 
 
 def get_product_sku_map_from_linkdb(fmlinkdb):
