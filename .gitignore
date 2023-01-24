@@ -3,6 +3,7 @@
 __pycache__
 .vscode*
 **/.envrc
+.env
 
 *.log
 /tmp
