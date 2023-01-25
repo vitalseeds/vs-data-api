@@ -21,7 +21,7 @@ WC_MAX_API_RESULT_COUNT = 10
 def get_batches_awaiting_upload_join_acq(connection):
     columns = ["awaiting_upload", "batch_number", "packets", "sku", "wc_product_id"]
     awaiting = constants.fname("packeting_batches", "awaiting_upload")
-    where = f"lower({awaiting})='yes'"
+    where = f"lower({awaiting})='yes' AND b.pack_date IS NOT NULL"
 
     sql = (
         "SELECT B.awaiting_upload,B.batch_number, B.packets, A.sku, A.wc_product_id  "

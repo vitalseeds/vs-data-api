@@ -39,7 +39,7 @@ def get_products_in_stock(wcapi):
 
 def get_batches_awaiting_upload(connection):
     table = "packeting_batches"
-    columns = ["awaiting_upload", "batch_number", "sku", "packets"]
+    columns = ["awaiting_upload", "batch_number", "sku", "packets", "wc_product_id"]
     awaiting = constants.fname("packeting_batches", "awaiting_upload")
     where = f"{awaiting}='yes'"
     return fmdb.select(connection, table, columns, where)
