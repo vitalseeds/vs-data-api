@@ -1,0 +1,22 @@
+dotenv[cli] used to avoid working directly with windows env vars
+
+ODBC driver
+https://support.claris.com/s/article/Software-Update-FileMaker-xDBC-client-drivers-for-FileMaker-1503692806454?language=en_US
+
+add odbc priviledge set and user with that set
+manage > security
+
+enable odbc
+IMPORTANT: you must 'edit layout' to show most of the menu items, including 'Sharing > enable ODBC'
+https://fmhelp.filemaker.com/help/17/fmp/en/#page/FMP_Help%2Fsharing-via-odbc-jdbc.html%23ww1027617
+
+
+Add WC API key
+add priviledge set *without sleep reauth*
+
+
+
+https://superuser.com/questions/15596/automatically-run-a-script-when-i-log-on-to-windows
+
+cd <my database directory>
+dotenv run -- vsdata import-product-ids

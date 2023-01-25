@@ -47,9 +47,8 @@ async def get_product(settings: config.Settings = Depends(get_settings)):
     """
     Gets batches that are awaiting upload to store
     """
-
-    cursor = db.connection(settings.fm_connection_string)
-    batches = stock.get_batches_awaiting_upload(cursor)
+    connection = db.connection(settings.fm_connection_string)
+    batches = stock.get_batches_awaiting_upload_join_acq(connection)
     return {"batches": batches}
 
 
