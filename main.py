@@ -59,4 +59,9 @@ async def upload_wc_stock(settings: config.Settings = Depends(get_settings)):
     """
     connection = db.connection(settings.fm_connection_string)
     batches = stock.update_wc_stock_for_new_batches(connection, settings.wcapi)
-    return {"batches": batches}
+    # TODO: check for wordpress hangups
+    # TODO: better response messages (to show in Filemaker)
+    if not batches:
+        return {"message": "No batches were updated on WooCommerce"}
+    updated_num = len(batches)
+    return {"batches": batches, "message": f"{updated_num} records were updated on WooCommerce"}
