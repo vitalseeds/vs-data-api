@@ -33,9 +33,8 @@ async def root():
     return {"message": "VS Data API running"}
 
 
-
 @app.get("/product/{product_id}")
-async def get_product(product_id, settings: config.Settings = Depends(get_settings)):
+async def get_product_by_id(product_id, settings: config.Settings = Depends(get_settings)):
     """
     Gets a product from the aquisitions table
     """
@@ -43,13 +42,14 @@ async def get_product(product_id, settings: config.Settings = Depends(get_settin
 
 
 @app.get("/batch/awaiting_upload")
-async def get_product(settings: config.Settings = Depends(get_settings)):
+async def get_awaiting_upload(settings: config.Settings = Depends(get_settings)):
     """
     Gets batches that are awaiting upload to store
     """
     connection = db.connection(settings.fm_connection_string)
     batches = stock.get_batches_awaiting_upload_join_acq(connection)
     return {"batches": batches}
+
 
 
 @app.get("/batch/upload-wc-stock")
@@ -64,4 +64,20 @@ async def upload_wc_stock(settings: config.Settings = Depends(get_settings)):
     if not batches:
         return {"message": "No batches were updated on WooCommerce"}
     updated_num = len(batches)
-    return {"batches": batches, "message": f"{updated_num} records were updated on WooCommerce"}
+    return {"batches": batches, "message": f"{updated_num} products were updated on WooCommerce"}
+
+
+@app.get("/batch/upload-wc-stock/variation/large")
+async def upload_wc_stock_variation_large(settings: config.Settings = Depends(get_settings)):
+    """
+    Increment stock for *large packet* batches awaiting upload.
+
+    This involves setting the stock level on the product *variation*, rather than the
+    main product.
+    """
+    connection = db.connection(settings.fm_connection_string)
+    batches = stock.update_wc_stock_for_new_batches(connection, settings.wcapi, product_variation="large")
+    if not batches:
+        return {"message": "No large batches were updated on WooCommerce"}
+    updated_num = len(batches)
+    return {"batches": batches, "message": f"{updated_num} product variations were updated on WooCommerce"}
