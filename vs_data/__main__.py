@@ -79,13 +79,16 @@ def import_wc_product_ids(ctx):
     print(regular_product_skus[:10])
 
     # Update acquisitions with wc_product_id
-    # stock.update_acquisitions_wc_id(fmdb, regular_product_skus)
+    stock.update_acquisitions_wc_id(fmdb, regular_product_skus)
 
+
+    # Get the WC:variation_id for each SKU from the link database
     variations = stock.get_product_variation_map_from_linkdb(fmlinkdb)
     print(variations[:10])
 
-    # Update acquisitions with wc_product_id
-    # stock.update_acquisitions_wc_id(fmdb, regular_product_skus)
+    # Update acquisitions with WC variation ids for large and regular packets
+    stock.update_acquisitions_wc_variations(fmdb, variations)
+
 
 
 if __name__ == "__main__":

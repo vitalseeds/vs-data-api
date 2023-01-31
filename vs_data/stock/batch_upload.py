@@ -220,16 +220,35 @@ def update_acquisitions_wc_id(connection, sku_id_map):
         print(cursor.rowcount)
         connection.commit()
 
-def update_acquisitions_wc_variations(connection, sku_id_map):
-    ...
-    # fm_table = _t("acquisitions")
-    # link_wc_id = "link_wc_product_id"
-    # wc_id = "wc_product_id"
-    # sku_field = _f("acquisitions", "sku")
-    # for row in sku_id_map:
-    #     sql = f"UPDATE {fm_table} SET {wc_id}={row[link_wc_id]} WHERE {sku_field} = '{row['sku']}'"
-    #     print(sql)
-    #     cursor = connection.cursor()
-    #     cursor.execute(sql)
-    #     print(cursor.rowcount)
-    #     connection.commit()
+def update_acquisitions_wc_variations(connection, variation_id_map):
+    large_variations = [v for v in variation_id_map if v["variation_option"] == "Large pack"]
+    log.debug(large_variations)
+    regular_variations = [v for v in variation_id_map if v["variation_option"] == "Regular packet"]
+    log.debug(regular_variations)
+
+    fm_table = _t("acquisitions")
+    wc_variation_id = "link_wc_variation_id"
+    parent_product_sku = _f("acquisitions", "sku")
+
+    large_variation_field = _f("acquisitions", "wc_variation_lg_id")
+    regular_variation_field = _f("acquisitions", "wc_variation_regular_id")
+
+    for row in large_variations:
+        # The large pack variations have calculated sku based on product sku + '-Gr'
+        base_sku = row['sku'].replace("-Gr", "")
+        sql = f"UPDATE {fm_table} SET {large_variation_field}={row[wc_variation_id]} WHERE {parent_product_sku} = '{base_sku}'"
+        print(sql)
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        print(cursor.rowcount)
+        connection.commit()
+
+    for row in regular_variations:
+        # Regular pack sku should be the same as parent product
+        base_sku = row['sku']
+        sql = f"UPDATE {fm_table} SET {regular_variation_field}={row[wc_variation_id]} WHERE {parent_product_sku} = '{base_sku}'"
+        print(sql)
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        print(cursor.rowcount)
+        connection.commit()
