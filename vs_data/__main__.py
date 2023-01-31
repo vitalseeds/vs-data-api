@@ -47,6 +47,26 @@ def update_stock(ctx):
 
 @cli.command()
 @click.pass_context
+def update_stock_variation(ctx):
+    fmdb = ctx.parent.obj["fmdb"]
+    wcapi = ctx.parent.obj["wcapi"]
+
+    # print(stock.get_large_batches_awaiting_upload_join_acq(fmdb))
+
+    # product_updates = [
+    #     {'id': 1695, 'stock_quantity': 29.0},
+    #     {'id': 1696, 'stock_quantity': 785.0},
+    #     {'id': 1691, 'stock_quantity': 102.0}
+    # ]
+    # data = {"update": product_updates}
+    # print(data)
+    # response = wcapi.post("products/batch", data)
+    # print(response.json())
+    # print(response)
+
+
+@cli.command()
+@click.pass_context
 def import_wc_product_ids(ctx):
     """
     Query the link db for wc product ids and add to the vs_db acquisitions table (based on sku)
@@ -59,7 +79,13 @@ def import_wc_product_ids(ctx):
     print(regular_product_skus[:10])
 
     # Update acquisitions with wc_product_id
-    stock.update_acquisitions_wc_id(fmdb, regular_product_skus)
+    # stock.update_acquisitions_wc_id(fmdb, regular_product_skus)
+
+    variations = stock.get_product_variation_map_from_linkdb(fmlinkdb)
+    print(variations[:10])
+
+    # Update acquisitions with wc_product_id
+    # stock.update_acquisitions_wc_id(fmdb, regular_product_skus)
 
 
 if __name__ == "__main__":

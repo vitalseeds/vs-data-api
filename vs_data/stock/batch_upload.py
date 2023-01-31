@@ -14,12 +14,13 @@ from vs_data.cli.table import display_table
 from vs_data.fm import constants
 from vs_data.fm.constants import fname as _f
 from vs_data.fm.constants import tname as _t
-
+from vs_data.fm import db as fmdb
 
 WC_MAX_API_RESULT_COUNT = 10
 
 
 def get_batches_awaiting_upload_join_acq(connection):
+    # TODO: should get sku from join on seed_lot, not packeting_batches
     columns = ["awaiting_upload", "batch_number", "packets", "sku", "wc_product_id"]
     awaiting = _f("packeting_batches", "awaiting_upload")
     where = f"lower({awaiting})='yes' AND b.pack_date IS NOT NULL"
@@ -35,6 +36,7 @@ def get_batches_awaiting_upload_join_acq(connection):
 
 
 def get_large_batches_awaiting_upload_join_acq(connection):
+    # TODO: duplication between columns definition and sql
     columns = [
         "awaiting_upload",
         "batch_number",
@@ -47,15 +49,13 @@ def get_large_batches_awaiting_upload_join_acq(connection):
     where = f"lower({awaiting})='yes' AND b.pack_date IS NOT NULL"
 
     sql = (
-        "SELECT B.awaiting_upload, B.batch_number, B.packets, A.sku, A.wc_product_id, A.wc_variation_lg_id "
+        "SELECT B.awaiting_upload, B.batch_number, B.packets, S.sku, A.wc_product_id, A.wc_variation_lg_id "
         f'FROM "{_t("large_batches")}" B '
-        'LEFT JOIN "acquisitions" A ON B.sku = A.SKU '
+        f'LEFT JOIN "{_t("seed_lots")}" S ON B.seed_lot = S.lot_number '
+        'LEFT JOIN "acquisitions" A ON S.sku = A.SKU '
         "WHERE " + where
     )
     log.debug(sql)
-    from pudb import set_trace
-
-    set_trace()
     rows = connection.cursor().execute(sql).fetchall()
     return [dict(zip(columns, r)) for r in rows]
 
@@ -100,7 +100,7 @@ def _total_stock_increments(batches):
     return stock_increments
 
 
-def wc_regular_product_update_request(products, stock_increments):
+def wc_large_product_update_request(wcapi, products, stock_increments):
     product_updates = []
     for product in products:
         current_stock_quantity = product["stock_quantity"]
@@ -111,14 +111,32 @@ def wc_regular_product_update_request(products, stock_increments):
                 "stock_quantity": new_stock_quantity,
             }
         )
-    return {"update": product_updates}
+    data = {"update": product_updates}
+    return wcapi.post("products/<product_id>/variations/batch", data).json()
+
+
+def wc_regular_product_update_request(wcapi, products, stock_increments):
+    product_updates = []
+    for product in products:
+        current_stock_quantity = product["stock_quantity"]
+        new_stock_quantity = current_stock_quantity + stock_increments[product["id"]]
+        product_updates.append(
+            {
+                "id": product["id"],
+                "stock_quantity": new_stock_quantity,
+            }
+        )
+    data = {"update": product_updates}
+    log.debug(data)
+    return wcapi.post("products/batch", data).json()
 
 
 # TODO: improve performance of lookups from returned data
 # TODO: add tests
 def update_wc_stock_for_new_batches(connection, wcapi=None, product_variation=False):
+    large_variation = True if product_variation == "large" else False
 
-    if product_variation == "large":
+    if large_variation:
         batches = get_large_batches_awaiting_upload_join_acq(connection)
     else:
         batches = get_batches_awaiting_upload_join_acq(connection)
@@ -151,9 +169,10 @@ def update_wc_stock_for_new_batches(connection, wcapi=None, product_variation=Fa
     )
 
     stock_increments = _total_stock_increments(batches)
-
-    data = wc_regular_product_update_request(products, stock_increments)
-    response = wcapi.post("products/batch", data).json()
+    if large_variation:
+        response = wc_large_product_update_request(wcapi, products, stock_increments)
+    else:
+        response = wc_regular_product_update_request(wcapi, products, stock_increments)
 
     # Check response for batches whose products have had stock updated on WC
     updated_products = [product["id"] for product in response["update"]]
@@ -181,11 +200,18 @@ def get_product_sku_map_from_linkdb(fmlinkdb):
     return products
 
 
+def get_product_variation_map_from_linkdb(fmlinkdb):
+    table = "link:product_variations"
+    columns = ["link_wc_variation_id", "sku", "variation_option"]
+    variations = fmdb.select(fmlinkdb, table, columns)
+    return variations
+
+
 def update_acquisitions_wc_id(connection, sku_id_map):
     fm_table = _t("acquisitions")
     link_wc_id = "link_wc_product_id"
     wc_id = "wc_product_id"
-    sku_field = _fn("acquisitions", "sku")
+    sku_field = _f("acquisitions", "sku")
     for row in sku_id_map:
         sql = f"UPDATE {fm_table} SET {wc_id}={row[link_wc_id]} WHERE {sku_field} = '{row['sku']}'"
         print(sql)
@@ -193,3 +219,17 @@ def update_acquisitions_wc_id(connection, sku_id_map):
         cursor.execute(sql)
         print(cursor.rowcount)
         connection.commit()
+
+def update_acquisitions_wc_variations(connection, sku_id_map):
+    ...
+    # fm_table = _t("acquisitions")
+    # link_wc_id = "link_wc_product_id"
+    # wc_id = "wc_product_id"
+    # sku_field = _f("acquisitions", "sku")
+    # for row in sku_id_map:
+    #     sql = f"UPDATE {fm_table} SET {wc_id}={row[link_wc_id]} WHERE {sku_field} = '{row['sku']}'"
+    #     print(sql)
+    #     cursor = connection.cursor()
+    #     cursor.execute(sql)
+    #     print(cursor.rowcount)
+    #     connection.commit()

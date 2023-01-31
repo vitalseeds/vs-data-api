@@ -10,3 +10,12 @@ class Products(FilemakerTable):
     sku = "SKU"
     name = "Name"
     # wc_product_id = "wc_product_id"
+
+class ProductVariations(FilemakerTable):
+    table_name = "ProductVariations"
+
+    sku = "SKU"
+    link_wc_variation_id = "_kf_WooCommerceID"
+    variation_option = "ListProductAttributeOptions_c"
+    # name = "Name"
+    # wc_product_id = "wc_product_id"
