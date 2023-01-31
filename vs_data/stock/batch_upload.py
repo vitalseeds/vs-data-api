@@ -60,7 +60,9 @@ def get_large_batches_awaiting_upload_join_acq(connection):
     return [dict(zip(columns, r)) for r in rows]
 
 
-def unset_awaiting_upload_flag(connection, batch_ids=[]):
+def unset_awaiting_upload_flag(connection, batch_ids=None):
+    if batch_ids is None:
+        batch_ids = []
     assert batch_ids
 
     fm_table = _t("packeting_batches")
@@ -76,7 +78,7 @@ def unset_awaiting_upload_flag(connection, batch_ids=[]):
     connection.commit()
 
 
-def get_products_by_id(wcapi: object, ids: dict):
+def get_wc_products_by_id(wcapi: object, ids: dict):
     ids = [str(id) for id in ids]
     comma_separated_ids = ",".join(ids)
     response = wcapi.get(
@@ -127,10 +129,10 @@ def update_wc_stock_for_new_batches(connection, wcapi=None, product_variation=Fa
 
     log.debug("Batches awaiting upload")
     log.debug(batches)
-    return
+
     # Get current wc stock quantity
     batch_product_ids = [b["wc_product_id"] for b in batches]
-    products = get_products_by_id(wcapi, batch_product_ids)
+    products = get_wc_products_by_id(wcapi, batch_product_ids)
 
     if not products:
         log.debug("No products found for batches awaiting upload")
