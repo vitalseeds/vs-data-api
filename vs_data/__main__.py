@@ -40,29 +40,32 @@ def cli(ctx, fmdb, fmlinkdb, wc_url, wc_key, wc_secret):
 @cli.command()
 @click.pass_context
 def update_stock(ctx):
+    """
+    Update stock from new batches (regular size packets)
+    """
     fmdb = ctx.parent.obj["fmdb"]
     wcapi = ctx.parent.obj["wcapi"]
     stock.update_wc_stock_for_new_batches(fmdb, wcapi)
 
 
 @cli.command()
+@click.option("--force", is_flag=True)
 @click.pass_context
-def update_stock_variation(ctx):
+def update_stock_large_packets(ctx, force):
+    """
+    Update stock from new 'large packet' batches
+    """
     fmdb = ctx.parent.obj["fmdb"]
     wcapi = ctx.parent.obj["wcapi"]
 
-    # print(stock.get_large_batches_awaiting_upload_join_acq(fmdb))
-
-    # product_updates = [
-    #     {'id': 1695, 'stock_quantity': 29.0},
-    #     {'id': 1696, 'stock_quantity': 785.0},
-    #     {'id': 1691, 'stock_quantity': 102.0}
-    # ]
-    # data = {"update": product_updates}
-    # print(data)
-    # response = wcapi.post("products/batch", data)
-    # print(response.json())
-    # print(response)
+    batches = stock.get_large_batches_awaiting_upload_join_acq(fmdb)
+    if not batches:
+        print("nothing to upload")
+        return
+    print(batches)
+    confirm = input('Would you like to upload the stock from these batches? (Y/n)')
+    if confirm.lower() == 'y' or force:
+        stock.update_wc_stock_for_new_batches(fmdb, wcapi, product_variation="large")
 
 
 @cli.command()
