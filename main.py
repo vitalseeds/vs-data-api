@@ -11,7 +11,9 @@ from vs_data import wc
 
 import config
 
-app = FastAPI()
+app = FastAPI(
+    title="VS Data API"
+)
 
 
 @lru_cache()
@@ -34,7 +36,7 @@ async def root():
 
 
 @app.get("/product/{product_id}")
-async def get_product_by_id(product_id, settings: config.Settings = Depends(get_settings)):
+async def get_product_by_id(product_id: int, settings: config.Settings = Depends(get_settings)):
     """
     Gets a product from the aquisitions table
     """
