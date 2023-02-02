@@ -4,8 +4,7 @@ Uses [Fast API][1] to provide a simple (documented) API for Vital Seeds data on
 the local network.
 
 The API is intended to be a **very** simple wrapper that delegates actual
-business logic to a separate
-dedicated python package ([vs-data][2]).
+business logic to a separate dedicated python package `vs-data`, now also in this repo.
 
 Hopefully this will mean that
 `vs-data-api` can be dedicated to providing endpoints, leaving the deep
@@ -39,12 +38,9 @@ Show Custom Dialog [ $URL ; $MESSAGE ]
 🎉 Should show a dialog with the message `VS Data API running` (returned from root
 endpoint)
 
-
-
-[1]: https://fastapi.tiangolo.com/
-[2]: https://github.com/vitalseeds/vs-data
-
 # VS-data
+
+*Previously its own [installable package][2], now moved into the this repo to allow simpler maintenance.*
 
 This is a python library that serves as a bridge between inventory management in
 FileMaker, and order details on vitalseeds.co.uk.
@@ -59,7 +55,8 @@ To connect to Filemaker:
 
 - filemaker database
 - fm user configured with `all access`
-- ODBC manager instaleld and configured with a DSN for the db
+- ODBC manager installed and configured with a DSN for the db (optional, can
+  connect direct)
 - Filemaker ODBC driver
 
 To connect to WooCommerce:
@@ -84,12 +81,15 @@ To connect to WooCommerce:
   - have extremely poor documentation
   - have very limited and costly external support
 - python scripts can
-  - make use of robust third party libraries such as [WooCommerce][1]
+  - make use of robust third party libraries such as [WooCommerce][3]
   - be version controlled
   - use automated testing
   - be edited and searched as text, ie with a full featured code editor like [VScode](https://code.visualstudio.com/)
   - be **much** more performant
   - be iterated and improved more simply
 
-[1]: https://pypi.org/project/WooCommerce/
+
+[1]: https://fastapi.tiangolo.com/
+[2]: https://github.com/vitalseeds/vs-data
+[3]: https://pypi.org/project/WooCommerce/
 [wcapi]: https://woocommerce.com/document/woocommerce-rest-api/#section-2
