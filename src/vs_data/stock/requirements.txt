@@ -1,0 +1,8 @@
+fastapi==0.88.0
+git+ssh://git@github.com/vitalseeds/vs-data.git
+uvicorn==0.20.0
+uvloop==0.17.0
+
+# Development
+rich
+pudb

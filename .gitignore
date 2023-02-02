@@ -6,6 +6,7 @@ __pycache__
 .env
 
 *.log
+*.img
 /tmp
 
 .mypy_cache/
@@ -13,3 +14,9 @@ __pycache__
 /.coverage.*
 /.python-version
 /.pytype/
+/.nox/
+
+# /dist/
+/docs/_build/
+/src/*.egg-info/
+__pycache__/
