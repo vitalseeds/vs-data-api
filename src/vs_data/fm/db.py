@@ -109,3 +109,27 @@ def select(
     columns, rows = _select_columns(connection, table, columns, where)
     objects = [dict(zip(columns, r)) for r in rows]
     return objects
+
+
+def zip_validate_columns(rows: list, columns: list, int_fields: list = None) -> list:
+    """
+    Takes lists of column names and row values and zips together.
+
+    Also cooerces id and number type fields to int to avoid problems elsewhere.
+    Returns a list of dictionaries with column:value pairs.
+    """
+
+    if int_fields is None:
+        int_fields = ['wc_product_id', 'wc_variation_lg_id', 'packets', 'batch_number']
+    # Intersect to get columns that should be treated as ids
+    int_fields_present = [c for c in columns if c in int_fields]
+    dict_rows = [dict(zip(columns, r)) for r in rows]
+    if int_fields_present:
+        for i, row in enumerate(dict_rows):
+            for int_field in int_fields_present:
+                # Check has a value
+                if field_value := dict_rows[i][int_field]:
+                    # Coerce to int
+                    # TODO: this sort of wrangling could be negated by pydantic
+                    dict_rows[i][int_field] = int(field_value)
+    return dict_rows

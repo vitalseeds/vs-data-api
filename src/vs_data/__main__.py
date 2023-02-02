@@ -40,9 +40,32 @@ def cli(ctx, fmdb, fmlinkdb, wc_url, wc_key, wc_secret):
 @cli.command()
 @click.pass_context
 def update_stock(ctx):
+    """
+    Update stock from new batches (regular size packets)
+    """
     fmdb = ctx.parent.obj["fmdb"]
     wcapi = ctx.parent.obj["wcapi"]
     stock.update_wc_stock_for_new_batches(fmdb, wcapi)
+
+
+@cli.command()
+@click.option("--force", is_flag=True)
+@click.pass_context
+def update_stock_large_packets(ctx, force):
+    """
+    Update stock from new 'large packet' batches
+    """
+    fmdb = ctx.parent.obj["fmdb"]
+    wcapi = ctx.parent.obj["wcapi"]
+
+    batches = stock.get_large_batches_awaiting_upload_join_acq(fmdb)
+    if not batches:
+        print("nothing to upload")
+        return
+    print(batches)
+    confirm = input('Would you like to upload the stock from these batches? (Y/n)')
+    if confirm.lower() == 'y' or force:
+        stock.update_wc_stock_for_new_batches(fmdb, wcapi, product_variation="large")
 
 
 @cli.command()
@@ -60,6 +83,15 @@ def import_wc_product_ids(ctx):
 
     # Update acquisitions with wc_product_id
     stock.update_acquisitions_wc_id(fmdb, regular_product_skus)
+
+
+    # Get the WC:variation_id for each SKU from the link database
+    variations = stock.get_product_variation_map_from_linkdb(fmlinkdb)
+    print(variations[:10])
+
+    # Update acquisitions with WC variation ids for large and regular packets
+    stock.update_acquisitions_wc_variations(fmdb, variations)
+
 
 
 if __name__ == "__main__":

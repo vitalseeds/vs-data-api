@@ -45,6 +45,8 @@ def get_table_class(table_ref: str):
 
 
 def get_fm_field_name(table_ref: str, field_ref: str) -> str:
+    # TODO: accept 'table:fieldname' as one argument
+    # TODO: allow table name aliases eg acq (pydantic?)
     table_class = get_table_class(table_ref)
     return getattr(table_class, field_ref)
 
