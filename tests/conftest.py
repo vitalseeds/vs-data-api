@@ -6,10 +6,10 @@ from vs_data.fm import db
 from vs_data.fm.db import pyodbc
 from vs_data.wc import api
 import responses
-import betamax
+# import betamax
 
-with betamax.Betamax.configure() as config:
-    config.cassette_library_dir = "tests/fixtures/cassettes"
+# with betamax.Betamax.configure() as config:
+#     config.cassette_library_dir = "tests/fixtures/cassettes"
 
 
 VSDATA_FM_CONNECTION_STRING = os.environ["VSDATA_TEST_FM_CONNECTION_STRING"]
