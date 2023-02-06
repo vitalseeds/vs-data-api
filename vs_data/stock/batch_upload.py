@@ -214,7 +214,7 @@ def update_wc_stock_for_new_batches(connection, wcapi=None, product_variation=No
         )
         log.debug(products_large_variation_stock)
         if not products_large_variation_stock:
-            log.debug("No products found for batches awaiting upload")
+            log.debug("No product variations found for batches awaiting upload")
             return False
 
         log.debug("Current WC product stock")
