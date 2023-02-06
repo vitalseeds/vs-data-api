@@ -38,11 +38,23 @@ Show Custom Dialog [ $URL ; $MESSAGE ]
 🎉 Should show a dialog with the message `VS Data API running` (returned from root
 endpoint)
 
+## Tests
+
+Tests are provided using pytest. By default only fully mocked tests are run (see
+`pytest.ini`).
+
+To run _integration_ tests, ie those that connect to a local filemaker database
+file, or development woocommerce site:
+
+```py
+pytest -m "fmdb or wcapi"
+```
+
 # VS-data
 
 *Previously its own [installable package][2], now moved into the this repo to allow simpler maintenance.*
 
-This is a python library that serves as a bridge between inventory management in
+This is a python package that serves as a bridge between inventory management in
 FileMaker, and order details on vitalseeds.co.uk.
 
 Aims to replace opaque and proprietary FM 'scripts' - specifically where they
@@ -66,8 +78,9 @@ To connect to WooCommerce:
 
 ## Installation
 
-- `pip install ...(TBC)`
-- Set environment variables (these can also be passed as arguments eg when calling from FM)
+Set environment variables. See `.env.example` for full list. Alternatively these options can be passed as arguments eg when calling
+from FM.
+
   - `VSDATA_FM_CONNECTION_STRING`
   - `VSDATA_WC_URL`
   - `VSDATA_WC_KEY`

@@ -1,0 +1,1306 @@
+[
+  {
+    "id": 10350,
+    "name": "Leek - Bandit (Organic)",
+    "slug": "leek-bandit-organic",
+    "permalink": "http://vitalseedscouk.local/product/leek-bandit-organic/",
+    "date_created": "2019-11-12T11:10:44",
+    "date_created_gmt": "2019-11-12T11:10:44",
+    "date_modified": "2023-01-18T12:22:31",
+    "date_modified_gmt": "2023-01-18T12:22:31",
+    "type": "variable",
+    "status": "publish",
+    "featured": false,
+    "catalog_visibility": "visible",
+    "description": "<table id=\"tablepress-LEEK\" class=\"tablepress tablepress-id-LEEK\">\n<caption style=\"caption-side:bottom;text-align:left;border:none;background:none;margin:0;padding:0;\"><a href=\"http://vitalseedscouk.local/wp-admin/admin.php?page=tablepress&#038;action=edit&#038;table_id=LEEK\" rel=\"nofollow\">Edit</a></caption>\n<thead>\n<tr class=\"row-1 odd\">\n<th class=\"column-1\">Month</th>\n<th class=\"column-2\">J</th>\n<th class=\"column-3\">F</th>\n<th class=\"column-4\">M</th>\n<th class=\"column-5\">A</th>\n<th class=\"column-6\">M</th>\n<th class=\"column-7\">J</th>\n<th class=\"column-8\">J</th>\n<th class=\"column-9\">A</th>\n<th class=\"column-10\">S</th>\n<th class=\"column-11\">O</th>\n<th class=\"column-12\">N</th>\n<th class=\"column-13\">D</th>\n</tr>\n</thead>\n<tbody>\n<tr class=\"row-2 even\">\n<td class=\"column-1\">Sow</td>\n<td class=\"column-2\"></td>\n<td class=\"column-3\"></td>\n<td class=\"column-4\"></td>\n<td class=\"column-5\"></td>\n<td class=\"column-6\"></td>\n<td class=\"column-7\"></td>\n<td class=\"column-8\"></td>\n<td class=\"column-9\"></td>\n<td class=\"column-10\"></td>\n<td class=\"column-11\"></td>\n<td class=\"column-12\"></td>\n<td class=\"column-13\"></td>\n</tr>\n<tr class=\"row-3 odd\">\n<td class=\"column-1\">Transplant</td>\n<td class=\"column-2\"></td>\n<td class=\"column-3\"></td>\n<td class=\"column-4\"></td>\n<td class=\"column-5\"></td>\n<td class=\"column-6\"></td>\n<td class=\"column-7\"></td>\n<td class=\"column-8\"></td>\n<td class=\"column-9\"></td>\n<td class=\"column-10\"></td>\n<td class=\"column-11\"></td>\n<td class=\"column-12\"></td>\n<td class=\"column-13\"></td>\n</tr>\n<tr class=\"row-4 even\">\n<td class=\"column-1\">Harvest</td>\n<td class=\"column-2\"></td>\n<td class=\"column-3\"></td>\n<td class=\"column-4\"></td>\n<td class=\"column-5\"></td>\n<td class=\"column-6\"></td>\n<td class=\"column-7\"></td>\n<td class=\"column-8\"></td>\n<td class=\"column-9\"></td>\n<td class=\"column-10\"></td>\n<td class=\"column-11\"></td>\n<td class=\"column-12\"></td>\n<td class=\"column-13\"></td>\n</tr>\n</tbody>\n</table>\n<p>When to sow: March - April</p>\n<p>Spacing: 15 x 30cm</p>\n<p>Leek tips: Seedbed method: Sow seed 1cm deep in 10cm wide drills, around 2-300 seeds per metre. When the plants are pencil-thickness, dig them up, trim the roots back to 3cm, and the stems to 2/3 of their original length. Dib holes 15-20cm deep and drop one leek into each hole. Leave the hole open to give the plants room to grow, except in dry spells when the holes should be filled to keep roots from drying out.</p>\n",
+    "short_description": "<p>The latest leek! A tasty, winter-hardy, bluey-green variety, most suitable for harvesting in spring. We have even adopted (and adapted) a Catalan festival &#8211; the calcotada &#8211; to celebrate the end of the leek harvest in mid-May where we barbecue the remainder of the crop and have a party!<br />\nGuest description by our friend Dan from Chagfood CSA</p>\n<p><img class=\"size-full wp-image-2472 alignnone\" src=\"http://vitalseedscouk.local/wp-content/uploads/2019/09/Soil-Association-Organic-logo-100x100.jpg\" alt=\"\" width=\"100\" height=\"100\" /></p>\n",
+    "sku": "LkBa",
+    "price": "",
+    "regular_price": "",
+    "sale_price": "",
+    "date_on_sale_from": null,
+    "date_on_sale_from_gmt": null,
+    "date_on_sale_to": null,
+    "date_on_sale_to_gmt": null,
+    "on_sale": false,
+    "purchasable": false,
+    "total_sales": 958,
+    "virtual": false,
+    "downloadable": false,
+    "downloads": [],
+    "download_limit": -1,
+    "download_expiry": -1,
+    "external_url": "",
+    "button_text": "",
+    "tax_status": "taxable",
+    "tax_class": "zero-rated-income",
+    "manage_stock": true,
+    "stock_quantity": 0,
+    "backorders": "no",
+    "backorders_allowed": false,
+    "backordered": false,
+    "low_stock_amount": null,
+    "sold_individually": false,
+    "weight": "0.003116",
+    "dimensions": { "length": "", "width": "", "height": "" },
+    "shipping_required": true,
+    "shipping_taxable": true,
+    "shipping_class": "",
+    "shipping_class_id": 0,
+    "reviews_allowed": false,
+    "average_rating": "0.00",
+    "rating_count": 0,
+    "upsell_ids": [],
+    "cross_sell_ids": [],
+    "parent_id": 0,
+    "purchase_note": "",
+    "categories": [
+      { "id": 260, "name": "Large pack", "slug": "large-pack" },
+      { "id": 143, "name": "Leek Seeds", "slug": "leek-seeds" },
+      { "id": 96, "name": "Vegetable Seeds", "slug": "vegetable-seeds" }
+    ],
+    "tags": [{ "id": 259, "name": "Large pack", "slug": "large-pack" }],
+    "images": [
+      {
+        "id": 10408,
+        "date_created": "2019-11-13T16:13:33",
+        "date_created_gmt": "2019-11-13T16:13:33",
+        "date_modified": "2019-11-13T16:13:41",
+        "date_modified_gmt": "2019-11-13T16:13:41",
+        "src": "http://vitalseedscouk.local/wp-content/uploads/2019/11/Leek_Bandit.jpg",
+        "name": "Leek_Bandit",
+        "alt": "Leek_Bandit"
+      },
+      {
+        "id": 10407,
+        "date_created": "2019-11-13T16:13:32",
+        "date_created_gmt": "2019-11-13T16:13:32",
+        "date_modified": "2019-11-13T16:13:32",
+        "date_modified_gmt": "2019-11-13T16:13:32",
+        "src": "http://vitalseedscouk.local/wp-content/uploads/2019/11/Leek_Bandit-3.jpg",
+        "name": "Leek_Bandit (3)",
+        "alt": ""
+      },
+      {
+        "id": 10406,
+        "date_created": "2019-11-13T16:13:30",
+        "date_created_gmt": "2019-11-13T16:13:30",
+        "date_modified": "2019-11-13T16:13:55",
+        "date_modified_gmt": "2019-11-13T16:13:55",
+        "src": "http://vitalseedscouk.local/wp-content/uploads/2019/11/IMG_1213.jpg",
+        "name": "Leek_Bandit",
+        "alt": "Leek_Bandit"
+      }
+    ],
+    "attributes": [],
+    "default_attributes": [],
+    "variations": [36989, 37024],
+    "grouped_products": [],
+    "menu_order": 105,
+    "price_html": "",
+    "related_ids": [1718, 1687, 1699, 1690, 1715],
+    "meta_data": [
+      {
+        "id": 154453,
+        "key": "classic-editor-remember",
+        "value": "classic-editor"
+      },
+      { "id": 154464, "key": "_elementor_controls_usage", "value": [] },
+      { "id": 154465, "key": "ckwc_subscription", "value": "" },
+      { "id": 154466, "key": "giftcoupon", "value": "no" },
+      { "id": 154467, "key": "discount_type", "value": "percent" },
+      { "id": 154468, "key": "coupon_amount", "value": "" },
+      { "id": 154469, "key": "individual_use", "value": "no" },
+      { "id": 154470, "key": "product_ids", "value": "" },
+      { "id": 154471, "key": "exclude_product_ids", "value": "" },
+      { "id": 154472, "key": "usage_limit", "value": "" },
+      { "id": 154473, "key": "usage_limit_per_user", "value": "" },
+      { "id": 154474, "key": "limit_usage_to_x_items", "value": "" },
+      { "id": 154475, "key": "expiry_date", "value": "" },
+      { "id": 154476, "key": "apply_before_tax", "value": "no" },
+      { "id": 154477, "key": "free_shipping", "value": "no" },
+      { "id": 154478, "key": "exclude_sale_items", "value": "no" },
+      { "id": 154479, "key": "product_categories", "value": [] },
+      { "id": 154480, "key": "exclude_product_categories", "value": [] },
+      { "id": 154481, "key": "minimum_amount", "value": "" },
+      { "id": 154482, "key": "maximum_amount", "value": "" },
+      { "id": 154483, "key": "customer_email", "value": [] },
+      { "id": 154484, "key": "fb_product_description", "value": "" },
+      { "id": 154485, "key": "fb_visibility", "value": "yes" },
+      {
+        "id": 154486,
+        "key": "fb_product_group_id",
+        "value": "2622851467822672"
+      },
+      {
+        "id": 154487,
+        "key": "fb_product_item_id",
+        "value": "2622851487822670"
+      },
+      { "id": 154489, "key": "_yoast_wpseo_primary_product_cat", "value": "" },
+      { "id": 154490, "key": "_yoast_wpseo_content_score", "value": "60" }
+    ],
+    "stock_status": "outofstock",
+    "yoast_head": "<!-- This site is optimized with the Yoast SEO plugin v19.0 - https://yoast.com/wordpress/plugins/seo/ -->\n<title>Leek - Bandit (Organic) - Vital Seeds</title>\n<meta name=\"description\" content=\"The latest leek! A tasty, winter-hardy, bluey-green variety, most suitable for harvesting in spring. We have even adopted (and adapted) a Catalan festival - the calcotada - to celebrate the end of the leek harvest in mid-May where we barbecue the remainder of the crop and have a party! Guest description by our friend Dan from Chagfood CSA\" />\n<meta name=\"robots\" content=\"noindex, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1\" />\n<meta property=\"og:locale\" content=\"en_GB\" />\n<meta property=\"og:type\" content=\"article\" />\n<meta property=\"og:title\" content=\"Leek - Bandit (Organic) - Vital Seeds\" />\n<meta property=\"og:description\" content=\"The latest leek! A tasty, winter-hardy, bluey-green variety, most suitable for harvesting in spring. We have even adopted (and adapted) a Catalan festival - the calcotada - to celebrate the end of the leek harvest in mid-May where we barbecue the remainder of the crop and have a party! Guest description by our friend Dan from Chagfood CSA\" />\n<meta property=\"og:url\" content=\"http://vitalseedscouk.local/product/leek-bandit-organic/\" />\n<meta property=\"og:site_name\" content=\"Vital Seeds\" />\n<meta property=\"article:publisher\" content=\"http://facebook.com/vitalseedsltd\" />\n<meta property=\"article:modified_time\" content=\"2023-01-18T12:22:31+00:00\" />\n<meta property=\"og:image\" content=\"http://vitalseedscouk.local/wp-content/uploads/2019/11/Leek_Bandit.jpg\" />\n\t<meta property=\"og:image:width\" content=\"490\" />\n\t<meta property=\"og:image:height\" content=\"490\" />\n\t<meta property=\"og:image:type\" content=\"image/jpeg\" />\n<meta name=\"twitter:card\" content=\"summary_large_image\" />\n<script type=\"application/ld+json\" class=\"yoast-schema-graph\">{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"http://vitalseedscouk.local/#organization\",\"name\":\"Vital Seeds Ltd\",\"url\":\"http://vitalseedscouk.local/\",\"sameAs\":[\"https://instagram.com/vital.seeds/\",\"http://facebook.com/vitalseedsltd\"],\"logo\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-GB\",\"@id\":\"http://vitalseedscouk.local/#/schema/logo/image/\",\"url\":\"http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg\",\"contentUrl\":\"http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg\",\"width\":2579,\"height\":2431,\"caption\":\"Vital Seeds Ltd\"},\"image\":{\"@id\":\"http://vitalseedscouk.local/#/schema/logo/image/\"}},{\"@type\":\"WebSite\",\"@id\":\"http://vitalseedscouk.local/#website\",\"url\":\"http://vitalseedscouk.local/\",\"name\":\"Vital Seeds\",\"description\":\"Organic vegetable, herb and flower seeds\",\"publisher\":{\"@id\":\"http://vitalseedscouk.local/#organization\"},\"potentialAction\":[{\"@type\":\"SearchAction\",\"target\":{\"@type\":\"EntryPoint\",\"urlTemplate\":\"http://vitalseedscouk.local/?s={search_term_string}\"},\"query-input\":\"required name=search_term_string\"}],\"inLanguage\":\"en-GB\"},{\"@type\":\"ImageObject\",\"inLanguage\":\"en-GB\",\"@id\":\"http://vitalseedscouk.local/product/leek-bandit-organic/#primaryimage\",\"url\":\"http://vitalseedscouk.local/wp-content/uploads/2019/11/Leek_Bandit.jpg\",\"contentUrl\":\"http://vitalseedscouk.local/wp-content/uploads/2019/11/Leek_Bandit.jpg\",\"width\":490,\"height\":490,\"caption\":\"Leek_Bandit\"},{\"@type\":\"WebPage\",\"@id\":\"http://vitalseedscouk.local/product/leek-bandit-organic/#webpage\",\"url\":\"http://vitalseedscouk.local/product/leek-bandit-organic/\",\"name\":\"Leek - Bandit (Organic) - Vital Seeds\",\"isPartOf\":{\"@id\":\"http://vitalseedscouk.local/#website\"},\"primaryImageOfPage\":{\"@id\":\"http://vitalseedscouk.local/product/leek-bandit-organic/#primaryimage\"},\"datePublished\":\"2019-11-12T11:10:44+00:00\",\"dateModified\":\"2023-01-18T12:22:31+00:00\",\"description\":\"The latest leek! A tasty, winter-hardy, bluey-green variety, most suitable for harvesting in spring. We have even adopted (and adapted) a Catalan festival - the calcotada - to celebrate the end of the leek harvest in mid-May where we barbecue the remainder of the crop and have a party! Guest description by our friend Dan from Chagfood CSA\",\"breadcrumb\":{\"@id\":\"http://vitalseedscouk.local/product/leek-bandit-organic/#breadcrumb\"},\"inLanguage\":\"en-GB\",\"potentialAction\":[{\"@type\":\"ReadAction\",\"target\":[\"http://vitalseedscouk.local/product/leek-bandit-organic/\"]}]},{\"@type\":\"BreadcrumbList\",\"@id\":\"http://vitalseedscouk.local/product/leek-bandit-organic/#breadcrumb\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"http://vitalseedscouk.local/\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"Shop\",\"item\":\"http://vitalseedscouk.local/shop/\"},{\"@type\":\"ListItem\",\"position\":3,\"name\":\"Leek &#8211; Bandit (Organic)\"}]}]}</script>\n<!-- / Yoast SEO plugin. -->",
+    "yoast_head_json": {
+      "title": "Leek - Bandit (Organic) - Vital Seeds",
+      "description": "The latest leek! A tasty, winter-hardy, bluey-green variety, most suitable for harvesting in spring. We have even adopted (and adapted) a Catalan festival - the calcotada - to celebrate the end of the leek harvest in mid-May where we barbecue the remainder of the crop and have a party! Guest description by our friend Dan from Chagfood CSA",
+      "robots": {
+        "index": "noindex",
+        "follow": "follow",
+        "max-snippet": "max-snippet:-1",
+        "max-image-preview": "max-image-preview:large",
+        "max-video-preview": "max-video-preview:-1"
+      },
+      "og_locale": "en_GB",
+      "og_type": "article",
+      "og_title": "Leek - Bandit (Organic) - Vital Seeds",
+      "og_description": "The latest leek! A tasty, winter-hardy, bluey-green variety, most suitable for harvesting in spring. We have even adopted (and adapted) a Catalan festival - the calcotada - to celebrate the end of the leek harvest in mid-May where we barbecue the remainder of the crop and have a party! Guest description by our friend Dan from Chagfood CSA",
+      "og_url": "http://vitalseedscouk.local/product/leek-bandit-organic/",
+      "og_site_name": "Vital Seeds",
+      "article_publisher": "http://facebook.com/vitalseedsltd",
+      "article_modified_time": "2023-01-18T12:22:31+00:00",
+      "og_image": [
+        {
+          "width": 490,
+          "height": 490,
+          "url": "http://vitalseedscouk.local/wp-content/uploads/2019/11/Leek_Bandit.jpg",
+          "type": "image/jpeg"
+        }
+      ],
+      "twitter_card": "summary_large_image",
+      "schema": {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "http://vitalseedscouk.local/#organization",
+            "name": "Vital Seeds Ltd",
+            "url": "http://vitalseedscouk.local/",
+            "sameAs": [
+              "https://instagram.com/vital.seeds/",
+              "http://facebook.com/vitalseedsltd"
+            ],
+            "logo": {
+              "@type": "ImageObject",
+              "inLanguage": "en-GB",
+              "@id": "http://vitalseedscouk.local/#/schema/logo/image/",
+              "url": "http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg",
+              "contentUrl": "http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg",
+              "width": 2579,
+              "height": 2431,
+              "caption": "Vital Seeds Ltd"
+            },
+            "image": {
+              "@id": "http://vitalseedscouk.local/#/schema/logo/image/"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "http://vitalseedscouk.local/#website",
+            "url": "http://vitalseedscouk.local/",
+            "name": "Vital Seeds",
+            "description": "Organic vegetable, herb and flower seeds",
+            "publisher": { "@id": "http://vitalseedscouk.local/#organization" },
+            "potentialAction": [
+              {
+                "@type": "SearchAction",
+                "target": {
+                  "@type": "EntryPoint",
+                  "urlTemplate": "http://vitalseedscouk.local/?s={search_term_string}"
+                },
+                "query-input": "required name=search_term_string"
+              }
+            ],
+            "inLanguage": "en-GB"
+          },
+          {
+            "@type": "ImageObject",
+            "inLanguage": "en-GB",
+            "@id": "http://vitalseedscouk.local/product/leek-bandit-organic/#primaryimage",
+            "url": "http://vitalseedscouk.local/wp-content/uploads/2019/11/Leek_Bandit.jpg",
+            "contentUrl": "http://vitalseedscouk.local/wp-content/uploads/2019/11/Leek_Bandit.jpg",
+            "width": 490,
+            "height": 490,
+            "caption": "Leek_Bandit"
+          },
+          {
+            "@type": "WebPage",
+            "@id": "http://vitalseedscouk.local/product/leek-bandit-organic/#webpage",
+            "url": "http://vitalseedscouk.local/product/leek-bandit-organic/",
+            "name": "Leek - Bandit (Organic) - Vital Seeds",
+            "isPartOf": { "@id": "http://vitalseedscouk.local/#website" },
+            "primaryImageOfPage": {
+              "@id": "http://vitalseedscouk.local/product/leek-bandit-organic/#primaryimage"
+            },
+            "datePublished": "2019-11-12T11:10:44+00:00",
+            "dateModified": "2023-01-18T12:22:31+00:00",
+            "description": "The latest leek! A tasty, winter-hardy, bluey-green variety, most suitable for harvesting in spring. We have even adopted (and adapted) a Catalan festival - the calcotada - to celebrate the end of the leek harvest in mid-May where we barbecue the remainder of the crop and have a party! Guest description by our friend Dan from Chagfood CSA",
+            "breadcrumb": {
+              "@id": "http://vitalseedscouk.local/product/leek-bandit-organic/#breadcrumb"
+            },
+            "inLanguage": "en-GB",
+            "potentialAction": [
+              {
+                "@type": "ReadAction",
+                "target": [
+                  "http://vitalseedscouk.local/product/leek-bandit-organic/"
+                ]
+              }
+            ]
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": "http://vitalseedscouk.local/product/leek-bandit-organic/#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "http://vitalseedscouk.local/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Shop",
+                "item": "http://vitalseedscouk.local/shop/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Leek &#8211; Bandit (Organic)"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "_links": {
+      "self": [
+        { "href": "http://vitalseedscouk.local/wp-json/wc/v3/products/10350" }
+      ],
+      "collection": [
+        { "href": "http://vitalseedscouk.local/wp-json/wc/v3/products" }
+      ]
+    }
+  },
+  {
+    "id": 5316,
+    "name": "Test",
+    "slug": "test",
+    "permalink": "http://vitalseedscouk.local/product/test/",
+    "date_created": "2019-04-09T10:08:17",
+    "date_created_gmt": "2019-04-09T09:08:17",
+    "date_modified": "2023-01-18T12:22:31",
+    "date_modified_gmt": "2023-01-18T12:22:31",
+    "type": "variable",
+    "status": "private",
+    "featured": false,
+    "catalog_visibility": "visible",
+    "description": "",
+    "short_description": "",
+    "sku": "TST",
+    "price": "",
+    "regular_price": "",
+    "sale_price": "",
+    "date_on_sale_from": null,
+    "date_on_sale_from_gmt": null,
+    "date_on_sale_to": null,
+    "date_on_sale_to_gmt": null,
+    "on_sale": false,
+    "purchasable": false,
+    "total_sales": 99,
+    "virtual": false,
+    "downloadable": false,
+    "downloads": [],
+    "download_limit": -1,
+    "download_expiry": -1,
+    "external_url": "",
+    "button_text": "",
+    "tax_status": "none",
+    "tax_class": "zero-rated-income",
+    "manage_stock": true,
+    "stock_quantity": 4218,
+    "backorders": "no",
+    "backorders_allowed": false,
+    "backordered": false,
+    "low_stock_amount": null,
+    "sold_individually": false,
+    "weight": "",
+    "dimensions": { "length": "", "width": "", "height": "" },
+    "shipping_required": true,
+    "shipping_taxable": false,
+    "shipping_class": "",
+    "shipping_class_id": 0,
+    "reviews_allowed": false,
+    "average_rating": "0.00",
+    "rating_count": 0,
+    "upsell_ids": [],
+    "cross_sell_ids": [],
+    "parent_id": 0,
+    "purchase_note": "",
+    "categories": [{ "id": 197, "name": "Swede Seeds", "slug": "swede" }],
+    "tags": [],
+    "images": [],
+    "attributes": [],
+    "default_attributes": [],
+    "variations": [39720, 39721],
+    "grouped_products": [],
+    "menu_order": 160,
+    "price_html": "",
+    "related_ids": [2912],
+    "meta_data": [
+      {
+        "id": 83393,
+        "key": "classic-editor-remember",
+        "value": "classic-editor"
+      },
+      {
+        "id": 83428,
+        "key": "_yoast_wpseo_primary_product_cat",
+        "value": "197"
+      },
+      { "id": 131667, "key": "ckwc_subscription", "value": "tag:1705737" }
+    ],
+    "stock_status": "instock",
+    "yoast_head": "<!-- This site is optimized with the Yoast SEO plugin v19.0 - https://yoast.com/wordpress/plugins/seo/ -->\n<title>Test - Vital Seeds</title>\n<!-- Admin only notice: this page does not show a meta description because it does not have one, either write it for this page specifically or go into the [SEO - Search Appearance] menu and set up a template. -->\n<meta name=\"robots\" content=\"noindex, follow\" />\n<meta property=\"og:locale\" content=\"en_GB\" />\n<meta property=\"og:type\" content=\"article\" />\n<meta property=\"og:title\" content=\"Test - Vital Seeds\" />\n<meta property=\"og:url\" content=\"http://vitalseedscouk.local/product/test/\" />\n<meta property=\"og:site_name\" content=\"Vital Seeds\" />\n<meta property=\"article:publisher\" content=\"http://facebook.com/vitalseedsltd\" />\n<meta property=\"article:modified_time\" content=\"2023-01-18T12:22:31+00:00\" />\n<meta name=\"twitter:card\" content=\"summary_large_image\" />\n<script type=\"application/ld+json\" class=\"yoast-schema-graph\">{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"http://vitalseedscouk.local/#organization\",\"name\":\"Vital Seeds Ltd\",\"url\":\"http://vitalseedscouk.local/\",\"sameAs\":[\"https://instagram.com/vital.seeds/\",\"http://facebook.com/vitalseedsltd\"],\"logo\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-GB\",\"@id\":\"http://vitalseedscouk.local/#/schema/logo/image/\",\"url\":\"http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg\",\"contentUrl\":\"http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg\",\"width\":2579,\"height\":2431,\"caption\":\"Vital Seeds Ltd\"},\"image\":{\"@id\":\"http://vitalseedscouk.local/#/schema/logo/image/\"}},{\"@type\":\"WebSite\",\"@id\":\"http://vitalseedscouk.local/#website\",\"url\":\"http://vitalseedscouk.local/\",\"name\":\"Vital Seeds\",\"description\":\"Organic vegetable, herb and flower seeds\",\"publisher\":{\"@id\":\"http://vitalseedscouk.local/#organization\"},\"potentialAction\":[{\"@type\":\"SearchAction\",\"target\":{\"@type\":\"EntryPoint\",\"urlTemplate\":\"http://vitalseedscouk.local/?s={search_term_string}\"},\"query-input\":\"required name=search_term_string\"}],\"inLanguage\":\"en-GB\"},{\"@type\":\"WebPage\",\"@id\":\"http://vitalseedscouk.local/product/test/#webpage\",\"url\":\"http://vitalseedscouk.local/product/test/\",\"name\":\"Test - Vital Seeds\",\"isPartOf\":{\"@id\":\"http://vitalseedscouk.local/#website\"},\"datePublished\":\"2019-04-09T09:08:17+00:00\",\"dateModified\":\"2023-01-18T12:22:31+00:00\",\"breadcrumb\":{\"@id\":\"http://vitalseedscouk.local/product/test/#breadcrumb\"},\"inLanguage\":\"en-GB\",\"potentialAction\":[{\"@type\":\"ReadAction\",\"target\":[\"http://vitalseedscouk.local/product/test/\"]}]},{\"@type\":\"BreadcrumbList\",\"@id\":\"http://vitalseedscouk.local/product/test/#breadcrumb\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"http://vitalseedscouk.local/\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"Shop\",\"item\":\"http://vitalseedscouk.local/shop/\"},{\"@type\":\"ListItem\",\"position\":3,\"name\":\"Test\"}]}]}</script>\n<!-- / Yoast SEO plugin. -->",
+    "yoast_head_json": {
+      "title": "Test - Vital Seeds",
+      "robots": { "index": "noindex", "follow": "follow" },
+      "og_locale": "en_GB",
+      "og_type": "article",
+      "og_title": "Test - Vital Seeds",
+      "og_url": "http://vitalseedscouk.local/product/test/",
+      "og_site_name": "Vital Seeds",
+      "article_publisher": "http://facebook.com/vitalseedsltd",
+      "article_modified_time": "2023-01-18T12:22:31+00:00",
+      "twitter_card": "summary_large_image",
+      "schema": {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "http://vitalseedscouk.local/#organization",
+            "name": "Vital Seeds Ltd",
+            "url": "http://vitalseedscouk.local/",
+            "sameAs": [
+              "https://instagram.com/vital.seeds/",
+              "http://facebook.com/vitalseedsltd"
+            ],
+            "logo": {
+              "@type": "ImageObject",
+              "inLanguage": "en-GB",
+              "@id": "http://vitalseedscouk.local/#/schema/logo/image/",
+              "url": "http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg",
+              "contentUrl": "http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg",
+              "width": 2579,
+              "height": 2431,
+              "caption": "Vital Seeds Ltd"
+            },
+            "image": {
+              "@id": "http://vitalseedscouk.local/#/schema/logo/image/"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "http://vitalseedscouk.local/#website",
+            "url": "http://vitalseedscouk.local/",
+            "name": "Vital Seeds",
+            "description": "Organic vegetable, herb and flower seeds",
+            "publisher": { "@id": "http://vitalseedscouk.local/#organization" },
+            "potentialAction": [
+              {
+                "@type": "SearchAction",
+                "target": {
+                  "@type": "EntryPoint",
+                  "urlTemplate": "http://vitalseedscouk.local/?s={search_term_string}"
+                },
+                "query-input": "required name=search_term_string"
+              }
+            ],
+            "inLanguage": "en-GB"
+          },
+          {
+            "@type": "WebPage",
+            "@id": "http://vitalseedscouk.local/product/test/#webpage",
+            "url": "http://vitalseedscouk.local/product/test/",
+            "name": "Test - Vital Seeds",
+            "isPartOf": { "@id": "http://vitalseedscouk.local/#website" },
+            "datePublished": "2019-04-09T09:08:17+00:00",
+            "dateModified": "2023-01-18T12:22:31+00:00",
+            "breadcrumb": {
+              "@id": "http://vitalseedscouk.local/product/test/#breadcrumb"
+            },
+            "inLanguage": "en-GB",
+            "potentialAction": [
+              {
+                "@type": "ReadAction",
+                "target": ["http://vitalseedscouk.local/product/test/"]
+              }
+            ]
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": "http://vitalseedscouk.local/product/test/#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "http://vitalseedscouk.local/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Shop",
+                "item": "http://vitalseedscouk.local/shop/"
+              },
+              { "@type": "ListItem", "position": 3, "name": "Test" }
+            ]
+          }
+        ]
+      }
+    },
+    "_links": {
+      "self": [
+        { "href": "http://vitalseedscouk.local/wp-json/wc/v3/products/5316" }
+      ],
+      "collection": [
+        { "href": "http://vitalseedscouk.local/wp-json/wc/v3/products" }
+      ]
+    }
+  },
+  {
+    "id": 1744,
+    "name": "Radish - Cherry Belle (Organic)",
+    "slug": "radish-cherry-belle-organic",
+    "permalink": "http://vitalseedscouk.local/product/radish-cherry-belle-organic/",
+    "date_created": "2018-10-01T16:41:15",
+    "date_created_gmt": "2018-10-01T15:41:15",
+    "date_modified": "2023-01-18T12:22:32",
+    "date_modified_gmt": "2023-01-18T12:22:32",
+    "type": "variable",
+    "status": "publish",
+    "featured": false,
+    "catalog_visibility": "visible",
+    "description": "<table id=\"tablepress-RAD\" class=\"tablepress tablepress-id-RAD\">\n<caption style=\"caption-side:bottom;text-align:left;border:none;background:none;margin:0;padding:0;\"><a href=\"http://vitalseedscouk.local/wp-admin/admin.php?page=tablepress&#038;action=edit&#038;table_id=RAD\" rel=\"nofollow\">Edit</a></caption>\n<thead>\n<tr class=\"row-1 odd\">\n<th class=\"column-1\">Month</th>\n<th class=\"column-2\">J</th>\n<th class=\"column-3\">F</th>\n<th class=\"column-4\">M</th>\n<th class=\"column-5\">A</th>\n<th class=\"column-6\">M</th>\n<th class=\"column-7\">J</th>\n<th class=\"column-8\">J</th>\n<th class=\"column-9\">A</th>\n<th class=\"column-10\">S</th>\n<th class=\"column-11\">O</th>\n<th class=\"column-12\">N</th>\n<th class=\"column-13\">D</th>\n</tr>\n</thead>\n<tbody>\n<tr class=\"row-2 even\">\n<td class=\"column-1\">Sow</td>\n<td class=\"column-2\"></td>\n<td class=\"column-3\"></td>\n<td class=\"column-4\"></td>\n<td class=\"column-5\"></td>\n<td class=\"column-6\"></td>\n<td class=\"column-7\"></td>\n<td class=\"column-8\"></td>\n<td class=\"column-9\"></td>\n<td class=\"column-10\"></td>\n<td class=\"column-11\"></td>\n<td class=\"column-12\"></td>\n<td class=\"column-13\"></td>\n</tr>\n<tr class=\"row-3 odd\">\n<td class=\"column-1\">Transplant</td>\n<td class=\"column-2\"></td>\n<td class=\"column-3\"></td>\n<td class=\"column-4\"></td>\n<td class=\"column-5\"></td>\n<td class=\"column-6\"></td>\n<td class=\"column-7\"></td>\n<td class=\"column-8\"></td>\n<td class=\"column-9\"></td>\n<td class=\"column-10\"></td>\n<td class=\"column-11\"></td>\n<td class=\"column-12\"></td>\n<td class=\"column-13\"></td>\n</tr>\n<tr class=\"row-4 even\">\n<td class=\"column-1\">Harvest</td>\n<td class=\"column-2\"></td>\n<td class=\"column-3\"></td>\n<td class=\"column-4\"></td>\n<td class=\"column-5\"></td>\n<td class=\"column-6\"></td>\n<td class=\"column-7\"></td>\n<td class=\"column-8\"></td>\n<td class=\"column-9\"></td>\n<td class=\"column-10\"></td>\n<td class=\"column-11\"></td>\n<td class=\"column-12\"></td>\n<td class=\"column-13\"></td>\n</tr>\n</tbody>\n</table>\n<p>When to sow: Feb - Aug</p>\n<p>Spacing: 2 x 15cm</p>\n<p>Radish tips: Sow seeds directly in the soil. Outdoors from March under fleece, or under cover from mid February in rows 10-15cm apart. Useful for inter-cropping and catch-cropping or marking rows of slower germinating seeds.</p>\n",
+    "short_description": "<p>A quick-maturing variety with bright scarlet skin and crisp white flesh. We love the way radishes signal that summer is well on the way! These cherry-like beauties are so fresh and crunchy and such a welcome addition to the lunch plate after the hungry gap. This variety was awarded an RHS Award of Garden Merit, making it an excellent choice for home gardeners.</p>\n<p><img class=\"size-full wp-image-2472 alignnone\" src=\"http://vitalseedscouk.local/wp-content/uploads/2019/09/Soil-Association-Organic-logo-100x100.jpg\" alt=\"\" width=\"100\" height=\"100\" /></p>\n",
+    "sku": "RaCB",
+    "price": "",
+    "regular_price": "",
+    "sale_price": "",
+    "date_on_sale_from": null,
+    "date_on_sale_from_gmt": null,
+    "date_on_sale_to": null,
+    "date_on_sale_to_gmt": null,
+    "on_sale": false,
+    "purchasable": false,
+    "total_sales": 1906,
+    "virtual": false,
+    "downloadable": false,
+    "downloads": [],
+    "download_limit": -1,
+    "download_expiry": -1,
+    "external_url": "",
+    "button_text": "",
+    "tax_status": "taxable",
+    "tax_class": "zero-rated-income",
+    "manage_stock": true,
+    "stock_quantity": 380,
+    "backorders": "no",
+    "backorders_allowed": false,
+    "backordered": false,
+    "low_stock_amount": 0,
+    "sold_individually": false,
+    "weight": "0.004824",
+    "dimensions": { "length": "", "width": "", "height": "" },
+    "shipping_required": true,
+    "shipping_taxable": true,
+    "shipping_class": "",
+    "shipping_class_id": 0,
+    "reviews_allowed": false,
+    "average_rating": "0.00",
+    "rating_count": 0,
+    "upsell_ids": [],
+    "cross_sell_ids": [],
+    "parent_id": 0,
+    "purchase_note": "",
+    "categories": [
+      { "id": 260, "name": "Large pack", "slug": "large-pack" },
+      { "id": 149, "name": "Radish Seeds", "slug": "radish-seeds" },
+      { "id": 96, "name": "Vegetable Seeds", "slug": "vegetable-seeds" }
+    ],
+    "tags": [
+      { "id": 101, "name": "Easy to grow", "slug": "easy-to-grow" },
+      { "id": 111, "name": "Fun for kids", "slug": "fun-for-kids" },
+      { "id": 259, "name": "Large pack", "slug": "large-pack" },
+      { "id": 104, "name": "Quick to grow", "slug": "quick-to-grow" },
+      { "id": 171, "name": "RHS AGM winners", "slug": "rhs-agm-winners" },
+      { "id": 134, "name": "Roots", "slug": "roots" },
+      { "id": 102, "name": "Salad", "slug": "salad" },
+      {
+        "id": 103,
+        "name": "Suitable for containers",
+        "slug": "suitable-for-containers"
+      }
+    ],
+    "images": [
+      {
+        "id": 2778,
+        "date_created": "2018-12-04T12:31:58",
+        "date_created_gmt": "2018-12-04T12:31:58",
+        "date_modified": "2019-06-13T14:16:33",
+        "date_modified_gmt": "2019-06-13T12:16:33",
+        "src": "http://vitalseedscouk.local/wp-content/uploads/2018/10/Radish-Cherry-Belle.jpg",
+        "name": "Radish Cherry Belle",
+        "alt": "Radish Cherry Belle"
+      },
+      {
+        "id": 2776,
+        "date_created": "2018-12-04T12:31:49",
+        "date_created_gmt": "2018-12-04T12:31:49",
+        "date_modified": "2019-06-13T14:16:33",
+        "date_modified_gmt": "2019-06-13T12:16:33",
+        "src": "http://vitalseedscouk.local/wp-content/uploads/2018/10/Radish-Cherry-Belle-2.jpg",
+        "name": "Radish Cherry Belle (2)",
+        "alt": ""
+      },
+      {
+        "id": 2777,
+        "date_created": "2018-12-04T12:31:55",
+        "date_created_gmt": "2018-12-04T12:31:55",
+        "date_modified": "2019-06-13T14:16:33",
+        "date_modified_gmt": "2019-06-13T12:16:33",
+        "src": "http://vitalseedscouk.local/wp-content/uploads/2018/10/Radish-Cherry-Belle-3.jpg",
+        "name": "Radish Cherry Belle (3)",
+        "alt": ""
+      }
+    ],
+    "attributes": [
+      {
+        "id": 1,
+        "name": "Packet size",
+        "position": 0,
+        "visible": true,
+        "variation": true,
+        "options": ["Regular packet", "Large pack"]
+      }
+    ],
+    "default_attributes": [
+      { "id": 1, "name": "Packet size", "option": "regular" }
+    ],
+    "variations": [36999, 37034],
+    "grouped_products": [],
+    "menu_order": 143,
+    "price_html": "",
+    "related_ids": [1682, 1692, 1697, 1716, 1688],
+    "meta_data": [
+      { "id": 17041, "key": "_wpas_done_all", "value": "1" },
+      { "id": 23893, "key": "_yoast_wpseo_primary_product_cat", "value": "" },
+      { "id": 23894, "key": "_yoast_wpseo_content_score", "value": "90" },
+      {
+        "id": 28338,
+        "key": "fb_product_group_id",
+        "value": "2291366604272184"
+      },
+      { "id": 28339, "key": "fb_visibility", "value": "1" },
+      { "id": 30309, "key": "fb_product_description", "value": "" },
+      { "id": 30310, "key": "fb_product_item_id", "value": "2291366647605513" },
+      {
+        "id": 36075,
+        "key": "classic-editor-remember",
+        "value": "classic-editor"
+      },
+      { "id": 36120, "key": "giftcoupon", "value": "no" },
+      { "id": 36121, "key": "discount_type", "value": "percent" },
+      { "id": 36122, "key": "coupon_amount", "value": "" },
+      { "id": 36123, "key": "individual_use", "value": "no" },
+      { "id": 36124, "key": "product_ids", "value": "" },
+      { "id": 36125, "key": "exclude_product_ids", "value": "" },
+      { "id": 36126, "key": "usage_limit", "value": "" },
+      { "id": 36127, "key": "usage_limit_per_user", "value": "" },
+      { "id": 36128, "key": "limit_usage_to_x_items", "value": "" },
+      { "id": 36129, "key": "expiry_date", "value": "" },
+      { "id": 36130, "key": "apply_before_tax", "value": "no" },
+      { "id": 36131, "key": "free_shipping", "value": "no" },
+      { "id": 36132, "key": "exclude_sale_items", "value": "no" },
+      { "id": 36133, "key": "product_categories", "value": "[]" },
+      { "id": 36134, "key": "exclude_product_categories", "value": "[]" },
+      { "id": 36135, "key": "minimum_amount", "value": "" },
+      { "id": 36136, "key": "maximum_amount", "value": "" },
+      { "id": 36137, "key": "customer_email", "value": "[]" }
+    ],
+    "stock_status": "instock",
+    "yoast_head": "<!-- This site is optimized with the Yoast SEO plugin v19.0 - https://yoast.com/wordpress/plugins/seo/ -->\n<title>Radish - Cherry Belle (Organic) - Vital Seeds</title>\n<meta name=\"description\" content=\"A quick-maturing variety with bright scarlet skin and crisp white flesh. We love the way radishes signal that summer is well on the way! These cherry-like beauties are so fresh and crunchy and such a welcome addition to the lunch plate after the hungry gap. This variety was awarded an RHS Award of Garden Merit, making it an excellent choice for home gardeners.\" />\n<meta name=\"robots\" content=\"noindex, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1\" />\n<meta property=\"og:locale\" content=\"en_GB\" />\n<meta property=\"og:type\" content=\"article\" />\n<meta property=\"og:title\" content=\"Radish - Cherry Belle (Organic) - Vital Seeds\" />\n<meta property=\"og:description\" content=\"A quick-maturing variety with bright scarlet skin and crisp white flesh. We love the way radishes signal that summer is well on the way! These cherry-like beauties are so fresh and crunchy and such a welcome addition to the lunch plate after the hungry gap. This variety was awarded an RHS Award of Garden Merit, making it an excellent choice for home gardeners.\" />\n<meta property=\"og:url\" content=\"http://vitalseedscouk.local/product/radish-cherry-belle-organic/\" />\n<meta property=\"og:site_name\" content=\"Vital Seeds\" />\n<meta property=\"article:publisher\" content=\"http://facebook.com/vitalseedsltd\" />\n<meta property=\"article:modified_time\" content=\"2023-01-18T12:22:32+00:00\" />\n<meta property=\"og:image\" content=\"http://vitalseedscouk.local/wp-content/uploads/2018/10/Radish-Cherry-Belle.jpg\" />\n\t<meta property=\"og:image:width\" content=\"1024\" />\n\t<meta property=\"og:image:height\" content=\"1024\" />\n\t<meta property=\"og:image:type\" content=\"image/jpeg\" />\n<meta name=\"twitter:card\" content=\"summary_large_image\" />\n<script type=\"application/ld+json\" class=\"yoast-schema-graph\">{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"http://vitalseedscouk.local/#organization\",\"name\":\"Vital Seeds Ltd\",\"url\":\"http://vitalseedscouk.local/\",\"sameAs\":[\"https://instagram.com/vital.seeds/\",\"http://facebook.com/vitalseedsltd\"],\"logo\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-GB\",\"@id\":\"http://vitalseedscouk.local/#/schema/logo/image/\",\"url\":\"http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg\",\"contentUrl\":\"http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg\",\"width\":2579,\"height\":2431,\"caption\":\"Vital Seeds Ltd\"},\"image\":{\"@id\":\"http://vitalseedscouk.local/#/schema/logo/image/\"}},{\"@type\":\"WebSite\",\"@id\":\"http://vitalseedscouk.local/#website\",\"url\":\"http://vitalseedscouk.local/\",\"name\":\"Vital Seeds\",\"description\":\"Organic vegetable, herb and flower seeds\",\"publisher\":{\"@id\":\"http://vitalseedscouk.local/#organization\"},\"potentialAction\":[{\"@type\":\"SearchAction\",\"target\":{\"@type\":\"EntryPoint\",\"urlTemplate\":\"http://vitalseedscouk.local/?s={search_term_string}\"},\"query-input\":\"required name=search_term_string\"}],\"inLanguage\":\"en-GB\"},{\"@type\":\"ImageObject\",\"inLanguage\":\"en-GB\",\"@id\":\"http://vitalseedscouk.local/product/radish-cherry-belle-organic/#primaryimage\",\"url\":\"http://vitalseedscouk.local/wp-content/uploads/2018/10/Radish-Cherry-Belle.jpg\",\"contentUrl\":\"http://vitalseedscouk.local/wp-content/uploads/2018/10/Radish-Cherry-Belle.jpg\",\"width\":1024,\"height\":1024,\"caption\":\"Radish Cherry Belle\"},{\"@type\":\"WebPage\",\"@id\":\"http://vitalseedscouk.local/product/radish-cherry-belle-organic/#webpage\",\"url\":\"http://vitalseedscouk.local/product/radish-cherry-belle-organic/\",\"name\":\"Radish - Cherry Belle (Organic) - Vital Seeds\",\"isPartOf\":{\"@id\":\"http://vitalseedscouk.local/#website\"},\"primaryImageOfPage\":{\"@id\":\"http://vitalseedscouk.local/product/radish-cherry-belle-organic/#primaryimage\"},\"datePublished\":\"2018-10-01T15:41:15+00:00\",\"dateModified\":\"2023-01-18T12:22:32+00:00\",\"description\":\"A quick-maturing variety with bright scarlet skin and crisp white flesh. We love the way radishes signal that summer is well on the way! These cherry-like beauties are so fresh and crunchy and such a welcome addition to the lunch plate after the hungry gap. This variety was awarded an RHS Award of Garden Merit, making it an excellent choice for home gardeners.\",\"breadcrumb\":{\"@id\":\"http://vitalseedscouk.local/product/radish-cherry-belle-organic/#breadcrumb\"},\"inLanguage\":\"en-GB\",\"potentialAction\":[{\"@type\":\"ReadAction\",\"target\":[\"http://vitalseedscouk.local/product/radish-cherry-belle-organic/\"]}]},{\"@type\":\"BreadcrumbList\",\"@id\":\"http://vitalseedscouk.local/product/radish-cherry-belle-organic/#breadcrumb\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"http://vitalseedscouk.local/\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"Shop\",\"item\":\"http://vitalseedscouk.local/shop/\"},{\"@type\":\"ListItem\",\"position\":3,\"name\":\"Radish &#8211; Cherry Belle (Organic)\"}]}]}</script>\n<!-- / Yoast SEO plugin. -->",
+    "yoast_head_json": {
+      "title": "Radish - Cherry Belle (Organic) - Vital Seeds",
+      "description": "A quick-maturing variety with bright scarlet skin and crisp white flesh. We love the way radishes signal that summer is well on the way! These cherry-like beauties are so fresh and crunchy and such a welcome addition to the lunch plate after the hungry gap. This variety was awarded an RHS Award of Garden Merit, making it an excellent choice for home gardeners.",
+      "robots": {
+        "index": "noindex",
+        "follow": "follow",
+        "max-snippet": "max-snippet:-1",
+        "max-image-preview": "max-image-preview:large",
+        "max-video-preview": "max-video-preview:-1"
+      },
+      "og_locale": "en_GB",
+      "og_type": "article",
+      "og_title": "Radish - Cherry Belle (Organic) - Vital Seeds",
+      "og_description": "A quick-maturing variety with bright scarlet skin and crisp white flesh. We love the way radishes signal that summer is well on the way! These cherry-like beauties are so fresh and crunchy and such a welcome addition to the lunch plate after the hungry gap. This variety was awarded an RHS Award of Garden Merit, making it an excellent choice for home gardeners.",
+      "og_url": "http://vitalseedscouk.local/product/radish-cherry-belle-organic/",
+      "og_site_name": "Vital Seeds",
+      "article_publisher": "http://facebook.com/vitalseedsltd",
+      "article_modified_time": "2023-01-18T12:22:32+00:00",
+      "og_image": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "url": "http://vitalseedscouk.local/wp-content/uploads/2018/10/Radish-Cherry-Belle.jpg",
+          "type": "image/jpeg"
+        }
+      ],
+      "twitter_card": "summary_large_image",
+      "schema": {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "http://vitalseedscouk.local/#organization",
+            "name": "Vital Seeds Ltd",
+            "url": "http://vitalseedscouk.local/",
+            "sameAs": [
+              "https://instagram.com/vital.seeds/",
+              "http://facebook.com/vitalseedsltd"
+            ],
+            "logo": {
+              "@type": "ImageObject",
+              "inLanguage": "en-GB",
+              "@id": "http://vitalseedscouk.local/#/schema/logo/image/",
+              "url": "http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg",
+              "contentUrl": "http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg",
+              "width": 2579,
+              "height": 2431,
+              "caption": "Vital Seeds Ltd"
+            },
+            "image": {
+              "@id": "http://vitalseedscouk.local/#/schema/logo/image/"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "http://vitalseedscouk.local/#website",
+            "url": "http://vitalseedscouk.local/",
+            "name": "Vital Seeds",
+            "description": "Organic vegetable, herb and flower seeds",
+            "publisher": { "@id": "http://vitalseedscouk.local/#organization" },
+            "potentialAction": [
+              {
+                "@type": "SearchAction",
+                "target": {
+                  "@type": "EntryPoint",
+                  "urlTemplate": "http://vitalseedscouk.local/?s={search_term_string}"
+                },
+                "query-input": "required name=search_term_string"
+              }
+            ],
+            "inLanguage": "en-GB"
+          },
+          {
+            "@type": "ImageObject",
+            "inLanguage": "en-GB",
+            "@id": "http://vitalseedscouk.local/product/radish-cherry-belle-organic/#primaryimage",
+            "url": "http://vitalseedscouk.local/wp-content/uploads/2018/10/Radish-Cherry-Belle.jpg",
+            "contentUrl": "http://vitalseedscouk.local/wp-content/uploads/2018/10/Radish-Cherry-Belle.jpg",
+            "width": 1024,
+            "height": 1024,
+            "caption": "Radish Cherry Belle"
+          },
+          {
+            "@type": "WebPage",
+            "@id": "http://vitalseedscouk.local/product/radish-cherry-belle-organic/#webpage",
+            "url": "http://vitalseedscouk.local/product/radish-cherry-belle-organic/",
+            "name": "Radish - Cherry Belle (Organic) - Vital Seeds",
+            "isPartOf": { "@id": "http://vitalseedscouk.local/#website" },
+            "primaryImageOfPage": {
+              "@id": "http://vitalseedscouk.local/product/radish-cherry-belle-organic/#primaryimage"
+            },
+            "datePublished": "2018-10-01T15:41:15+00:00",
+            "dateModified": "2023-01-18T12:22:32+00:00",
+            "description": "A quick-maturing variety with bright scarlet skin and crisp white flesh. We love the way radishes signal that summer is well on the way! These cherry-like beauties are so fresh and crunchy and such a welcome addition to the lunch plate after the hungry gap. This variety was awarded an RHS Award of Garden Merit, making it an excellent choice for home gardeners.",
+            "breadcrumb": {
+              "@id": "http://vitalseedscouk.local/product/radish-cherry-belle-organic/#breadcrumb"
+            },
+            "inLanguage": "en-GB",
+            "potentialAction": [
+              {
+                "@type": "ReadAction",
+                "target": [
+                  "http://vitalseedscouk.local/product/radish-cherry-belle-organic/"
+                ]
+              }
+            ]
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": "http://vitalseedscouk.local/product/radish-cherry-belle-organic/#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "http://vitalseedscouk.local/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Shop",
+                "item": "http://vitalseedscouk.local/shop/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Radish &#8211; Cherry Belle (Organic)"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "_links": {
+      "self": [
+        { "href": "http://vitalseedscouk.local/wp-json/wc/v3/products/1744" }
+      ],
+      "collection": [
+        { "href": "http://vitalseedscouk.local/wp-json/wc/v3/products" }
+      ]
+    }
+  },
+  {
+    "id": 1696,
+    "name": "Spinach - Giant winter (Organic)",
+    "slug": "spinach-giant-winter-organic",
+    "permalink": "http://vitalseedscouk.local/product/spinach-giant-winter-organic/",
+    "date_created": "2018-10-01T16:40:58",
+    "date_created_gmt": "2018-10-01T15:40:58",
+    "date_modified": "2023-01-18T12:22:32",
+    "date_modified_gmt": "2023-01-18T12:22:32",
+    "type": "variable",
+    "status": "publish",
+    "featured": false,
+    "catalog_visibility": "visible",
+    "description": "<table id=\"tablepress-SPIN\" class=\"tablepress tablepress-id-SPIN\">\n<caption style=\"caption-side:bottom;text-align:left;border:none;background:none;margin:0;padding:0;\"><a href=\"http://vitalseedscouk.local/wp-admin/admin.php?page=tablepress&#038;action=edit&#038;table_id=SPIN\" rel=\"nofollow\">Edit</a></caption>\n<thead>\n<tr class=\"row-1 odd\">\n<th class=\"column-1\">Month</th>\n<th class=\"column-2\">J</th>\n<th class=\"column-3\">F</th>\n<th class=\"column-4\">M</th>\n<th class=\"column-5\">A</th>\n<th class=\"column-6\">M</th>\n<th class=\"column-7\">J</th>\n<th class=\"column-8\">J</th>\n<th class=\"column-9\">A</th>\n<th class=\"column-10\">S</th>\n<th class=\"column-11\">O</th>\n<th class=\"column-12\">N</th>\n<th class=\"column-13\">D</th>\n</tr>\n</thead>\n<tbody>\n<tr class=\"row-2 even\">\n<td class=\"column-1\">Sow</td>\n<td class=\"column-2\"></td>\n<td class=\"column-3\"></td>\n<td class=\"column-4\"></td>\n<td class=\"column-5\"></td>\n<td class=\"column-6\"></td>\n<td class=\"column-7\"></td>\n<td class=\"column-8\"></td>\n<td class=\"column-9\"></td>\n<td class=\"column-10\"></td>\n<td class=\"column-11\"></td>\n<td class=\"column-12\"></td>\n<td class=\"column-13\"></td>\n</tr>\n<tr class=\"row-3 odd\">\n<td class=\"column-1\">Transplant</td>\n<td class=\"column-2\"></td>\n<td class=\"column-3\"></td>\n<td class=\"column-4\"></td>\n<td class=\"column-5\"></td>\n<td class=\"column-6\"></td>\n<td class=\"column-7\"></td>\n<td class=\"column-8\"></td>\n<td class=\"column-9\"></td>\n<td class=\"column-10\"></td>\n<td class=\"column-11\"></td>\n<td class=\"column-12\"></td>\n<td class=\"column-13\"></td>\n</tr>\n<tr class=\"row-4 even\">\n<td class=\"column-1\">Harvest</td>\n<td class=\"column-2\"></td>\n<td class=\"column-3\"></td>\n<td class=\"column-4\"></td>\n<td class=\"column-5\"></td>\n<td class=\"column-6\"></td>\n<td class=\"column-7\"></td>\n<td class=\"column-8\"></td>\n<td class=\"column-9\"></td>\n<td class=\"column-10\"></td>\n<td class=\"column-11\"></td>\n<td class=\"column-12\"></td>\n<td class=\"column-13\"></td>\n</tr>\n</tbody>\n</table>\n<p>When to sow: March - Sept</p>\n<p>Spacing: 30 x 15cm</p>\n<p>Spinach tips: For summer varieties of spinach sow in late spring, and protect with fleece if there is danger of frost. For winter varieties sow at the end of the summer.</p>\n<p>Sow in situ in drills 30cm apart, and thin to 15cm between plants. Alternatively sow in modules and transplant to final spacing.</p>\n",
+    "short_description": "<p>A winter variety with large, savoyed, pointy leaves especially selected for winter hardiness. This productive spinach is particularly recommended for autumn and winter cultivation. The dark green characteristically pointy leaves are very aromatic and perfect eaten raw in salads, or delicious cooked.<br />\n(Approximate seed count &#8211; 500)</p>\n<p><img class=\"size-full wp-image-2472 alignnone\" src=\"http://vitalseedscouk.local/wp-content/uploads/2019/09/Soil-Association-Organic-logo-100x100.jpg\" alt=\"\" width=\"100\" height=\"100\" /></p>\n",
+    "sku": "SpGW",
+    "price": "",
+    "regular_price": "",
+    "sale_price": "",
+    "date_on_sale_from": null,
+    "date_on_sale_from_gmt": null,
+    "date_on_sale_to": null,
+    "date_on_sale_to_gmt": null,
+    "on_sale": false,
+    "purchasable": false,
+    "total_sales": 5301,
+    "virtual": false,
+    "downloadable": false,
+    "downloads": [],
+    "download_limit": -1,
+    "download_expiry": -1,
+    "external_url": "",
+    "button_text": "",
+    "tax_status": "taxable",
+    "tax_class": "zero-rated-income",
+    "manage_stock": true,
+    "stock_quantity": 380,
+    "backorders": "no",
+    "backorders_allowed": false,
+    "backordered": false,
+    "low_stock_amount": null,
+    "sold_individually": false,
+    "weight": "0.010357",
+    "dimensions": { "length": "", "width": "", "height": "" },
+    "shipping_required": true,
+    "shipping_taxable": true,
+    "shipping_class": "",
+    "shipping_class_id": 0,
+    "reviews_allowed": false,
+    "average_rating": "0.00",
+    "rating_count": 0,
+    "upsell_ids": [],
+    "cross_sell_ids": [],
+    "parent_id": 0,
+    "purchase_note": "",
+    "categories": [
+      { "id": 260, "name": "Large pack", "slug": "large-pack" },
+      { "id": 141, "name": "Spinach Seeds", "slug": "spinach-seeds" },
+      { "id": 96, "name": "Vegetable Seeds", "slug": "vegetable-seeds" }
+    ],
+    "tags": [
+      { "id": 101, "name": "Easy to grow", "slug": "easy-to-grow" },
+      { "id": 100, "name": "Greens", "slug": "greens" },
+      { "id": 259, "name": "Large pack", "slug": "large-pack" },
+      { "id": 104, "name": "Quick to grow", "slug": "quick-to-grow" },
+      { "id": 102, "name": "Salad", "slug": "salad" },
+      {
+        "id": 103,
+        "name": "Suitable for containers",
+        "slug": "suitable-for-containers"
+      },
+      { "id": 114, "name": "Winter veg", "slug": "winter-veg" }
+    ],
+    "images": [
+      {
+        "id": 10019,
+        "date_created": "2019-10-10T11:47:18",
+        "date_created_gmt": "2019-10-10T09:47:18",
+        "date_modified": "2019-10-10T11:47:18",
+        "date_modified_gmt": "2019-10-10T09:47:18",
+        "src": "http://vitalseedscouk.local/wp-content/uploads/2018/10/SPGW-Spinach-Giant-Winter.jpg",
+        "name": "SPGW-Spinach-Giant-Winter",
+        "alt": ""
+      }
+    ],
+    "attributes": [
+      {
+        "id": 1,
+        "name": "Packet size",
+        "position": 0,
+        "visible": true,
+        "variation": true,
+        "options": ["Regular packet", "Large pack"]
+      }
+    ],
+    "default_attributes": [
+      { "id": 1, "name": "Packet size", "option": "regular" }
+    ],
+    "variations": [28745, 28746],
+    "grouped_products": [],
+    "menu_order": 150,
+    "price_html": "",
+    "related_ids": [1695, 1688, 1715, 1712, 1697],
+    "meta_data": [
+      { "id": 15361, "key": "_wpas_done_all", "value": "1" },
+      {
+        "id": 31572,
+        "key": "fb_product_group_id",
+        "value": "2529725483735095"
+      },
+      { "id": 31573, "key": "fb_visibility", "value": "1" },
+      {
+        "id": 146068,
+        "key": "classic-editor-remember",
+        "value": "classic-editor"
+      },
+      { "id": 146073, "key": "ckwc_subscription", "value": "" },
+      { "id": 146074, "key": "fb_product_description", "value": "" },
+      { "id": 146075, "key": "_yoast_wpseo_primary_product_cat", "value": "" },
+      { "id": 146076, "key": "_yoast_wpseo_content_score", "value": "90" }
+    ],
+    "stock_status": "instock",
+    "yoast_head": "<!-- This site is optimized with the Yoast SEO plugin v19.0 - https://yoast.com/wordpress/plugins/seo/ -->\n<title>Spinach - Giant winter (Organic) - Vital Seeds</title>\n<meta name=\"description\" content=\"A winter variety with large, savoyed, pointy leaves especially selected for winter hardiness. This productive spinach is particularly recommended for autumn and winter cultivation. The dark green characteristically pointy leaves are very aromatic and perfect eaten raw in salads, or delicious cooked. (Approximate seed count - 500)\" />\n<meta name=\"robots\" content=\"noindex, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1\" />\n<meta property=\"og:locale\" content=\"en_GB\" />\n<meta property=\"og:type\" content=\"article\" />\n<meta property=\"og:title\" content=\"Spinach - Giant winter (Organic) - Vital Seeds\" />\n<meta property=\"og:description\" content=\"A winter variety with large, savoyed, pointy leaves especially selected for winter hardiness. This productive spinach is particularly recommended for autumn and winter cultivation. The dark green characteristically pointy leaves are very aromatic and perfect eaten raw in salads, or delicious cooked. (Approximate seed count - 500)\" />\n<meta property=\"og:url\" content=\"http://vitalseedscouk.local/product/spinach-giant-winter-organic/\" />\n<meta property=\"og:site_name\" content=\"Vital Seeds\" />\n<meta property=\"article:publisher\" content=\"http://facebook.com/vitalseedsltd\" />\n<meta property=\"article:modified_time\" content=\"2023-01-18T12:22:32+00:00\" />\n<meta property=\"og:image\" content=\"http://vitalseedscouk.local/wp-content/uploads/2018/10/SPGW-Spinach-Giant-Winter.jpg\" />\n\t<meta property=\"og:image:width\" content=\"423\" />\n\t<meta property=\"og:image:height\" content=\"423\" />\n\t<meta property=\"og:image:type\" content=\"image/jpeg\" />\n<meta name=\"twitter:card\" content=\"summary_large_image\" />\n<script type=\"application/ld+json\" class=\"yoast-schema-graph\">{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"http://vitalseedscouk.local/#organization\",\"name\":\"Vital Seeds Ltd\",\"url\":\"http://vitalseedscouk.local/\",\"sameAs\":[\"https://instagram.com/vital.seeds/\",\"http://facebook.com/vitalseedsltd\"],\"logo\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-GB\",\"@id\":\"http://vitalseedscouk.local/#/schema/logo/image/\",\"url\":\"http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg\",\"contentUrl\":\"http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg\",\"width\":2579,\"height\":2431,\"caption\":\"Vital Seeds Ltd\"},\"image\":{\"@id\":\"http://vitalseedscouk.local/#/schema/logo/image/\"}},{\"@type\":\"WebSite\",\"@id\":\"http://vitalseedscouk.local/#website\",\"url\":\"http://vitalseedscouk.local/\",\"name\":\"Vital Seeds\",\"description\":\"Organic vegetable, herb and flower seeds\",\"publisher\":{\"@id\":\"http://vitalseedscouk.local/#organization\"},\"potentialAction\":[{\"@type\":\"SearchAction\",\"target\":{\"@type\":\"EntryPoint\",\"urlTemplate\":\"http://vitalseedscouk.local/?s={search_term_string}\"},\"query-input\":\"required name=search_term_string\"}],\"inLanguage\":\"en-GB\"},{\"@type\":\"ImageObject\",\"inLanguage\":\"en-GB\",\"@id\":\"http://vitalseedscouk.local/product/spinach-giant-winter-organic/#primaryimage\",\"url\":\"http://vitalseedscouk.local/wp-content/uploads/2018/10/SPGW-Spinach-Giant-Winter.jpg\",\"contentUrl\":\"http://vitalseedscouk.local/wp-content/uploads/2018/10/SPGW-Spinach-Giant-Winter.jpg\",\"width\":423,\"height\":423},{\"@type\":\"WebPage\",\"@id\":\"http://vitalseedscouk.local/product/spinach-giant-winter-organic/#webpage\",\"url\":\"http://vitalseedscouk.local/product/spinach-giant-winter-organic/\",\"name\":\"Spinach - Giant winter (Organic) - Vital Seeds\",\"isPartOf\":{\"@id\":\"http://vitalseedscouk.local/#website\"},\"primaryImageOfPage\":{\"@id\":\"http://vitalseedscouk.local/product/spinach-giant-winter-organic/#primaryimage\"},\"datePublished\":\"2018-10-01T15:40:58+00:00\",\"dateModified\":\"2023-01-18T12:22:32+00:00\",\"description\":\"A winter variety with large, savoyed, pointy leaves especially selected for winter hardiness. This productive spinach is particularly recommended for autumn and winter cultivation. The dark green characteristically pointy leaves are very aromatic and perfect eaten raw in salads, or delicious cooked. (Approximate seed count - 500)\",\"breadcrumb\":{\"@id\":\"http://vitalseedscouk.local/product/spinach-giant-winter-organic/#breadcrumb\"},\"inLanguage\":\"en-GB\",\"potentialAction\":[{\"@type\":\"ReadAction\",\"target\":[\"http://vitalseedscouk.local/product/spinach-giant-winter-organic/\"]}]},{\"@type\":\"BreadcrumbList\",\"@id\":\"http://vitalseedscouk.local/product/spinach-giant-winter-organic/#breadcrumb\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"http://vitalseedscouk.local/\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"Shop\",\"item\":\"http://vitalseedscouk.local/shop/\"},{\"@type\":\"ListItem\",\"position\":3,\"name\":\"Spinach &#8211; Giant winter (Organic)\"}]}]}</script>\n<!-- / Yoast SEO plugin. -->",
+    "yoast_head_json": {
+      "title": "Spinach - Giant winter (Organic) - Vital Seeds",
+      "description": "A winter variety with large, savoyed, pointy leaves especially selected for winter hardiness. This productive spinach is particularly recommended for autumn and winter cultivation. The dark green characteristically pointy leaves are very aromatic and perfect eaten raw in salads, or delicious cooked. (Approximate seed count - 500)",
+      "robots": {
+        "index": "noindex",
+        "follow": "follow",
+        "max-snippet": "max-snippet:-1",
+        "max-image-preview": "max-image-preview:large",
+        "max-video-preview": "max-video-preview:-1"
+      },
+      "og_locale": "en_GB",
+      "og_type": "article",
+      "og_title": "Spinach - Giant winter (Organic) - Vital Seeds",
+      "og_description": "A winter variety with large, savoyed, pointy leaves especially selected for winter hardiness. This productive spinach is particularly recommended for autumn and winter cultivation. The dark green characteristically pointy leaves are very aromatic and perfect eaten raw in salads, or delicious cooked. (Approximate seed count - 500)",
+      "og_url": "http://vitalseedscouk.local/product/spinach-giant-winter-organic/",
+      "og_site_name": "Vital Seeds",
+      "article_publisher": "http://facebook.com/vitalseedsltd",
+      "article_modified_time": "2023-01-18T12:22:32+00:00",
+      "og_image": [
+        {
+          "width": 423,
+          "height": 423,
+          "url": "http://vitalseedscouk.local/wp-content/uploads/2018/10/SPGW-Spinach-Giant-Winter.jpg",
+          "type": "image/jpeg"
+        }
+      ],
+      "twitter_card": "summary_large_image",
+      "schema": {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "http://vitalseedscouk.local/#organization",
+            "name": "Vital Seeds Ltd",
+            "url": "http://vitalseedscouk.local/",
+            "sameAs": [
+              "https://instagram.com/vital.seeds/",
+              "http://facebook.com/vitalseedsltd"
+            ],
+            "logo": {
+              "@type": "ImageObject",
+              "inLanguage": "en-GB",
+              "@id": "http://vitalseedscouk.local/#/schema/logo/image/",
+              "url": "http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg",
+              "contentUrl": "http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg",
+              "width": 2579,
+              "height": 2431,
+              "caption": "Vital Seeds Ltd"
+            },
+            "image": {
+              "@id": "http://vitalseedscouk.local/#/schema/logo/image/"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "http://vitalseedscouk.local/#website",
+            "url": "http://vitalseedscouk.local/",
+            "name": "Vital Seeds",
+            "description": "Organic vegetable, herb and flower seeds",
+            "publisher": { "@id": "http://vitalseedscouk.local/#organization" },
+            "potentialAction": [
+              {
+                "@type": "SearchAction",
+                "target": {
+                  "@type": "EntryPoint",
+                  "urlTemplate": "http://vitalseedscouk.local/?s={search_term_string}"
+                },
+                "query-input": "required name=search_term_string"
+              }
+            ],
+            "inLanguage": "en-GB"
+          },
+          {
+            "@type": "ImageObject",
+            "inLanguage": "en-GB",
+            "@id": "http://vitalseedscouk.local/product/spinach-giant-winter-organic/#primaryimage",
+            "url": "http://vitalseedscouk.local/wp-content/uploads/2018/10/SPGW-Spinach-Giant-Winter.jpg",
+            "contentUrl": "http://vitalseedscouk.local/wp-content/uploads/2018/10/SPGW-Spinach-Giant-Winter.jpg",
+            "width": 423,
+            "height": 423
+          },
+          {
+            "@type": "WebPage",
+            "@id": "http://vitalseedscouk.local/product/spinach-giant-winter-organic/#webpage",
+            "url": "http://vitalseedscouk.local/product/spinach-giant-winter-organic/",
+            "name": "Spinach - Giant winter (Organic) - Vital Seeds",
+            "isPartOf": { "@id": "http://vitalseedscouk.local/#website" },
+            "primaryImageOfPage": {
+              "@id": "http://vitalseedscouk.local/product/spinach-giant-winter-organic/#primaryimage"
+            },
+            "datePublished": "2018-10-01T15:40:58+00:00",
+            "dateModified": "2023-01-18T12:22:32+00:00",
+            "description": "A winter variety with large, savoyed, pointy leaves especially selected for winter hardiness. This productive spinach is particularly recommended for autumn and winter cultivation. The dark green characteristically pointy leaves are very aromatic and perfect eaten raw in salads, or delicious cooked. (Approximate seed count - 500)",
+            "breadcrumb": {
+              "@id": "http://vitalseedscouk.local/product/spinach-giant-winter-organic/#breadcrumb"
+            },
+            "inLanguage": "en-GB",
+            "potentialAction": [
+              {
+                "@type": "ReadAction",
+                "target": [
+                  "http://vitalseedscouk.local/product/spinach-giant-winter-organic/"
+                ]
+              }
+            ]
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": "http://vitalseedscouk.local/product/spinach-giant-winter-organic/#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "http://vitalseedscouk.local/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Shop",
+                "item": "http://vitalseedscouk.local/shop/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Spinach &#8211; Giant winter (Organic)"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "_links": {
+      "self": [
+        { "href": "http://vitalseedscouk.local/wp-json/wc/v3/products/1696" }
+      ],
+      "collection": [
+        { "href": "http://vitalseedscouk.local/wp-json/wc/v3/products" }
+      ]
+    }
+  },
+  {
+    "id": 1690,
+    "name": "Beetroot - Bull's Blood (Organic)",
+    "slug": "beetroot-bulls-blood-organic",
+    "permalink": "http://vitalseedscouk.local/product/beetroot-bulls-blood-organic/",
+    "date_created": "2018-10-01T16:40:57",
+    "date_created_gmt": "2018-10-01T15:40:57",
+    "date_modified": "2023-01-18T12:22:33",
+    "date_modified_gmt": "2023-01-18T12:22:33",
+    "type": "simple",
+    "status": "publish",
+    "featured": false,
+    "catalog_visibility": "visible",
+    "description": "<table id=\"tablepress-CHARD\" class=\"tablepress tablepress-id-CHARD\">\n<caption style=\"caption-side:bottom;text-align:left;border:none;background:none;margin:0;padding:0;\"><a href=\"http://vitalseedscouk.local/wp-admin/admin.php?page=tablepress&#038;action=edit&#038;table_id=CHARD\" rel=\"nofollow\">Edit</a></caption>\n<thead>\n<tr class=\"row-1 odd\">\n<th class=\"column-1\">Month</th>\n<th class=\"column-2\">J</th>\n<th class=\"column-3\">F</th>\n<th class=\"column-4\">M</th>\n<th class=\"column-5\">A</th>\n<th class=\"column-6\">M</th>\n<th class=\"column-7\">J</th>\n<th class=\"column-8\">J</th>\n<th class=\"column-9\">A</th>\n<th class=\"column-10\">S</th>\n<th class=\"column-11\">O</th>\n<th class=\"column-12\">N</th>\n<th class=\"column-13\">D</th>\n</tr>\n</thead>\n<tbody>\n<tr class=\"row-2 even\">\n<td class=\"column-1\">Sow</td>\n<td class=\"column-2\"></td>\n<td class=\"column-3\"></td>\n<td class=\"column-4\"></td>\n<td class=\"column-5\"></td>\n<td class=\"column-6\"></td>\n<td class=\"column-7\"></td>\n<td class=\"column-8\"></td>\n<td class=\"column-9\"></td>\n<td class=\"column-10\"></td>\n<td class=\"column-11\"></td>\n<td class=\"column-12\"></td>\n<td class=\"column-13\"></td>\n</tr>\n<tr class=\"row-3 odd\">\n<td class=\"column-1\">Transplant</td>\n<td class=\"column-2\"></td>\n<td class=\"column-3\"></td>\n<td class=\"column-4\"></td>\n<td class=\"column-5\"></td>\n<td class=\"column-6\"></td>\n<td class=\"column-7\"></td>\n<td class=\"column-8\"></td>\n<td class=\"column-9\"></td>\n<td class=\"column-10\"></td>\n<td class=\"column-11\"></td>\n<td class=\"column-12\"></td>\n<td class=\"column-13\"></td>\n</tr>\n<tr class=\"row-4 even\">\n<td class=\"column-1\">Harvest</td>\n<td class=\"column-2\"></td>\n<td class=\"column-3\"></td>\n<td class=\"column-4\"></td>\n<td class=\"column-5\"></td>\n<td class=\"column-6\"></td>\n<td class=\"column-7\"></td>\n<td class=\"column-8\"></td>\n<td class=\"column-9\"></td>\n<td class=\"column-10\"></td>\n<td class=\"column-11\"></td>\n<td class=\"column-12\"></td>\n<td class=\"column-13\"></td>\n</tr>\n</tbody>\n</table>\n<p>When to sow: Feb - Aug</p>\n<p>Spacing: 25 x 25cm</p>\n<p>Beet leaf tips: Direct sow in shallow drills of 1.5cm depth. When plants are 15cm high, thin to appropriate spacing. </p>\n<p>Early sowings can be made in modules starting in February and then transplanted outside 4-5 weeks later to crop May onwards. Sowing after midsummer will provide you with leaves from autumn until the following spring.</p>\n",
+    "short_description": "<p>A variety with extremely dark red leaves, usually grown as a salad leaf. The leaves are exceptionally dark red, almost purple colour and very tender and sweet, especially as baby-leaf. They can be cut up to 4-5 times and will grow back.<br />\n(Approximate seed count &#8211; 200)</p>\n<p><img class=\"size-full wp-image-2472 alignnone\" src=\"http://vitalseedscouk.local/wp-content/uploads/2019/09/Soil-Association-Organic-logo-100x100.jpg\" alt=\"\" width=\"100\" height=\"100\" /></p>\n",
+    "sku": "BLBB",
+    "price": "2.38",
+    "regular_price": "2.38",
+    "sale_price": "",
+    "date_on_sale_from": null,
+    "date_on_sale_from_gmt": null,
+    "date_on_sale_to": null,
+    "date_on_sale_to_gmt": null,
+    "on_sale": false,
+    "purchasable": true,
+    "total_sales": 1056,
+    "virtual": false,
+    "downloadable": false,
+    "downloads": [],
+    "download_limit": -1,
+    "download_expiry": -1,
+    "external_url": "",
+    "button_text": "",
+    "tax_status": "taxable",
+    "tax_class": "zero-rated-income",
+    "manage_stock": true,
+    "stock_quantity": 380,
+    "backorders": "no",
+    "backorders_allowed": false,
+    "backordered": false,
+    "low_stock_amount": null,
+    "sold_individually": false,
+    "weight": "0.005833",
+    "dimensions": { "length": "", "width": "", "height": "" },
+    "shipping_required": true,
+    "shipping_taxable": true,
+    "shipping_class": "",
+    "shipping_class_id": 0,
+    "reviews_allowed": false,
+    "average_rating": "0.00",
+    "rating_count": 0,
+    "upsell_ids": [1694, 1703],
+    "cross_sell_ids": [],
+    "parent_id": 0,
+    "purchase_note": "",
+    "categories": [
+      { "id": 133, "name": "Beetroot Seeds", "slug": "beetroot-seeds" },
+      { "id": 96, "name": "Vegetable Seeds", "slug": "vegetable-seeds" }
+    ],
+    "tags": [
+      { "id": 101, "name": "Easy to grow", "slug": "easy-to-grow" },
+      { "id": 104, "name": "Quick to grow", "slug": "quick-to-grow" },
+      { "id": 134, "name": "Roots", "slug": "roots" },
+      {
+        "id": 103,
+        "name": "Suitable for containers",
+        "slug": "suitable-for-containers"
+      }
+    ],
+    "images": [
+      {
+        "id": 1872,
+        "date_created": "2018-10-01T19:05:55",
+        "date_created_gmt": "2018-10-01T17:05:55",
+        "date_modified": "2018-10-01T19:06:01",
+        "date_modified_gmt": "2018-10-01T17:06:01",
+        "src": "http://vitalseedscouk.local/wp-content/uploads/2018/10/Beetroot-Bulls-Blood-1.jpg",
+        "name": "Beetroot &#8211; Bull&#8217;s Blood 1",
+        "alt": "Beetroot - Bull's Blood 1"
+      },
+      {
+        "id": 1873,
+        "date_created": "2018-10-01T19:06:15",
+        "date_created_gmt": "2018-10-01T17:06:15",
+        "date_modified": "2018-10-01T19:06:22",
+        "date_modified_gmt": "2018-10-01T17:06:22",
+        "src": "http://vitalseedscouk.local/wp-content/uploads/2018/10/Beetroot-Bulls-Blood-2.jpg",
+        "name": "Beetroot &#8211; Bull&#8217;s Blood 2",
+        "alt": ""
+      }
+    ],
+    "attributes": [],
+    "default_attributes": [],
+    "variations": [],
+    "grouped_products": [],
+    "menu_order": 27,
+    "price_html": "<span class=\"woocommerce-Price-amount amount\"><bdi><span class=\"woocommerce-Price-currencySymbol\">&pound;</span>2.38</bdi></span>",
+    "related_ids": [1711, 1716, 1714, 1682, 1704],
+    "meta_data": [
+      { "id": 15151, "key": "_wpas_done_all", "value": "1" },
+      { "id": 19330, "key": "_wcsquare_disable_sync", "value": "no" },
+      { "id": 19331, "key": "_yoast_wpseo_primary_product_cat", "value": "" },
+      { "id": 19332, "key": "_yoast_wpseo_content_score", "value": "30" },
+      {
+        "id": 23206,
+        "key": "_yoast_wpseo_focuskw",
+        "value": "beetroot - bull's blood"
+      },
+      {
+        "id": 23207,
+        "key": "_yoast_wpseo_title",
+        "value": "%%title%% %%page%% %%sep%% %%sitename%% %%sep%% Buy from UK for gardeners"
+      },
+      { "id": 23208, "key": "_yoast_wpseo_linkdex", "value": "36" },
+      {
+        "id": 28806,
+        "key": "fb_product_group_id",
+        "value": "1922583574525080"
+      },
+      { "id": 28807, "key": "fb_visibility", "value": "1" }
+    ],
+    "stock_status": "instock",
+    "yoast_head": "<!-- This site is optimized with the Yoast SEO plugin v19.0 - https://yoast.com/wordpress/plugins/seo/ -->\n<title>Beetroot - Bull&#039;s Blood (Organic) - Vital Seeds - Buy from UK for gardeners</title>\n<meta name=\"description\" content=\"A variety with extremely dark red leaves, usually grown as a salad leaf. The leaves are exceptionally dark red, almost purple colour and very tender and sweet, especially as baby-leaf. They can be cut up to 4-5 times and will grow back. (Approximate seed count - 200)\" />\n<meta name=\"robots\" content=\"noindex, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1\" />\n<meta property=\"og:locale\" content=\"en_GB\" />\n<meta property=\"og:type\" content=\"article\" />\n<meta property=\"og:title\" content=\"Beetroot - Bull&#039;s Blood (Organic) - Vital Seeds - Buy from UK for gardeners\" />\n<meta property=\"og:description\" content=\"A variety with extremely dark red leaves, usually grown as a salad leaf. The leaves are exceptionally dark red, almost purple colour and very tender and sweet, especially as baby-leaf. They can be cut up to 4-5 times and will grow back. (Approximate seed count - 200)\" />\n<meta property=\"og:url\" content=\"http://vitalseedscouk.local/product/beetroot-bulls-blood-organic/\" />\n<meta property=\"og:site_name\" content=\"Vital Seeds\" />\n<meta property=\"article:publisher\" content=\"http://facebook.com/vitalseedsltd\" />\n<meta property=\"article:modified_time\" content=\"2023-01-18T12:22:33+00:00\" />\n<meta property=\"og:image\" content=\"http://vitalseedscouk.local/wp-content/uploads/2018/10/Beetroot-Bulls-Blood-1.jpg\" />\n\t<meta property=\"og:image:width\" content=\"1024\" />\n\t<meta property=\"og:image:height\" content=\"1024\" />\n\t<meta property=\"og:image:type\" content=\"image/jpeg\" />\n<meta name=\"twitter:card\" content=\"summary_large_image\" />\n<script type=\"application/ld+json\" class=\"yoast-schema-graph\">{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"http://vitalseedscouk.local/#organization\",\"name\":\"Vital Seeds Ltd\",\"url\":\"http://vitalseedscouk.local/\",\"sameAs\":[\"https://instagram.com/vital.seeds/\",\"http://facebook.com/vitalseedsltd\"],\"logo\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-GB\",\"@id\":\"http://vitalseedscouk.local/#/schema/logo/image/\",\"url\":\"http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg\",\"contentUrl\":\"http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg\",\"width\":2579,\"height\":2431,\"caption\":\"Vital Seeds Ltd\"},\"image\":{\"@id\":\"http://vitalseedscouk.local/#/schema/logo/image/\"}},{\"@type\":\"WebSite\",\"@id\":\"http://vitalseedscouk.local/#website\",\"url\":\"http://vitalseedscouk.local/\",\"name\":\"Vital Seeds\",\"description\":\"Organic vegetable, herb and flower seeds\",\"publisher\":{\"@id\":\"http://vitalseedscouk.local/#organization\"},\"potentialAction\":[{\"@type\":\"SearchAction\",\"target\":{\"@type\":\"EntryPoint\",\"urlTemplate\":\"http://vitalseedscouk.local/?s={search_term_string}\"},\"query-input\":\"required name=search_term_string\"}],\"inLanguage\":\"en-GB\"},{\"@type\":\"ImageObject\",\"inLanguage\":\"en-GB\",\"@id\":\"http://vitalseedscouk.local/product/beetroot-bulls-blood-organic/#primaryimage\",\"url\":\"http://vitalseedscouk.local/wp-content/uploads/2018/10/Beetroot-Bulls-Blood-1.jpg\",\"contentUrl\":\"http://vitalseedscouk.local/wp-content/uploads/2018/10/Beetroot-Bulls-Blood-1.jpg\",\"width\":1024,\"height\":1024,\"caption\":\"Beetroot - Bull's Blood 1\"},{\"@type\":\"WebPage\",\"@id\":\"http://vitalseedscouk.local/product/beetroot-bulls-blood-organic/#webpage\",\"url\":\"http://vitalseedscouk.local/product/beetroot-bulls-blood-organic/\",\"name\":\"Beetroot - Bull's Blood (Organic) - Vital Seeds - Buy from UK for gardeners\",\"isPartOf\":{\"@id\":\"http://vitalseedscouk.local/#website\"},\"primaryImageOfPage\":{\"@id\":\"http://vitalseedscouk.local/product/beetroot-bulls-blood-organic/#primaryimage\"},\"datePublished\":\"2018-10-01T15:40:57+00:00\",\"dateModified\":\"2023-01-18T12:22:33+00:00\",\"description\":\"A variety with extremely dark red leaves, usually grown as a salad leaf. The leaves are exceptionally dark red, almost purple colour and very tender and sweet, especially as baby-leaf. They can be cut up to 4-5 times and will grow back. (Approximate seed count - 200)\",\"breadcrumb\":{\"@id\":\"http://vitalseedscouk.local/product/beetroot-bulls-blood-organic/#breadcrumb\"},\"inLanguage\":\"en-GB\",\"potentialAction\":[{\"@type\":\"ReadAction\",\"target\":[\"http://vitalseedscouk.local/product/beetroot-bulls-blood-organic/\"]}]},{\"@type\":\"BreadcrumbList\",\"@id\":\"http://vitalseedscouk.local/product/beetroot-bulls-blood-organic/#breadcrumb\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"http://vitalseedscouk.local/\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"Shop\",\"item\":\"http://vitalseedscouk.local/shop/\"},{\"@type\":\"ListItem\",\"position\":3,\"name\":\"Beetroot &#8211; Bull&#8217;s Blood (Organic)\"}]}]}</script>\n<!-- / Yoast SEO plugin. -->",
+    "yoast_head_json": {
+      "title": "Beetroot - Bull's Blood (Organic) - Vital Seeds - Buy from UK for gardeners",
+      "description": "A variety with extremely dark red leaves, usually grown as a salad leaf. The leaves are exceptionally dark red, almost purple colour and very tender and sweet, especially as baby-leaf. They can be cut up to 4-5 times and will grow back. (Approximate seed count - 200)",
+      "robots": {
+        "index": "noindex",
+        "follow": "follow",
+        "max-snippet": "max-snippet:-1",
+        "max-image-preview": "max-image-preview:large",
+        "max-video-preview": "max-video-preview:-1"
+      },
+      "og_locale": "en_GB",
+      "og_type": "article",
+      "og_title": "Beetroot - Bull's Blood (Organic) - Vital Seeds - Buy from UK for gardeners",
+      "og_description": "A variety with extremely dark red leaves, usually grown as a salad leaf. The leaves are exceptionally dark red, almost purple colour and very tender and sweet, especially as baby-leaf. They can be cut up to 4-5 times and will grow back. (Approximate seed count - 200)",
+      "og_url": "http://vitalseedscouk.local/product/beetroot-bulls-blood-organic/",
+      "og_site_name": "Vital Seeds",
+      "article_publisher": "http://facebook.com/vitalseedsltd",
+      "article_modified_time": "2023-01-18T12:22:33+00:00",
+      "og_image": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "url": "http://vitalseedscouk.local/wp-content/uploads/2018/10/Beetroot-Bulls-Blood-1.jpg",
+          "type": "image/jpeg"
+        }
+      ],
+      "twitter_card": "summary_large_image",
+      "schema": {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "http://vitalseedscouk.local/#organization",
+            "name": "Vital Seeds Ltd",
+            "url": "http://vitalseedscouk.local/",
+            "sameAs": [
+              "https://instagram.com/vital.seeds/",
+              "http://facebook.com/vitalseedsltd"
+            ],
+            "logo": {
+              "@type": "ImageObject",
+              "inLanguage": "en-GB",
+              "@id": "http://vitalseedscouk.local/#/schema/logo/image/",
+              "url": "http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg",
+              "contentUrl": "http://vitalseedscouk.local/wp-content/uploads/2018/06/Main-logo-square.jpg",
+              "width": 2579,
+              "height": 2431,
+              "caption": "Vital Seeds Ltd"
+            },
+            "image": {
+              "@id": "http://vitalseedscouk.local/#/schema/logo/image/"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "http://vitalseedscouk.local/#website",
+            "url": "http://vitalseedscouk.local/",
+            "name": "Vital Seeds",
+            "description": "Organic vegetable, herb and flower seeds",
+            "publisher": { "@id": "http://vitalseedscouk.local/#organization" },
+            "potentialAction": [
+              {
+                "@type": "SearchAction",
+                "target": {
+                  "@type": "EntryPoint",
+                  "urlTemplate": "http://vitalseedscouk.local/?s={search_term_string}"
+                },
+                "query-input": "required name=search_term_string"
+              }
+            ],
+            "inLanguage": "en-GB"
+          },
+          {
+            "@type": "ImageObject",
+            "inLanguage": "en-GB",
+            "@id": "http://vitalseedscouk.local/product/beetroot-bulls-blood-organic/#primaryimage",
+            "url": "http://vitalseedscouk.local/wp-content/uploads/2018/10/Beetroot-Bulls-Blood-1.jpg",
+            "contentUrl": "http://vitalseedscouk.local/wp-content/uploads/2018/10/Beetroot-Bulls-Blood-1.jpg",
+            "width": 1024,
+            "height": 1024,
+            "caption": "Beetroot - Bull's Blood 1"
+          },
+          {
+            "@type": "WebPage",
+            "@id": "http://vitalseedscouk.local/product/beetroot-bulls-blood-organic/#webpage",
+            "url": "http://vitalseedscouk.local/product/beetroot-bulls-blood-organic/",
+            "name": "Beetroot - Bull's Blood (Organic) - Vital Seeds - Buy from UK for gardeners",
+            "isPartOf": { "@id": "http://vitalseedscouk.local/#website" },
+            "primaryImageOfPage": {
+              "@id": "http://vitalseedscouk.local/product/beetroot-bulls-blood-organic/#primaryimage"
+            },
+            "datePublished": "2018-10-01T15:40:57+00:00",
+            "dateModified": "2023-01-18T12:22:33+00:00",
+            "description": "A variety with extremely dark red leaves, usually grown as a salad leaf. The leaves are exceptionally dark red, almost purple colour and very tender and sweet, especially as baby-leaf. They can be cut up to 4-5 times and will grow back. (Approximate seed count - 200)",
+            "breadcrumb": {
+              "@id": "http://vitalseedscouk.local/product/beetroot-bulls-blood-organic/#breadcrumb"
+            },
+            "inLanguage": "en-GB",
+            "potentialAction": [
+              {
+                "@type": "ReadAction",
+                "target": [
+                  "http://vitalseedscouk.local/product/beetroot-bulls-blood-organic/"
+                ]
+              }
+            ]
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": "http://vitalseedscouk.local/product/beetroot-bulls-blood-organic/#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "http://vitalseedscouk.local/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Shop",
+                "item": "http://vitalseedscouk.local/shop/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Beetroot &#8211; Bull&#8217;s Blood (Organic)"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "_links": {
+      "self": [
+        { "href": "http://vitalseedscouk.local/wp-json/wc/v3/products/1690" }
+      ],
+      "collection": [
+        { "href": "http://vitalseedscouk.local/wp-json/wc/v3/products" }
+      ]
+    }
+  }
+]
