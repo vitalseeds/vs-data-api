@@ -4,6 +4,7 @@ __pycache__
 .vscode*
 **/.envrc
 .env
+.env-test
 
 *.log
 *.img
