@@ -51,11 +51,12 @@ def test_update_wc_stock_for_new_batches(wcapi, vsdb_connection, mocked_response
     stock.update_wc_stock_for_new_batches(vsdb_connection, wcapi)
 
 
-def _add_from_file_params_from_url(responses, file_path: "Union[str, bytes, os.PathLike[Any]]", *args, **kwargs) -> None:
+def _add_from_file_match_params(responses, file_path: "Union[str, bytes, os.PathLike[Any]]", *args, **kwargs) -> None:
     """
     Replacement for responses.RequestsMock._add_from_file
 
-    Allows for recorded responses to match subset of querystring params.
+    Allows for recorded responses to match a subset of querystring params.
+    Original provided by responses auto adds a full querystring matcher.
     Implemented to avoid failing match on generated oauth parameters.
     """
     # https://github.com/tombola/responses/blob/3b3ded7661fc3369431155baefb54975ceca5162/responses/__init__.py#L787
@@ -67,28 +68,20 @@ def _add_from_file_params_from_url(responses, file_path: "Union[str, bytes, os.P
     with open(file_path, "rb") as file:
         data = _toml.load(file)
 
-    from urllib.parse import parse_qsl
-    from urllib.parse import urlparse
-    from urllib.parse import urlsplit, urlunsplit, urljoin
-    # from requests.packages.urllib3.util.url import parse_url
+    from urllib.parse import urlparse, urljoin
     for rsp in data["responses"]:
         rsp = rsp["response"]
 
         request_url = urlparse(rsp["url"])
-        request_query = request_url.query
-        request_params = parse_qsl(request_query)
-
-        # URL with the querystring removed
+        # Remove querystring so that responses does not add query_string_matcher:
+        # https://github.com/getsentry/responses/blob/3b3ded7661fc3369431155baefb54975ceca5162/responses/__init__.py#L387
         request_url = urljoin(rsp["url"], request_url.path)
-
-        print(f"[magenta]{request_url}")
-        print(request_params)
+        print(f"{rsp['method']}: {request_url}")
 
         responses.add(
             method=rsp["method"],
             url=request_url,
             body=rsp["body"],
-            # params=request_params,
             status=rsp["status"],
             content_type=rsp["content_type"],
             auto_calculate_content_length=rsp["auto_calculate_content_length"],
@@ -101,60 +94,14 @@ def _add_from_file_params_from_url(responses, file_path: "Union[str, bytes, os.P
 def test_wcapi_stock(wcapi, vsdb_connection, mocked_responses):
     flag_batches_for_upload(vsdb_connection)
 
-    expected_query_params = {"include": "28388.0,1716.0,10271.0"}
-    # Allows WC GET request to match with a subset of parameters
     # File contains more than one request, fails for subsequent POST because
     # params do not match.
-    _add_from_file_params_from_url(responses, file_path="tests/fixtures/batch_awaiting_upload_wc_products.toml",
+    expected_query_params = {"include": "28388.0,1716.0,10271.0"}
+    _add_from_file_match_params(responses, file_path="tests/fixtures/test_wcapi_stock/batch_awaiting_upload_wc_products.toml",
         match=[
             matchers.query_param_matcher(expected_query_params, strict_match=False),
         ]
     )
-    # responses._add_from_file(file_path="tests/fixtures/batch_awaiting_upload_wc_products.toml",
-    #     match=[
-    #         matchers.query_param_matcher(expected_query_params, strict_match=False),
-    #     ]
-    # )
-
-    # Remove querystring matcher
-    # responses.registered()[0].match = ()
-    # explore(responses.registered())
-    # responses.registered()[0]
+    responses._add_from_file(file_path="tests/fixtures/test_wcapi_stock/batch_post_product_stock.toml")
 
     stock.update_wc_stock_for_new_batches(vsdb_connection, wcapi)
-
-
-@responses.activate
-def test_wcapi_request(wcapi, vsdb_connection, mocked_responses):
-    flag_batches_for_upload(vsdb_connection)
-    expected_query_params = {"include": "28388.0,1716.0,10271.0"}
-    # expected_query_params = {"include": "28388.0,1716.0,10271.0"x, "something": "hello"}
-    # responses._add_from_file(file_path="tests/fixtures/batch_awaiting_upload_wc_products.toml")
-    # responses._add_from_file(file_path="tests/fixtures/batch_awaiting_upload_wc_products.toml",
-    #     match=[
-    #         matchers.query_param_matcher(expected_query_params, strict_match=False),
-    #     ]
-    # )
-    _add_from_file_params_from_url(responses, file_path="tests/fixtures/batch_awaiting_upload_wc_products.toml",
-        match=[
-            matchers.query_param_matcher(expected_query_params, strict_match=False),
-        ]
-    )
-
-    file_path="tests/fixtures/batch_awaiting_upload_wc_products.toml"
-
-
-    requests.get("http://vitalseedscouk.local/wp-json/wc/v3/products?include=28388.0,1716.0,10271.0&per_page=100&oauth_consumer_key=ck_91b27f53dec56ef51dcd56cf2e63fe59364b04ba&oauth_timestamp=1675493888&oauth_nonce=5effb7db5b3468be2298bd560dc816378de9911a&oauth_signature_method=HMAC-SHA256&oauth_signature=A6NVF5g6NU5wqvAtrKBwqO3vasfpOBoW%2FswEbdYIO3M%3D&include=28388.0%2C1716.0%2C10271.0&per_page=100")
-
-
-
-
-# def test_api(mocked_responses):
-#     mocked_responses.get(
-#         "http://twitter.com/api/1/foobar",
-#         body="{}",
-#         status=200,
-#         content_type="application/json",
-#     )
-#     resp = requests.get("http://twitter.com/api/1/foobar")
-#     assert resp.status_code == 200
