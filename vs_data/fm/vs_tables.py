@@ -20,18 +20,20 @@ class PacketingBatches(FilemakerTable):
     packets = "packets"
     to_pack = "to_pack"
     pack_date = "pack_date"
+    seed_lot = "seed_lot" # previously SeedLotFK - change to number
 
 
 class LargeBatches(FilemakerTable):
     table_name = "large_batches"  # rename table occurence 'Growers_batches'
 
     awaiting_upload = "awaiting_upload"
-    sku = "sku"
-    sku_variation = "sku_variation"
+    sku = "sku" # previously SKUFK
+    sku_variation = "sku_variation" # previously SKU_var
     batch_number = "batch_number"
     packets = "packets"  # previously 'packed'
     to_pack = "to_pack"  # previously 'packets'
     pack_date = "pack_date"
+    seed_lot = "seed_lot" # previously SeedLotFK - change to number
 
 class SeedLots(FilemakerTable):
     table_name = "seed_lots"  # rename table occurence 'Growers_batches'
