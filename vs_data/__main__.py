@@ -38,6 +38,20 @@ def cli(ctx, fmdb, fmlinkdb, wc_url, wc_key, wc_secret):
 
 
 @cli.command()
+@click.argument('product_ids')
+@click.pass_context
+def get_wc_products(ctx, product_ids):
+    """
+    Update stock from new batches (regular size packets)
+    """
+    fmdb = ctx.parent.obj["fmdb"]
+    product_ids = [int(p) for p in product_ids.split(',')]
+    wcapi = ctx.parent.obj["wcapi"]
+    return stock.get_wc_products_by_id(wcapi, product_ids)
+
+
+
+@cli.command()
 @click.pass_context
 def update_stock(ctx):
     """

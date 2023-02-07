@@ -86,6 +86,19 @@ from FM.
   - `VSDATA_WC_KEY`
   - `VSDATA_WC_SECRET`
 
+
+## Usage
+
+Currently, to run the cli commands in production you will need to explicitly load configuration:
+
+`dotenv run -- python vs_data import-wc-product-ids`
+
+This will be moved into pydantic settings and imported automatically as a default.
+
+Run test config via dotenv to test new endpoints etc against a dummy database and staging site:
+
+`dotenv -f .env-test run -- python vs_data import-wc-product-ids`
+
 ## Rationale
 
 - FM scripts
