@@ -7,7 +7,6 @@ import click
 from rich import print
 
 from vs_data import stock
-from vs_data.cli.table import display_product_table
 from vs_data.fm import constants
 from vs_data.fm import db
 from vs_data.wc import api
@@ -48,7 +47,6 @@ def get_wc_products(ctx, product_ids):
     product_ids = [int(p) for p in product_ids.split(',')]
     wcapi = ctx.parent.obj["wcapi"]
     return stock.get_wc_products_by_id(wcapi, product_ids)
-
 
 
 @cli.command()
@@ -106,6 +104,17 @@ def import_wc_product_ids(ctx):
     # Update acquisitions with WC variation ids for large and regular packets
     stock.update_acquisitions_wc_variations(fmdb, variations)
 
+
+@cli.command()
+@click.pass_context
+def stock_csv(ctx):
+    """
+    Generate a CSV of stock values from filemaker and woocommerce.
+    """
+    fmdb = ctx.parent.obj["fmdb"]
+    wcapi = ctx.parent.obj["wcapi"]
+
+    stock.compare_wc_fm_stock(fmdb, wcapi, cli=True)
 
 
 if __name__ == "__main__":

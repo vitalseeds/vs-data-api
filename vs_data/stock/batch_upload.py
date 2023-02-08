@@ -176,7 +176,7 @@ def wc_regular_product_update_stock(wcapi, products, stock_increments):
 # TODO: split large_variation logic out then review duplication
 def update_wc_stock_for_new_batches(connection, wcapi=None, product_variation=None):
     """
-    Update WooCommerce stock from newly packated batches.
+    Update WooCommerce stock from newly packeted batches.
 
     Args:
         FileMaker db connection

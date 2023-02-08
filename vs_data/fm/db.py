@@ -75,7 +75,7 @@ def connection(connection_string: str) -> pyodbc.Connection:
 def _select_columns(
     connection: pyodbc.Connection,
     table: str,
-    columns: str,
+    columns: list,
     where: str = None,
 ) -> dict:
     """

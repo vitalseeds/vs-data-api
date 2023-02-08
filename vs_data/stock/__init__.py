@@ -9,5 +9,7 @@ from .batch_upload import update_acquisitions_wc_id
 from .batch_upload import update_wc_stock_for_new_batches
 from .misc import get_batches_awaiting_upload
 from .misc import get_large_batches_awaiting_upload
-from .misc import get_products_in_stock
+from .misc import get_wc_products_in_stock
 from .misc import get_wp_product_by_sku
+from .misc import get_all_products
+from .stock_analytics import compare_wc_fm_stock
