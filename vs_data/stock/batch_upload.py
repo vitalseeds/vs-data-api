@@ -31,6 +31,7 @@ def get_batches_awaiting_upload_join_acq(connection):
         'LEFT JOIN "acquisitions" A ON B.sku = A.SKU '
         "WHERE " + where
     )
+    log.debug(sql)
     rows = connection.cursor().execute(sql).fetchall()
     return [dict(zip(columns, r)) for r in rows]
 

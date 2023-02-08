@@ -106,15 +106,16 @@ def import_wc_product_ids(ctx):
 
 
 @cli.command()
+@click.option("--uncache", is_flag=True, help="Delete pickled results from previous run")
 @click.pass_context
-def stock_csv(ctx):
+def stock_csv(ctx, uncache):
     """
     Generate a CSV of stock values from filemaker and woocommerce.
     """
     fmdb = ctx.parent.obj["fmdb"]
     wcapi = ctx.parent.obj["wcapi"]
 
-    stock.compare_wc_fm_stock(fmdb, wcapi, cli=True)
+    stock.compare_wc_fm_stock(fmdb, wcapi, cli=True, uncache=uncache)
 
 
 if __name__ == "__main__":

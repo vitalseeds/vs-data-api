@@ -4,7 +4,7 @@ from . import FilemakerTable
 class Acquisitions(FilemakerTable):
     table_name = "acquisitions"
 
-    sku = "SKU"
+    sku = "sku"
     crop = "crop"
     wc_product_id = "wc_product_id"
     wc_variation_lg_id = "wc_variation_lg_id"
@@ -40,3 +40,13 @@ class SeedLots(FilemakerTable):
 
     lot_number = "lot_number"
     sku = "sku" # previously 'SKUFK'
+
+
+class Stock(FilemakerTable):
+    table_name = "stock"
+
+    sku = "sku"
+    stock_large = "stock_large"
+    stock_regular = "stock_regular"
+    update = "update"
+    update_large = "update_large"
