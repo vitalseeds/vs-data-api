@@ -12,6 +12,8 @@ from vs_data.fm.constants import tname as _t
 from vs_data import log
 from rich import print
 import numpy as np
+from datascroller import scroll
+
 
 def get_acq_join_stock(connection):
     acq_sku = _f("acquisitions", "sku")
@@ -85,12 +87,12 @@ def compare_wc_fm_stock(fmdb, wcapi, cli: bool=False, csv: bool=False, uncache=F
 
     # create a pandas dataframe for vs stock
     vs_stock_pd: pd.DataFrame = pd.DataFrame(acquisitions, columns=columns)
-    vs_stock_pd['wc_product_id'] = vs_stock_pd['wc_product_id'].astype('Int64')
-    vs_stock_pd['wc_variation_lg_id'] = vs_stock_pd['wc_variation_lg_id'].astype('Int64')
-
-    if cli:
-        # display_table(acquisitions, headers=columns)
-        log.debug(vs_stock_pd)
+    vs_stock_pd = vs_stock_pd.astype({
+        "wc_product_id": 'Int64',
+        "wc_variation_lg_id": 'Int64'
+    })
+    vs_stock_pd = vs_stock_pd.add_suffix('__vs')
+    log.debug(f"{vs_stock_pd=}")
 
     # get all products from woocommerce
     if exists(products_pickle):
@@ -103,15 +105,15 @@ def compare_wc_fm_stock(fmdb, wcapi, cli: bool=False, csv: bool=False, uncache=F
 
     # create a pandas dataframe for regular stock
     wc_product_stock_pd = pd.DataFrame.from_dict(wc_products)
-    # log.debug(wc_product_stock_pd[["id", "name", "stock_quantity", "variations"]])
+    wc_product_stock_pd = wc_product_stock_pd.add_suffix('__wc_prd')
 
     # create a pandas dataframe for large stock
     # filter for products that have a large product variation
-    vs_stock_variations = vs_stock_pd[vs_stock_pd.wc_variation_lg_id.notnull()]
+    vs_stock_variations = vs_stock_pd[vs_stock_pd.wc_variation_lg_id__vs.notnull()]
 
-    # Create map dict using pandas index
+    # create variation map dict using the dataframe index
     # https://cmdlinetips.com/2021/04/convert-two-column-values-from-pandas-dataframe-to-a-dictionary/
-    lg_variation_id_map = vs_stock_variations.set_index('wc_product_id').to_dict()['wc_variation_lg_id']
+    lg_variation_id_map = vs_stock_variations.set_index('wc_product_id__vs').to_dict()['wc_variation_lg_id__vs']
 
     # Get and cache each of the product variations individually
     if exists(variations_pickle):
@@ -128,48 +130,37 @@ def compare_wc_fm_stock(fmdb, wcapi, cli: bool=False, csv: bool=False, uncache=F
             pickle.dump(products_large_variation_stock, file)
 
     wc_variations_stock_pd = pd.DataFrame.from_dict(products_large_variation_stock, orient='index')
-    log.debug(wc_variations_stock_pd)
+    wc_variations_stock_pd = wc_variations_stock_pd.add_suffix('__wc_lg_var')
 
-    # vs_stock_pd
-    # wc_product_stock_pd
-    # wc_variations_stock_pd
-    # import pudb; pu.db
-    # wc_all_stock = wc_product_stock_pd.join(wc_variations_stock_pd, on="id", rsuffix="_variation")
-    log.debug(f"{wc_product_stock_pd.columns=}")
-    log.debug(f"{wc_variations_stock_pd.columns=}")
-    log.debug(wc_variations_stock_pd)
-    # quit()
-    wc_all_stock = pd.merge(wc_product_stock_pd, wc_variations_stock_pd, left_on="id", right_index=True, suffixes=["_prd", "_var"])
-    log.debug(f"{wc_all_stock=}")
-    log.debug(f"{vs_stock_pd=}")
-    log.debug(f"{wc_all_stock.columns=}")
-    log.debug(f"{vs_stock_pd.columns=}")
-
+    # join wc product and large variations stock on product id
+    wc_all_stock = pd.merge(wc_product_stock_pd, wc_variations_stock_pd, left_on="id__wc_prd", right_index=True)
 
     # Remove products that have null values for wc_product_id (no product on wc)
-    vs_stock_pd = vs_stock_pd[vs_stock_pd['wc_product_id'].notna()]
-    log.debug(f"{vs_stock_pd=}")
-    # vs_stock_pd = vs_stock_pd[vs_stock_pd['wc_product_id'].replace('',
-    # np.nan).notna()]
-
-    vs_all_stock = pd.merge(vs_stock_pd, wc_all_stock, left_on="wc_product_id", right_on="id", suffixes=["_vs", "_wc"])
+    vs_stock_pd = vs_stock_pd[vs_stock_pd['wc_product_id__vs'].notna()]
+    # join vs_stock and wc stock df on wc product id
+    vs_all_stock = pd.merge(vs_stock_pd, wc_all_stock, left_on="wc_product_id__vs", right_on="id__wc_prd")
     log.debug(f"{vs_all_stock=}")
     log.debug(f"{vs_all_stock.columns=}")
+    report: pd.DataFrame = vs_all_stock[[
+        'sku__vs',
+        'wc_product_id__vs',
+        'variation_id__wc_lg_var',
+        'stock_regular__vs',
+        "stock_quantity__wc_prd",
+        'stock_large__vs',
+        'stock_quantity__wc_lg_var',
+    ]]
+    # convert floats to int
+    report = report.astype({
+        'stock_regular__vs': "Int64",
+        'stock_large__vs': 'Int64',
+        "stock_quantity__wc_prd": "Int64",
+        "stock_quantity__wc_lg_var": "Int64",
+    })
 
-    log.debug(vs_all_stock[["sku_vs", "sku_wc", "id", "wc_product_id", "variation_id", "wc_variation_lg_id", "stock_large", "stock_regular"]])
-    # all_stock = pd.merge(wc_all_stock, vs_stock_pd, on=['id','wc_product_id'], how='inner', suffixes=['_wc', '_vs'])
-    # print(f"{all_stock.columns=}")
-    # df.loc[df['wc_variation_lg_id'] == 36979.0]
+    pd.set_option('display.max_columns', None)  # or 1000
+    pd.set_option('display.max_rows', None)  # or 1000
+    pd.set_option('display.max_colwidth', None)  # or 199
 
-
-    # rename stock column wc_regular_stock
-
-    # get all variations from woocommerce - dataframe
-    # rename stock column wc_large_stock
-
-    # join products and variations stock df on product id
-
-    # join vs_stock and wc stock df on sku
-
-    # compare (cli)
-    # dataframe to csv
+    if cli:
+        scroll(report)
