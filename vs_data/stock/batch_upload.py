@@ -110,8 +110,6 @@ def get_wc_large_variations_by_product(wcapi: object, product_ids: list, lg_vari
         large variation ids (dict) used as a map of product_id:variation_id
     """
     product_ids = [int(id) for id in product_ids]
-
-    # products = get_wc_products_by_id(wcapi, product_ids)
     product_large_variations = {}
     for product_id in product_ids:
         large_variation_id = lg_variation_ids[product_id]
