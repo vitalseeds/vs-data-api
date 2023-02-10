@@ -156,12 +156,12 @@ def compare_wc_fm_stock(fmdb, wcapi, cli: bool=False, csv: bool=False, uncache=F
     wc_variations_stock_pd = wc_variations_stock_pd.add_suffix('__wc_lg_var')
 
     # join wc product and large variations stock on product id
-    wc_all_stock = pd.merge(wc_product_stock_pd, wc_variations_stock_pd, left_on="id__wc_prd", right_index=True)
+    wc_all_stock = pd.merge(wc_product_stock_pd, wc_variations_stock_pd, left_on="id__wc_prd", right_index=True, how="left")
 
     # Remove products that have null values for wc_product_id (no product on wc)
     vs_stock_pd = vs_stock_pd[vs_stock_pd['wc_product_id__vs'].notna()]
     # join vs_stock and wc stock df on wc product id
-    vs_all_stock = pd.merge(vs_stock_pd, wc_all_stock, left_on="wc_product_id__vs", right_on="id__wc_prd")
+    vs_all_stock = pd.merge(vs_stock_pd, wc_all_stock, left_on="wc_product_id__vs", right_on="id__wc_prd", how="left")
     log.debug(f"{vs_all_stock=}")
     log.debug(f"{vs_all_stock.columns=}")
     report: pd.DataFrame = vs_all_stock[[

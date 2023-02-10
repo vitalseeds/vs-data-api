@@ -97,3 +97,18 @@ async def download(settings: config.Settings = Depends(get_settings)):
     date_suffix = datetime.now().strftime('%m-%d-%Y_%H-%M-%S')
     file_name = f"vsdata_stock-report-all_{date_suffix}.csv"
     return FileResponse(path=export_file_path, filename=file_name, media_type='text/csv')
+
+
+@app.get("/stock/report/all/cached")
+async def download(settings: config.Settings = Depends(get_settings)):
+    """
+    Query filemaker then all WooCommerce products, then all WC large product
+    variations. Warning: the variations aspect makes this quite slow.
+
+    Aggregate all stock information into a CSV report.
+    """
+    connection = db.connection(settings.fm_connection_string)
+    export_file_path = stock.compare_wc_fm_stock(connection, settings.wcapi, csv=True, uncache=False)
+    date_suffix = datetime.now().strftime('%m-%d-%Y_%H-%M-%S')
+    file_name = f"vsdata_stock-report-all_{date_suffix}.csv"
+    return FileResponse(path=export_file_path, filename=file_name, media_type='text/csv')
