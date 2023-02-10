@@ -1,5 +1,10 @@
-fastapi==0.88.0
+fastapi==0.90.1
+pydantic==1.10.4
 WooCommerce==3.0.0
+pandas==1.5.2
+
 ipython
-rich
+rich==13.3.1
 pudb
+
+datascroller==1.4.1

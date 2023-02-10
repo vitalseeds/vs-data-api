@@ -1,8 +1,7 @@
-
 from functools import lru_cache
-
+from datetime import datetime
 from fastapi import Depends, FastAPI
-
+from starlette.responses import FileResponse
 
 from vs_data.fm import db
 from vs_data import stock
@@ -83,3 +82,18 @@ async def upload_wc_stock_variation_large(settings: config.Settings = Depends(ge
         return {"message": "No large batches were updated on WooCommerce"}
     updated_num = len(batches)
     return {"batches": batches, "message": f"{updated_num} product variations were updated on WooCommerce"}
+
+
+@app.get("/stock/report/all")
+async def download(settings: config.Settings = Depends(get_settings)):
+    """
+    Query filemaker then all WooCommerce products, then all WC large product
+    variations. Warning: the variations aspect makes this quite slow.
+
+    Aggregate all stock information into a CSV report.
+    """
+    connection = db.connection(settings.fm_connection_string)
+    export_file_path = stock.compare_wc_fm_stock(connection, settings.wcapi, csv=True, uncache=True)
+    date_suffix = datetime.now().strftime('%m-%d-%Y_%H-%M-%S')
+    file_name = f"vsdata_stock-report-all_{date_suffix}.csv"
+    return FileResponse(path=export_file_path, filename=file_name, media_type='text/csv')

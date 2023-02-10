@@ -31,6 +31,7 @@ def get_batches_awaiting_upload_join_acq(connection):
         'LEFT JOIN "acquisitions" A ON B.sku = A.SKU '
         "WHERE " + where
     )
+    log.debug(sql)
     rows = connection.cursor().execute(sql).fetchall()
     return [dict(zip(columns, r)) for r in rows]
 
@@ -109,8 +110,6 @@ def get_wc_large_variations_by_product(wcapi: object, product_ids: list, lg_vari
         large variation ids (dict) used as a map of product_id:variation_id
     """
     product_ids = [int(id) for id in product_ids]
-
-    # products = get_wc_products_by_id(wcapi, product_ids)
     product_large_variations = {}
     for product_id in product_ids:
         large_variation_id = lg_variation_ids[product_id]
@@ -176,7 +175,7 @@ def wc_regular_product_update_stock(wcapi, products, stock_increments):
 # TODO: split large_variation logic out then review duplication
 def update_wc_stock_for_new_batches(connection, wcapi=None, product_variation=None):
     """
-    Update WooCommerce stock from newly packated batches.
+    Update WooCommerce stock from newly packeted batches.
 
     Args:
         FileMaker db connection

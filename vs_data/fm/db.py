@@ -75,7 +75,7 @@ def connection(connection_string: str) -> pyodbc.Connection:
 def _select_columns(
     connection: pyodbc.Connection,
     table: str,
-    columns: str,
+    columns: list,
     where: str = None,
 ) -> dict:
     """
@@ -133,3 +133,11 @@ def zip_validate_columns(rows: list, columns: list, int_fields: list = None) -> 
                     # TODO: this sort of wrangling could be negated by pydantic
                     dict_rows[i][int_field] = int(field_value)
     return dict_rows
+
+def convert_pyodbc_cursor_results_to_lists(results):
+    # TODO: not neccessary if not displaying in cli table (_select returns
+    # columns)
+    rows = []
+    for row in results:
+        rows.append(list(row))
+    return rows

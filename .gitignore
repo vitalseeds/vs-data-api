@@ -8,7 +8,9 @@ __pycache__
 
 *.log
 *.img
-/tmp
+/tmp/**
+!/tmp/**/
+!/tmp/**/.gitkeep
 
 .mypy_cache/
 /.coverage
