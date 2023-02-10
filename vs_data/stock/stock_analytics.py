@@ -14,6 +14,7 @@ from rich import print
 import numpy as np
 from datascroller import scroll
 
+REPORT_CSV_FILE_PATH = 'tmp/exports/report.csv'
 
 def _debug_data(vs_stock_pd, vs_all_stock, wc_product_stock_pd, wc_variations_stock_pd, wc_all_stock, report):
     """
@@ -190,7 +191,10 @@ def compare_wc_fm_stock(fmdb, wcapi, cli: bool=False, csv: bool=False, uncache=F
         return f'{os.environ.get("VSDATA_WC_URL")}/wp-admin/post.php?post={row["wc_product_id__vs"]}&action=edit'
 
     report['wc_edit_url'] = report.apply(lambda row: get_wc_edit_url(row), axis=1)
-    report.to_csv('tmp/exports/report.csv', index=False)
+    if csv:
+        report.to_csv(REPORT_CSV_FILE_PATH, index=False)
 
     if cli:
         scroll(report)
+
+    return REPORT_CSV_FILE_PATH
