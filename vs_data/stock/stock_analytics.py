@@ -184,12 +184,13 @@ def compare_wc_fm_stock(fmdb, wcapi, cli: bool=False, csv: bool=False, uncache=F
     pd.set_option('display.max_rows', None)  # or 1000
     pd.set_option('display.max_colwidth', None)  # or 199
 
-    # TODO: stock_quantity__wc_lg_var contains the main product stock value, not
-    # the variation
-
     # _debug_data(vs_stock_pd, vs_all_stock, wc_product_stock_pd, wc_variations_stock_pd, wc_all_stock, report)
 
-    vs_all_stock.to_csv('tmp/exports/vs_all_stock.csv', index=False)
+    def get_wc_edit_url(row):
+        return f'{os.environ.get("VSDATA_WC_URL")}/wp-admin/post.php?post={row["wc_product_id__vs"]}&action=edit'
+
+    report['wc_edit_url'] = report.apply(lambda row: get_wc_edit_url(row), axis=1)
+    report.to_csv('tmp/exports/report.csv', index=False)
 
     if cli:
         scroll(report)

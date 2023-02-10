@@ -113,6 +113,11 @@ def import_wc_product_ids(ctx):
 def stock_csv(ctx, uncache):
     """
     Generate a CSV of stock values from filemaker and woocommerce.
+
+    By default this will run once and cache the expensive wcapi request data and
+    fm query results.
+
+    To clear cache and run afresh call with '--uncache' flag.
     """
     fmdb = ctx.parent.obj.get("fmdb")
     wcapi = ctx.parent.obj.get("wcapi")
