@@ -23,27 +23,27 @@ def get_acq_join_stock(connection):
         _f("acquisitions", "wc_product_id"),
         _f("acquisitions", "wc_variation_lg_id"),
         _f("acquisitions", "wc_variation_regular_id"),
+        _f("acquisitions", "not_selling_in_shop"),
     ]
     stock_sku = _f("stock", "sku")
     stock_columns = [
         stock_sku,
         _f("stock", "stock_large"),
         _f("stock", "stock_regular"),
-        # _f("stock", "update"),
-        # _f("stock", "update_large"),
     ]
 
     # TODO: should get sku from join on seed_lot, not packeting_batches
     aliased_columns = [f"A.{a}" for a in acq_columns] + [f"S.{s}" for s in stock_columns]
     aliased_columns = ", ".join(aliased_columns)
-    awaiting = _f("packeting_batches", "awaiting_upload")
-    # where = f"lower({awaiting})='yes' AND b.pack_date IS NOT NULL"
+    not_selling = _f("acquisitions", "not_selling_in_shop")
+    # where = f"lower({not_selling})='yes'"
+    where = f"{not_selling} IS NULL"
 
     sql = (
         f"SELECT {aliased_columns} "
         'FROM "acquisitions" A '
         f'LEFT JOIN "stock" S ON A.{acq_sku} = S.{stock_sku} '
-        # "WHERE " + where
+        "WHERE " + where
     )
     log.debug(sql)
     rows = connection.cursor().execute(sql).fetchall()
@@ -161,6 +161,31 @@ def compare_wc_fm_stock(fmdb, wcapi, cli: bool=False, csv: bool=False, uncache=F
     pd.set_option('display.max_columns', None)  # or 1000
     pd.set_option('display.max_rows', None)  # or 1000
     pd.set_option('display.max_colwidth', None)  # or 199
+
+    # TODO: stock_quantity__wc_lg_var contains the main product stock value, not
+    # the variation
+
+    # scroll(vs_stock_pd.loc[vs_stock_pd["wc_product_id__vs"]==1694])
+    # print(wc_product_stock_pd.columns)
+    # quit()
+    # scroll(wc_product_stock_pd.loc[wc_product_stock_pd["id__wc_prd"]==1694][["stock_quantity__wc_prd"]])
+    # print(wc_variations_stock_pd.columns)
+    # scroll(wc_variations_stock_pd.loc[[1694]])
+    # scroll(report.loc[report["wc_product_id__vs"]==1694])
+    # scroll(vs_all_stock[vs_all_stock["id__wc_prd"]==1694][[
+    #     "wc_product_id__vs",
+    #     "variation_id__wc_lg_var",
+    #     'stock_regular__vs',
+    #     'stock_large__vs',
+    #     "stock_quantity__wc_prd",
+    #     "stock_quantity__wc_lg_var",
+    # ]])
+
+    # wc_product_stock_pd.to_csv('tmp/exports/wc_product_stock_pd.csv', index=False)
+    # wc_variations_stock_pd.to_csv('tmp/exports/wc_variations_stock_pd.csv', index=False)
+    # wc_all_stock.to_csv('tmp/exports/wc_all_stock.csv', index=False)
+    # vs_stock_pd.to_csv('tmp/exports/vs_stock_pd.csv', index=False)
+    vs_all_stock.to_csv('tmp/exports/vs_all_stock.csv', index=False)
 
     if cli:
         scroll(report)
