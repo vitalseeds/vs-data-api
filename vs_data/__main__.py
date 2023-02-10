@@ -21,19 +21,21 @@ from vs_data.wc import api
 
 @click.group()
 @click.version_option()
+@click.option("--isolate", "-i", is_flag=True, envvar="VSDATA_ISOLATE", help="Don't load external services (fm/wc)")
 @click.option("--wc-secret", envvar="VSDATA_WC_SECRET", default="")
 @click.option("--wc-key", envvar="VSDATA_WC_KEY", default="")
 @click.option("--wc-url", envvar="VSDATA_WC_URL", default="")
 @click.option("--fmlinkdb", envvar="VSDATA_FM_LINK_CONNECTION_STRING", default="")
 @click.option("--fmdb", envvar="VSDATA_FM_CONNECTION_STRING", default="")
 @click.pass_context
-def cli(ctx, fmdb, fmlinkdb, wc_url, wc_key, wc_secret):
+def cli(ctx, fmdb, fmlinkdb, wc_url, wc_key, wc_secret, isolate):
     """
     Parent to all the commands, sets up FM connection and WC api instance
     """
     ctx.ensure_object(dict)
-    ctx.obj["fmdb"] = db.connection(fmdb)
-    ctx.obj["wcapi"] = api.get_api(wc_url, wc_key, wc_secret)
+    if not isolate:
+        ctx.obj["fmdb"] = db.connection(fmdb)
+        ctx.obj["wcapi"] = api.get_api(wc_url, wc_key, wc_secret)
 
 
 @cli.command()
@@ -112,8 +114,8 @@ def stock_csv(ctx, uncache):
     """
     Generate a CSV of stock values from filemaker and woocommerce.
     """
-    fmdb = ctx.parent.obj["fmdb"]
-    wcapi = ctx.parent.obj["wcapi"]
+    fmdb = ctx.parent.obj.get("fmdb")
+    wcapi = ctx.parent.obj.get("wcapi")
 
     stock.compare_wc_fm_stock(fmdb, wcapi, cli=True, uncache=uncache)
 
