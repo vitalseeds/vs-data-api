@@ -100,7 +100,7 @@ async def download(settings: config.Settings = Depends(get_settings)):
 
 
 @app.get("/stock/report/all/cached")
-async def download(settings: config.Settings = Depends(get_settings)):
+async def download_cached(settings: config.Settings = Depends(get_settings)):
     """
     Query filemaker then all WooCommerce products, then all WC large product
     variations. Warning: the variations aspect makes this quite slow.
