@@ -94,6 +94,8 @@ def compare_wc_fm_stock(fmdb, wcapi, cli: bool=False, csv: bool=False, uncache=F
             os.remove(results_pickle)
         if os.path.exists(products_pickle):
             os.remove(products_pickle)
+        if os.path.exists(variations_pickle):
+            os.remove(variations_pickle)
 
     # get all products from vs:acquisitions
     if exists(results_pickle) and exists(column_pickle):
