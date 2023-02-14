@@ -7,6 +7,7 @@ import click
 from rich import print
 
 from vs_data import stock
+from vs_data import orders
 from vs_data.fm import constants
 from vs_data.fm import db
 from vs_data.wc import api
@@ -123,6 +124,20 @@ def stock_csv(ctx, uncache):
     wcapi = ctx.parent.obj.get("wcapi")
 
     stock.compare_wc_fm_stock(fmdb, wcapi, cli=True, uncache=uncache)
+
+
+@cli.command()
+@click.option("--status", default="completed", help="Status to set on WooCommerce order")
+@click.pass_context
+def update_order_status(ctx, status):
+    """
+    Mark packed order as completed in woocommerce
+    """
+    # fmdb = ctx.parent.obj.get("fmdb")
+    fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
+    wcapi = ctx.parent.obj.get("wcapi")
+
+    orders.update_packed_orders_status(fmlinkdb, wcapi, cli=True, status=status)
 
 
 if __name__ == "__main__":
