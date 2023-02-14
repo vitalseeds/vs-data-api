@@ -52,3 +52,6 @@ def test_update_wc_stock_for_new_batches(wcapi, vsdb_connection, mocked_response
     responses._add_from_file(file_path="tests/fixtures/test_wcapi_stock/batch_post_product_stock.toml")
 
     stock.update_wc_stock_for_new_batches(vsdb_connection, wcapi)
+
+
+# TEST that cache is invalidated in compare_wc_fm_stock
