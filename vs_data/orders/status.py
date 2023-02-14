@@ -25,14 +25,14 @@ def get_selected_orders(fmlinkdb, status="packing"):
     columns = ["link_wc_order_id", "full_name", "status", "selected"]
     selected = _f("link:orders", "selected")
     order_status = _f("link:orders", "status")
-    # where = (
-    #     f"lower({selected})='yes' "
-    #     f"AND lower({order_status})='{status}'"
-    # )
     where = (
-        f"{selected}='Yes' "
-        f"AND {order_status}='{status}'"
+        f"lower({selected})='yes' "
+        f"AND lower({order_status})='{status}'"
     )
+    # where = (
+    #     f"{selected}='Yes' "
+    #     f"AND {order_status}='{status}'"
+    # )
     return db.select(fmlinkdb, table, columns, where=where)
 
 
