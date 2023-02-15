@@ -16,6 +16,14 @@ from vs_data.fm import constants
 VSDATA_FM_CONNECTION_STRING = os.environ.get("VSDATA_FM_CONNECTION_STRING", None)
 VSDATA_FM_LINK_CONNECTION_STRING = os.environ.get("VSDATA_FM_LINK_CONNECTION_STRING", None)
 
+INTEGER_FIELD_NAMES = [
+    'wc_product_id',
+    'wc_variation_lg_id',
+    'packets',
+    'batch_number',
+    'link_wc_order_id',
+]
+
 
 def construct_dsn_connection_string(
     dsn: str = "", user: str = "", pwd: str = ""
@@ -68,6 +76,7 @@ def connection(connection_string: str) -> pyodbc.Connection:
     if not connection_string:
         return False
 
+    # log.debug(connection_string)
     connection = pyodbc.connect(connection_string)
     return connection
 
@@ -88,9 +97,9 @@ def _select_columns(
     field_list = ",".join([f'"{f}"' for f in fm_columns])
     where_clause = f"WHERE {where}" if where else ""
     sql = f'SELECT {field_list} FROM "{fm_table}" {where_clause}'
+    log.debug(sql)
     rows = connection.cursor().execute(sql).fetchall()
 
-    log.debug(sql)
     return columns, rows
 
 
@@ -107,7 +116,7 @@ def select(
     - connection, table, columns, where
     """
     columns, rows = _select_columns(connection, table, columns, where)
-    objects = [dict(zip(columns, r)) for r in rows]
+    objects = zip_validate_columns(rows, columns)
     return objects
 
 
@@ -120,7 +129,7 @@ def zip_validate_columns(rows: list, columns: list, int_fields: list = None) -> 
     """
 
     if int_fields is None:
-        int_fields = ['wc_product_id', 'wc_variation_lg_id', 'packets', 'batch_number']
+        int_fields = INTEGER_FIELD_NAMES
     # Intersect to get columns that should be treated as ids
     int_fields_present = [c for c in columns if c in int_fields]
     dict_rows = [dict(zip(columns, r)) for r in rows]

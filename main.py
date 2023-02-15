@@ -6,6 +6,7 @@ from starlette.responses import FileResponse
 from vs_data.fm import db
 from vs_data import stock
 from vs_data import wc
+from vs_data import orders
 
 
 import config
@@ -112,3 +113,22 @@ async def download_cached(settings: config.Settings = Depends(get_settings)):
     date_suffix = datetime.now().strftime('%m-%d-%Y_%H-%M-%S')
     file_name = f"vsdata_stock-report-all_{date_suffix}.csv"
     return FileResponse(path=export_file_path, filename=file_name, media_type='text/csv')
+
+
+@app.get("/orders/selected/update/status/{target_status}")
+async def update_status_selected_orders(target_status:str, settings: config.Settings = Depends(get_settings)):
+    """
+    Update order statuses.
+
+    - queries link database for orders that are marked as 'selected'
+    - posts a bulk update to woocommerce for those orders
+    - updates status and deselects orders in link database
+    """
+    fmlinkdb = db.connection(settings.fm_link_connection_string)
+    updated_orders = orders.update_packed_orders_status(fmlinkdb, settings.wcapi, target_status=target_status)
+
+    if updated_orders and isinstance(updated_orders, list):
+        num_orders = len(updated_orders)
+        return {"orders": updated_orders, "message": f"{num_orders} orders were updated on WooCommerce"}
+
+    return {"message": f"No orders were updated on WooCommerce."}

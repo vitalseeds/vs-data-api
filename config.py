@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     app_name: str = "VS Data API"
     # fm_connection_string = os.environ.get("VSDATA_FM_CONNECTION_STRING", "")
     fm_connection_string: str = Field()
+    fm_link_connection_string: str = Field()
     vsdata_wc_url: str = Field(..., env='vsdata_wc_url')
     vsdata_wc_key: str = Field(..., env='vsdata_wc_key')
     vsdata_wc_secret: str = Field(..., env='vsdata_wc_secret')
