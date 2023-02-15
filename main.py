@@ -116,7 +116,7 @@ async def download_cached(settings: config.Settings = Depends(get_settings)):
 
 
 @app.get("/orders/selected/complete")
-async def download_cached(settings: config.Settings = Depends(get_settings)):
+async def selected_complete(settings: config.Settings = Depends(get_settings)):
     """
     Query Link database for orders that are 'packing' and marked as 'selected'
     """

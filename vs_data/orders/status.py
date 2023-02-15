@@ -20,14 +20,14 @@ from datetime import datetime
 LAST_BATCH_UPDATE_LOG = "tmp/orders_batch_update_response.json"
 
 
-def get_selected_orders(fmlinkdb, status="packing"):
+def get_selected_orders(fmlinkdb):
     table = "link:orders"
     columns = ["link_wc_order_id", "full_name", "status", "selected"]
     selected = _f("link:orders", "selected")
-    order_status = _f("link:orders", "status")
+    # order_status = _f("link:orders", "status")
     where = (
         f"lower({selected})='yes' "
-        f"AND lower({order_status})='{status}'"
+        # f"AND lower({order_status})='{status}'"
     )
     # where = (
     #     f"{selected}='Yes' "
@@ -48,7 +48,7 @@ def wc_orders_update_status(wcapi, orders:dict[dict], status:str):
     data = {"update": order_updates}
     log.debug(data)
     response = wcapi.post("orders/batch", data).json()
-
+    
     # Reduce noise by picking out pertinent details
     updates = [
         {
@@ -107,7 +107,7 @@ def link_db_update_orders(fmlinkdb: object, update_response: dict):
 
 def update_packed_orders_status(fmlinkdb, wcapi, cli: bool=False, status="completed"):
     # Assume for now that we only want to get orders that are in 'packing'
-    orders = get_selected_orders(fmlinkdb, "packing")
+    orders = get_selected_orders(fmlinkdb)
     # orders = [{'link_wc_order_id': 46011, 'full_name': 'Roberta Mathieson', 'status': 'packing', 'selected': 'Yes'}]
     log.debug(orders)
 
@@ -115,6 +115,7 @@ def update_packed_orders_status(fmlinkdb, wcapi, cli: bool=False, status="comple
         wc_response = wc_orders_update_status(wcapi, orders, status=status)
         log.info("WooCommerce updated")
         log.debug(wc_response)
+        # TODO - only update link db if target status was 'completed'
         link_result = link_db_update_orders(fmlinkdb, wc_response)
         log.info(f"Link database updated: {link_result} rows affected")
 
