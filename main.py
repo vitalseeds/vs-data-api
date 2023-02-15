@@ -118,7 +118,11 @@ async def download_cached(settings: config.Settings = Depends(get_settings)):
 @app.get("/orders/selected/update/status/{target_status}")
 async def update_status_selected_orders(target_status:str, settings: config.Settings = Depends(get_settings)):
     """
-    Query Link database for orders that are 'packing' and marked as 'selected'
+    Update order statuses.
+
+    - queries link database for orders that are marked as 'selected'
+    - posts a bulk update to woocommerce for those orders
+    - updates status and deselects orders in link database
     """
     fmlinkdb = db.connection(settings.fm_link_connection_string)
     updated_orders = orders.update_packed_orders_status(fmlinkdb, settings.wcapi, target_status=target_status)
