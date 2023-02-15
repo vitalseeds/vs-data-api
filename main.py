@@ -115,15 +115,16 @@ async def download_cached(settings: config.Settings = Depends(get_settings)):
     return FileResponse(path=export_file_path, filename=file_name, media_type='text/csv')
 
 
-@app.get("/orders/selected/complete")
-async def selected_complete(settings: config.Settings = Depends(get_settings)):
+@app.get("/orders/selected/update/status/{target_status}")
+async def update_status_selected_orders(target_status:str, settings: config.Settings = Depends(get_settings)):
     """
     Query Link database for orders that are 'packing' and marked as 'selected'
     """
     fmlinkdb = db.connection(settings.fm_link_connection_string)
-    updated_orders = orders.update_packed_orders_status(fmlinkdb, settings.wcapi)
-    num_orders = 0
-    if updated_orders:
-        num_orders = len(updated_orders)
+    updated_orders = orders.update_packed_orders_status(fmlinkdb, settings.wcapi, target_status=target_status)
 
-    return {"orders": updated_orders, "message": f"{num_orders} products were updated on WooCommerce"}
+    if updated_orders and isinstance(updated_orders, list):
+        num_orders = len(updated_orders)
+        return {"orders": updated_orders, "message": f"{num_orders} orders were updated on WooCommerce"}
+
+    return {"message": f"No orders were updated on WooCommerce."}
