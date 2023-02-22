@@ -78,8 +78,7 @@ def _fm_completion_date_or_now(date:str|None):
     return date.replace("T", " ")
 
 
-def link_db_update_completed_orders(fmlinkdb: object, update_response: dict) -> int:
-    wc_updated_orders = update_response["update"]
+def link_db_update_completed_orders(fmlinkdb: object, wc_updated_orders: list) -> int:
     orders_table = _t("link:orders")
 
     link_wc_order_id = _f("link:orders", "link_wc_order_id")
