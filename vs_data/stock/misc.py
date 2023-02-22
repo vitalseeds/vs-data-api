@@ -8,8 +8,19 @@ from vs_data.fm import db as fmdb
 from vs_data.fm import constants
 from rich import print
 from vs_data import log
+import itertools
 
 WC_MAX_API_RESULT_COUNT = 100
+
+# back port of 3.12 itertools.batched
+# https://docs.python.org/3.12/library/itertools.html#itertools.batched
+def batched(iterable, n):
+    # batched('ABCDEFG', 3) --> ABC DEF G
+    if n < 1:
+        raise ValueError('n must be at least one')
+    it = iter(iterable)
+    while (batch := tuple(itertools.islice(it, n))):
+        yield batch
 
 
 def get_wp_product_by_sku(wcapi, sku):
@@ -64,6 +75,30 @@ def wcapi_aggregate_paginated_response(func):
             num_products = int(response.headers["X-WP-Total"])
 
         log.debug(f"{num_products=}, {len(items)=}")
+        return items
+    return wrapper
+
+
+def wcapi_batch_post(func):
+    """
+    Repeat calls a decorated function to post multiple updates to WooCommerce API.
+
+    Function to call must accept parameters:
+        - wcapi object
+        - iterable to be processed
+
+    and return a requests response.
+    """
+    def wrapper(wcapi, updates, *args, **kwargs):
+        items = []
+        log.debug(batched(updates, WC_MAX_API_RESULT_COUNT))
+        for batch in batched(updates, WC_MAX_API_RESULT_COUNT):
+            updates = func(wcapi, batch, *args, **kwargs)
+            # try:
+            items.extend(updates)
+            # except AttributeError:
+            #     ...
+
         return items
     return wrapper
 

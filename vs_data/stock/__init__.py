@@ -13,3 +13,5 @@ from .misc import get_wc_products_in_stock
 from .misc import get_wp_product_by_sku
 from .misc import get_all_products
 from .stock_analytics import compare_wc_fm_stock
+from .misc import wcapi_aggregate_paginated_response
+from .misc import wcapi_batch_post
