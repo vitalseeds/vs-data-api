@@ -36,8 +36,7 @@ def get_batches_awaiting_upload_join_acq(connection):
     return [dict(zip(columns, r)) for r in rows]
 
 
-
-def  get_large_batches_awaiting_upload_join_acq(connection: object) -> list:
+def get_large_batches_awaiting_upload_join_acq(connection: object) -> list:
     """
     Query the FM database for large_batches
     that are ready to be added to WooCommerce stock.
@@ -69,7 +68,7 @@ def  get_large_batches_awaiting_upload_join_acq(connection: object) -> list:
     return fmdb.zip_validate_columns(rows, columns)
 
 
-def unset_awaiting_upload_flag(connection, batch_ids=None, large_batch=False):
+def _unset_awaiting_upload_flag(connection, batch_ids=None, large_batch=False):
     if batch_ids is None:
         batch_ids = []
     assert batch_ids
@@ -125,6 +124,7 @@ def get_wc_large_variations_by_product(wcapi: object, product_ids: list, lg_vari
             }
     return product_large_variations
 
+
 def _total_stock_increments(batches):
     """
     Add up stock increments per sku.
@@ -170,7 +170,7 @@ def wc_regular_product_update_stock(wcapi, products, stock_increments):
     return wcapi.post("products/batch", data).json()
 
 
-# TODO: improve performance of lookups from returned data
+# TODO: improve performance of lookups from returned data?
 # TODO: add tests
 # TODO: split large_variation logic out then review duplication
 def update_wc_stock_for_new_batches(connection, wcapi=None, product_variation=None):
@@ -269,12 +269,16 @@ def update_wc_stock_for_new_batches(connection, wcapi=None, product_variation=No
         log.debug(uploaded_batches)
 
     # Remove 'Awaiting upload' flag
+    _unset_awaiting_upload_flag(connection, uploaded_batches, large_batch=large_variation)
 
-    unset_awaiting_upload_flag(connection, uploaded_batches, large_batch=large_variation)
+    # TODO: Also update stock value in FM directly from woocommerce value (lg/reg)
+    # This will negate requirement for a preceding 'update stock' FM script
 
     if len(response["update"]):
         return response["update"]
 
+# --------------------------------------------
+# TODO: move following functions to their own file fetch_wc_ids.py
 
 def get_product_sku_map_from_linkdb(fmlinkdb):
     table = "link:Products"
@@ -291,6 +295,9 @@ def get_product_variation_map_from_linkdb(fmlinkdb):
 
 
 def update_acquisitions_wc_id(connection, sku_id_map):
+    """
+    Update stock database acquisitions table with WC product id for each sku.
+    """
     fm_table = _t("acquisitions")
     link_wc_id = "link_wc_product_id"
     wc_id = "wc_product_id"
@@ -302,6 +309,7 @@ def update_acquisitions_wc_id(connection, sku_id_map):
         cursor.execute(sql)
         print(cursor.rowcount)
         connection.commit()
+
 
 def update_acquisitions_wc_variations(connection, variation_id_map):
     large_variations = [v for v in variation_id_map if v["variation_option"] == "Large pack"]
@@ -318,6 +326,7 @@ def update_acquisitions_wc_variations(connection, variation_id_map):
 
     for row in large_variations:
         # The large pack variations have calculated sku based on product sku + '-Gr'
+        # TODO: abstract large pack sku construction
         base_sku = row['sku'].replace("-Gr", "")
         sql = f"UPDATE {fm_table} SET {large_variation_field}={row[wc_variation_id]} WHERE {parent_product_sku} = '{base_sku}'"
         print(sql)
