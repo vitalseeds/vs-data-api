@@ -54,3 +54,14 @@ class Stock(FilemakerTable):
     stock_regular = "stock_regular"
     update = "update"
     update_large = "update_large"
+
+
+class StockCorrections(FilemakerTable):
+    table_name = "stock_corrections"
+
+    id = "id"
+    sku = "sku"
+    large_packet_correction = "large_packet_correction"
+    stock_change = "stock_change"
+    wc_stock_updated = "wc_stock_updated"
+    vs_stock_updated = "vs_stock_updated"

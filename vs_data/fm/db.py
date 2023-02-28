@@ -17,12 +17,18 @@ VSDATA_FM_CONNECTION_STRING = os.environ.get("VSDATA_FM_CONNECTION_STRING", None
 VSDATA_FM_LINK_CONNECTION_STRING = os.environ.get("VSDATA_FM_LINK_CONNECTION_STRING", None)
 
 INTEGER_FIELD_NAMES = [
+    "id",
     'wc_product_id',
     'wc_variation_regular_id',
     'wc_variation_lg_id',
     'packets',
     'batch_number',
     'link_wc_order_id',
+    "wc_stock_updated",
+    "vs_stock_updated",
+    "stock_regular",
+    "stock_large",
+    "large_packet_correction",
 ]
 
 
@@ -135,6 +141,8 @@ def zip_validate_columns(rows: list, columns: list, int_fields: list = None) -> 
     # Intersect to get columns that should be treated as ids
     int_fields_present = [c for c in columns if c in int_fields]
     dict_rows = [dict(zip(columns, r)) for r in rows]
+
+    # TODO: vectorise this somehow (pandas?) for performance
     if int_fields_present:
         for i, row in enumerate(dict_rows):
             for int_field in int_fields_present:
