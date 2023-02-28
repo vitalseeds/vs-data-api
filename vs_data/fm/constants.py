@@ -44,6 +44,8 @@ def get_table_class(table_ref: str):
     return getattr(db_table_map, snake_to_camel(table_ref))
 
 
+# TODO: accept "table:field" form
+# TODO: lookup for table shortnames eg 'acq'
 def get_fm_field_name(table_ref: str, field_ref: str) -> str:
     # TODO: accept 'table:fieldname' as one argument
     # TODO: allow table name aliases eg acq (pydantic?)
