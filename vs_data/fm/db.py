@@ -86,7 +86,7 @@ def _select_columns(
     table: str,
     columns: list,
     where: str = None,
-) -> dict:
+) -> tuple[list[str], list[list]]:
     """
     Construct SQL statement for a select query and return result.
 
