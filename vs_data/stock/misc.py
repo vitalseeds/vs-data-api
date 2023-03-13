@@ -94,10 +94,12 @@ def wcapi_batch_post(func):
         log.debug(batched(updates, WC_MAX_API_RESULT_COUNT))
         for batch in batched(updates, WC_MAX_API_RESULT_COUNT):
             updates = func(wcapi, batch, *args, **kwargs)
-            # try:
-            items.extend(updates)
-            # except AttributeError:
-            #     ...
+            try:
+                items.extend(updates)
+            except TypeError:
+                log.warn("No updates described in reponse to wcapi batch post")
+                log.debug(f"{batch=}")
+                log.debug(f"{updates=}")
 
         return items
     return wrapper
