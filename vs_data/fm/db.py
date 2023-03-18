@@ -100,6 +100,7 @@ def _select_columns(
     log.debug(sql)
     rows = connection.cursor().execute(sql).fetchall()
 
+    # TODO: return a named tuple x.columns and x.rows
     return columns, rows
 
 
