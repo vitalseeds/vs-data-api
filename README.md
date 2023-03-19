@@ -63,6 +63,13 @@ Manager](https://odbcmanager.net/about.php)
 - add a _user_ driver from `/usr/local/lib/libsqlite3odbc-0.9993.dylib`
 - create a DSN using that driver (optional)
 
+#### Troubleshooting
+
+If receive error with normal operations after installing sqliteodbc, eg:
+`Can't open lib 'FileMaker ODBC' : file not found"`
+May need to make sure unixodbc has not been installed somehow.
+Eg `brew uninstall unixodbc`.
+
 # VS-data
 
 *Previously its own [installable package][2], now moved into the this repo to allow simpler maintenance.*

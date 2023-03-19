@@ -38,35 +38,19 @@ ACQUISITIONS_SCHEMA = {
 }
 ACQUISITIONS_COLUMNS = ACQUISITIONS_SCHEMA.keys()
 
-def create_connection(path):
-    connection = None
-    try:
-        connection = sqlite3.connect(path)
-        print("Connection to SQLite DB successful")
-    except Error as e:
-        print(f"The error '{e}' occurred")
-    return connection
+
+@pytest.mark.fmdb
+def test_connect_to_filemaker(vsdb_connection):
+    """
+    Tests that can access filemaker over ODBC
+    """
+    assert isinstance(vsdb_connection, pyodbc.Connection)
 
 
-def execute_query(connection, query):
-    cursor = connection.cursor()
-    try:
-        cursor.execute(query)
-        connection.commit()
-        print("Query executed successfully")
-    except Error as e:
-        print(f"The error '{e}' occurred")
+def test_connect_to_sqlite_with_odbc():
+    fmdb_mock = db.connection("DRIVER={SQLite3 ODBC Driver};SERVER=localhost;DATABASE=tests/fmdb_mock.sqlite;Trusted_connection=yes")
+    assert isinstance(fmdb_mock, pyodbc.Connection)
 
-
-def execute_read_query(connection, query):
-    cursor = connection.cursor()
-    result = None
-    try:
-        cursor.execute(query)
-        result = cursor.fetchall()
-        return result
-    except Error as e:
-        print(f"The error '{e}' occurred")
 
 def create_acquisitions_table(fmdb_mock):
     # TODO: use schema constant to generate SQL
@@ -80,17 +64,14 @@ def create_acquisitions_table(fmdb_mock):
             not_selling_in_shop TEXT
         );
     """)
-    execute_query(fmdb_mock, create_acq_table)
+    fmdb_mock.cursor().execute(create_acq_table)
+    fmdb_mock.commit()
+    log.debug("Created acquisitions table")
 
 
 def create_acquisitions_sample(fmdb, fmdb_mock):
     create_acquisitions_table(fmdb_mock)
     _, rows = db._select_columns(fmdb, "acquisitions", columns=ACQUISITIONS_COLUMNS)
-
-    # rows = quote_string_values(rows)
-    # print(rows)
-    # acq_values = [f"({', '.join(str(r))})" for r in rows]
-    # print(acq_values)
     acq_values = [f'("{r[0]}", "{r[1]}", {r[2] or "NULL"}, {r[3] or "NULL"}, {r[4] or "NULL"}, "{r[5]}")' for r in rows]
     create_mock_acquistions = dedent(f"""
         INSERT INTO
@@ -98,8 +79,9 @@ def create_acquisitions_sample(fmdb, fmdb_mock):
         VALUES
         {', '.join(acq_values)};
     """)
-    print(create_mock_acquistions)
-    execute_query(fmdb_mock, create_mock_acquistions)
+    fmdb_mock.cursor().execute(create_mock_acquistions)
+    fmdb_mock.commit()
+    log.debug("Added acquisitions from filemaker")
 
 
 def test_create_sqlite_mock(vsdb_connection):
@@ -107,32 +89,24 @@ def test_create_sqlite_mock(vsdb_connection):
     Requires an sqlite odbc driver for pyodbc to talk to test db
     Try http://www.ch-werner.de/sqliteodbc installer or `brew install sqliteodbc`
     """
-    # TODO: write up pyodbc sqlite solution/dependencies in docs
-    # https://realpython.com/python-sql-libraries/#sqlite_1
-    fmdb_mock = create_connection("tests/fmdb_mock.sqlite")
+    fmdb_mock = db.connection("DRIVER={SQLite3 ODBC Driver};SERVER=localhost;DATABASE=tests/fmdb_mock.sqlite;Trusted_connection=yes")
 
     create_acquisitions_sample(vsdb_connection, fmdb_mock)
-    # select_acquisition = "SELECT * from acquisitions"
-    # acquisitions = execute_read_query(fmdb_mock, select_acquisition)
+    select_acquisitions = "SELECT * from acquisitions"
+    fmdb_mock.cursor().execute(select_acquisitions)
 
-    for acquisition in acquisitions:
+    for acquisition in fmdb_mock.cursor().execute(select_acquisitions).fetchall():
         print(acquisition)
 
 
-def test_connect_to_sqlite_with_odbc():
-    # Create pyodbc connection to mock
+def test_select_columns():
     fmdb_mock = db.connection("DRIVER={SQLite3 ODBC Driver};SERVER=localhost;DATABASE=tests/fmdb_mock.sqlite;Trusted_connection=yes")
-    assert isinstance(fmdb_mock, pyodbc.Connection)
-    # Run an sql query using existing sql builder function (eg
-    # db._select_columns)
     results = db._select_columns(
         fmdb_mock,
         "acquisitions",
         ACQUISITIONS_COLUMNS,
     )
-    print(results)
-
-
+    assert results
 
 @pytest.mark.record
 def test_record__generate_batch_table(vsdb_connection):
