@@ -150,6 +150,20 @@ def _total_stock_increments(stock_corrections):
     return stock_increments
 
 
+def _check_product_updates(response, corrections):
+    """
+    Checks the WC response for updated products and compares that with submitted
+    stock_corrections
+    """
+    updated_products = [product["id"] for product in response["update"]]
+    uploaded_corrections = [
+        c["id"]
+        for c in corrections
+        if int(c["wc_product_id"]) in updated_products
+    ]
+    log.debug(uploaded_corrections)
+    return uploaded_corrections
+
 
 def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
     """
@@ -171,25 +185,39 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
         log.debug("No stock corrections await processing")
         return False
 
+    log.debug(f"stock_corrections {len(stock_corrections)}")
+    log.debug(stock_corrections)
+
+    # Separate large and regular packet stock corrections
     # validate that product actually has a product/variation
     regular_product_corrections = [sc for sc in stock_corrections if not sc["large_packet_correction"] and sc["wc_product_id"]]
     large_variation_corrections = [sc for sc in stock_corrections if sc["large_packet_correction"] and sc["wc_variation_lg_id"]]
+    invalid_variation_corrections = [sc["sku"] for sc in stock_corrections if sc["large_packet_correction"] and not sc["wc_variation_lg_id"]]
 
     wc_product_ids = [c["wc_product_id"] for c in regular_product_corrections]
     lg_variation_id_map = {c["wc_product_id"]: c["wc_variation_lg_id"] for c in large_variation_corrections}
 
-    log.debug(large_variation_corrections)
-    log.debug(lg_variation_id_map)
+    def log_submitted_corrections():
+        log.debug("regular_product_corrections:")
+        log.debug(regular_product_corrections)
+        log.debug("large_variation_corrections:")
+        log.debug(large_variation_corrections)
+        log.debug(lg_variation_id_map)
+        if invalid_variation_corrections:
+            log.warning(f"The following SKUs do not have WooCommerce 'large' variation IDs and will not be updated: {', '.join(invalid_variation_corrections)}    ")
+    log_submitted_corrections()
+
+    uploaded_corrections = []
 
     # Get current wc stock quantity
-    response_regular = None
-    if wc_product_ids:
-        products_stock = get_wc_products_by_id(wcapi, wc_product_ids)
+    if wc_product_ids and (products_stock := get_wc_products_by_id(wcapi, wc_product_ids)):
         regular_stock_increments = _total_stock_increments(regular_product_corrections)
+        log.debug(products_stock)
         log.debug(regular_stock_increments)
         response_regular = wc_regular_product_update_stock(wcapi, products_stock, regular_stock_increments)
+        uploaded_corrections.extend(_check_product_updates(response_regular, regular_product_corrections))
 
-    response_large = None
+    # Get current wc stock quantity for large variations
     if lg_variation_id_map:
         products_large_variation_stock = get_wc_large_variations_stock(
             wcapi,
@@ -199,26 +227,7 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
         log.debug(large_stock_increments)
         lg_variation_ids = {c["wc_product_id"]: c["wc_variation_lg_id"] for c in large_variation_corrections}
         response_large = wc_large_product_update_stock(wcapi, products_large_variation_stock, large_stock_increments, lg_variation_ids)
-
-    # Log response for batches whose products have had stock updated on WC
-    uploaded_corrections = []
-    if response_large:
-        updated_variations = [product["id"] for product in response_large["update"]]
-        uploaded_corrections.extend([
-            c["id"]
-            for c in large_variation_corrections
-            if int(c["wc_product_id"]) in updated_variations
-        ])
-        print(uploaded_corrections)
-
-    if response_regular:
-        updated_products = [product["id"] for product in response_regular["update"]]
-        uploaded_corrections.extend([
-            c["id"]
-            for c in regular_product_corrections
-            if int(c["wc_product_id"]) in updated_products
-        ])
-        print(uploaded_corrections)
+        uploaded_corrections.extend(_check_product_updates(response_large, large_variation_corrections))
 
     _set_wc_stock_updated_flag(connection, uploaded_corrections)
 
