@@ -8,3 +8,4 @@ rich==13.3.1
 pudb
 
 datascroller==1.4.1
+pydantic-xml==0.6.0
