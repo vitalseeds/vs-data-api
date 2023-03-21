@@ -83,8 +83,12 @@ def connection(connection_string: str) -> pyodbc.Connection:
     if not connection_string:
         return False
 
-    # log.debug(connection_string)
-    connection = pyodbc.connect(connection_string)
+    try:
+        connection = pyodbc.connect(connection_string)
+    except pyodbc.DatabaseError:
+        log.error(f"Could not connect to FileMaker \n({connection_string})")
+        exit(1)
+
     return connection
 
 

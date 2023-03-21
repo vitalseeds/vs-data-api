@@ -37,7 +37,7 @@ def cli(ctx, fmdb, fmlinkdb, wc_url, wc_key, wc_secret, isolate):
     ctx.ensure_object(dict)
     if not isolate:
         ctx.obj["fmdb"] = db.connection(fmdb)
-        ctx.obj["wcapi"] = api.get_api(wc_url, wc_key, wc_secret)
+        ctx.obj["wcapi"] = api.get_api(wc_url, wc_key, wc_secret, check_status=True)
 
 
 @cli.command()
@@ -148,7 +148,7 @@ def stock_csv(ctx, uncache):
     To clear cache and run afresh call with '--uncache' flag.
     """
     fmdb = ctx.parent.obj.get("fmdb")
-    wcapi = ctx.parent.obj.get("wcapi")
+    wcapi = ctx.parent.obj.get("wcapi") or exit(1)
 
     stock.compare_wc_fm_stock(fmdb, wcapi, cli=True, uncache=uncache)
 
@@ -162,7 +162,7 @@ def update_order_status(ctx, status):
     """
     # fmdb = ctx.parent.obj.get("fmdb")
     fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
-    wcapi = ctx.parent.obj.get("wcapi")
+    wcapi = ctx.parent.obj.get("wcapi") or exit(1)
 
     orders.update_packed_orders_status(fmlinkdb, wcapi, cli=True, status=status)
 
@@ -174,7 +174,7 @@ def apply_stock_corrections(ctx):
     Fetch new stock value and update Filemaker stock table.
     """
     fmdb = ctx.parent.obj.get("fmdb")
-    wcapi = ctx.parent.obj.get("wcapi")
+    wcapi = ctx.parent.obj.get("wcapi") or exit(1)
 
     stock.apply_corrections_to_wc_stock(fmdb, wcapi, cli=True)
 
