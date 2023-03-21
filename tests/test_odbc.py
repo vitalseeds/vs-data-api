@@ -69,7 +69,7 @@ def create_acquisitions_table(fmdb_mock):
     log.debug("Created acquisitions table")
 
 
-def create_acquisitions_sample(fmdb, fmdb_mock):
+def create_acquisitions_sample_from_filemaker(fmdb, fmdb_mock):
     create_acquisitions_table(fmdb_mock)
     _, rows = db._select_columns(fmdb, "acquisitions", columns=ACQUISITIONS_COLUMNS)
     acq_values = [f'("{r[0]}", "{r[1]}", {r[2] or "NULL"}, {r[3] or "NULL"}, {r[4] or "NULL"}, "{r[5]}")' for r in rows]
@@ -91,7 +91,7 @@ def test_create_sqlite_mock(vsdb_connection):
     """
     fmdb_mock = db.connection("DRIVER={SQLite3 ODBC Driver};SERVER=localhost;DATABASE=tests/fmdb_mock.sqlite;Trusted_connection=yes")
 
-    create_acquisitions_sample(vsdb_connection, fmdb_mock)
+    create_acquisitions_sample_from_filemaker(vsdb_connection, fmdb_mock)
     select_acquisitions = "SELECT * from acquisitions"
     fmdb_mock.cursor().execute(select_acquisitions)
 
