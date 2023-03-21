@@ -86,7 +86,7 @@ def _select_columns(
     table: str,
     columns: list,
     where: str = None,
-) -> dict:
+) -> tuple[list[str], list[list]]:
     """
     Construct SQL statement for a select query and return result.
 
@@ -100,6 +100,7 @@ def _select_columns(
     log.debug(sql)
     rows = connection.cursor().execute(sql).fetchall()
 
+    # TODO: return a named tuple x.columns and x.rows
     return columns, rows
 
 

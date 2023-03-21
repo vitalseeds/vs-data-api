@@ -5,6 +5,7 @@ __pycache__
 **/.envrc
 .env
 .env-test
+*.sqlite
 
 *.log
 *.img
