@@ -37,7 +37,7 @@ def cli(ctx, fmdb, fmlinkdb, wc_url, wc_key, wc_secret, isolate):
     ctx.ensure_object(dict)
     if not isolate:
         ctx.obj["fmdb"] = db.connection(fmdb)
-        ctx.obj["wcapi"] = api.get_api(wc_url, wc_key, wc_secret, check_status=True)
+        ctx.obj["wcapi"] = api.get_api(wc_url, wc_key, wc_secret, check_status=False)
 
 
 @cli.command()

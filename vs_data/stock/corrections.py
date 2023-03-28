@@ -17,6 +17,7 @@ from vs_data.fm.constants import tname as _t
 from vs_data.fm import db as fmdb
 from vs_data.stock.batch_upload import wc_large_product_update_stock
 from vs_data.stock.batch_upload import wc_regular_product_update_stock
+from inspect import cleandoc as dedent
 
 WC_MAX_API_RESULT_COUNT = 100
 LARGE_VARIATION_SKU_SUFFIX = "Gr"
@@ -38,14 +39,16 @@ def get_unprocessed_stock_corrections_join_acq_stock(connection):
     stock_sku = _f("stock", "sku")
     where = f'SC.{_f("stock_corrections", "wc_stock_updated")} IS NULL'
 
+    # TODO: case sensitive validation of sku in FileMaker would negate LOWER()
+    # This would be much more performant as could use indexes
     sql = (
         "SELECT SC.id, SC.sku, sc.large_packet_correction, sc.stock_change, "
         "SC.wc_stock_updated, SC.vs_stock_updated, "
         "A.wc_product_id, A.wc_variation_lg_id, "
         "S.stock_regular, S.stock_large "
         'FROM "stock_corrections" SC '
-        f'LEFT JOIN "acquisitions" A ON SC.sku = A.{acq_sku} '
-        f'LEFT JOIN "stock" S ON A.{acq_sku} = S.{stock_sku} '
+        f'LEFT JOIN "acquisitions" A ON LOWER(SC.sku) = LOWER(A.{acq_sku}) '
+        f'LEFT JOIN "stock" S ON LOWER(A.{acq_sku}) = LOWER(S.{stock_sku}) '
         "WHERE " + where
     )
     log.debug(sql)
@@ -212,7 +215,7 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
     # Get current wc stock quantity
     if wc_product_ids and (products_stock := get_wc_products_by_id(wcapi, wc_product_ids)):
         regular_stock_increments = _total_stock_increments(regular_product_corrections)
-        log.debug(products_stock)
+        # log.debug(products_stock)
         log.debug(regular_stock_increments)
         response_regular = wc_regular_product_update_stock(wcapi, products_stock, regular_stock_increments)
         uploaded_corrections.extend(_check_product_updates(response_regular, regular_product_corrections))
