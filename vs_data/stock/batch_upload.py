@@ -263,7 +263,7 @@ def update_wc_stock_for_new_batches(connection, wcapi=None, product_variation=No
         uploaded_batches = [
             int(b["batch_number"])
             for b in batches
-            if int(b["wc_product_id"]) in updated_products
+            if b["wc_product_id"] and int(b["wc_product_id"]) in updated_products
         ]
         log.debug("uploaded_batches:")
         log.debug(uploaded_batches)
