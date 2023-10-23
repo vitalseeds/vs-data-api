@@ -87,9 +87,10 @@ To connect to Filemaker:
 
 - filemaker database
 - fm user configured with `all access`
+- Filemaker ODBC driver
 - [ODBC manager](https://odbcmanager.net) installed and configured with a DSN for the db (optional, can
   connect direct)
-- Filemaker ODBC driver
+- (Mac only) iodbc library dependency for pypyodbc `brew install libiodbc`
 - Filemaker `sharing > enable ODBC`
 
 To connect to WooCommerce:
