@@ -140,5 +140,14 @@ def update_order_status(ctx, status):
     orders.update_packed_orders_status(fmlinkdb, wcapi, cli=True, status=status)
 
 
+@cli.command()
+@click.pass_context
+def test_fm(ctx):
+    """
+    Test FileMaker connection
+    """
+    fmdb = ctx.parent.obj["fmdb"]
+
+
 if __name__ == "__main__":
     cli()

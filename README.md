@@ -87,9 +87,10 @@ To connect to Filemaker:
 
 - filemaker database
 - fm user configured with `all access`
-- ODBC manager installed and configured with a DSN for the db (optional, can
+- [ODBC manager](https://odbcmanager.net) installed and configured with a DSN for the db (optional, can
   connect direct)
 - Filemaker ODBC driver
+- Filemaker `sharing > enable ODBC`
 
 To connect to WooCommerce:
 
@@ -106,6 +107,9 @@ from FM.
   - `VSDATA_WC_KEY`
   - `VSDATA_WC_SECRET`
 
+Install python dependencies.
+
+  - `pip install -r requirements.txt`
 
 ## Usage
 
@@ -113,7 +117,7 @@ Currently, to run the cli commands in production you will need to explicitly loa
 
 `dotenv run -- python vs_data import-wc-product-ids`
 
-This will be moved into pydantic settings and imported automatically as a default.
+TODO: This will be moved into pydantic settings and imported automatically as a default.
 
 Run test config via dotenv to test new endpoints etc against a dummy database and staging site:
 
