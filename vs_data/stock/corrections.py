@@ -156,7 +156,7 @@ def _total_stock_increments(stock_corrections):
     """
     stock_increments = defaultdict(lambda: 0)
     for correction in stock_corrections:
-        stock_increments[correction["wc_product_id"]] += correction["stock_change"]
+        stock_increments[correction["wc_product_id"]] += int(correction["stock_change"])
     return stock_increments
 
 
@@ -167,9 +167,7 @@ def _check_product_updates(response, corrections):
     """
     updated_products = [product["id"] for product in response["update"]]
     uploaded_corrections = [
-        c["id"]
-        for c in corrections
-        if int(c["wc_product_id"]) in updated_products
+        c["id"] for c in corrections if int(c["wc_product_id"]) in updated_products
     ]
     log.debug(uploaded_corrections)
     return uploaded_corrections

@@ -170,6 +170,8 @@ def update_order_status(ctx, status):
     orders.update_packed_orders_status(fmlinkdb, wcapi, cli=True, status=status)
 
 
+@cli.command()
+@click.pass_context
 def apply_stock_corrections(ctx):
     """
     Get stock corrections from filemaker, push to WooCommerce.
