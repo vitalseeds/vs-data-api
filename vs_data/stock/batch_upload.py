@@ -97,6 +97,7 @@ def get_wc_products_by_id(wcapi: object, ids: list):
     )
     if response.status_code == 200:
         return response.json()
+    log.warn("WC api did not respond")
 
 
 # TODO: remove product_ids param and use key of lg_variation_ids, see get_wc_large_variations_stock

@@ -97,11 +97,16 @@ def _set_wc_stock_updated_flag(connection, correction_ids=None):
     id = _f(table_name, "id")
     sql = ""
     for correction in correction_ids:
-        sql = f"UPDATE {fm_table} SET {wc_stock_updated}=1 WHERE {id} = {correction}"
-        cursor = connection.cursor()
-        log.info(sql)
-        cursor.execute(sql)
-        log.info(cursor.rowcount)
+        try:
+            sql = f"UPDATE {fm_table} SET {wc_stock_updated}=1 WHERE {id} = {correction}"
+            cursor = connection.cursor()
+            log.info(sql)
+            cursor.execute(sql)
+            log.info(cursor.rowcount)
+        except Exception:
+            # ensure other rows are still processed if there is an issue, eg
+            # missing product id
+            pass
     connection.commit()
 
 

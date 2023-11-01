@@ -75,8 +75,11 @@ def get_wc_stock(ctx, sku:str, large:bool=False):
         return
     product_ids = [p["wc_product_id"] for p in acquisitions]
     wc_products = stock.get_wc_products_by_id(wcapi, product_ids)
-    wc_product_stock = {p["id"]:p["stock_quantity"] for p in wc_products}
-    print(wc_product_stock)
+    if wc_products:
+        wc_product_stock = {p["id"]:p["stock_quantity"] for p in wc_products}
+        print(wc_product_stock)
+        return
+    print("No WC product found")
 
 
 @cli.command()
