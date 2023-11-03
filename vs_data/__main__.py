@@ -8,6 +8,7 @@ from rich import print
 
 from vs_data import stock
 from vs_data import orders
+from vs_data import products
 from vs_data.fm import constants
 from vs_data.fm import db
 from vs_data.wc import api
@@ -138,6 +139,25 @@ def update_order_status(ctx, status):
     wcapi = ctx.parent.obj.get("wcapi")
 
     orders.update_packed_orders_status(fmlinkdb, wcapi, cli=True, status=status)
+
+
+@cli.command()
+# @click.option(
+#     "--status",
+#     default="completed",
+#     help="Use sku from regular product variations to replace lg var skus that have been lowercased",
+# )
+@click.pass_context
+def recapitalise_lg_skus(ctx):
+    """
+    Recapitalise lg product variation skus
+    eg onwl-GR becomes OnWl-GR
+    """
+    # fmdb = ctx.parent.obj.get("fmdb")
+    # fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
+    wcapi = ctx.parent.obj.get("wcapi")
+
+    products.recapitalise_lg_skus(wcapi, cli=True)
 
 
 @cli.command()
