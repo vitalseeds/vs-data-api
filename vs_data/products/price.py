@@ -1,4 +1,6 @@
+from datetime import datetime
 import csv
+import pathlib
 from vs_data.stock.misc import get_all_products, get_all_wc_products
 from vs_data.cli.table import display_product_table, display_table
 import json
@@ -62,155 +64,114 @@ def get_acquisitions_with_large_variation(connection):
     # return fmdb.select(connection, table, columns)
 
 
+def get_audit_log_path(audit_key):
+    audit_log_dir = os.environ.get("AUDIT_LOG_DIR", "tmp")
+    return f'{audit_log_dir}/{audit_key}.csv'
+
+
+def write_audit_csv(audit_key, list_of_dicts):
+    filename = get_audit_log_path(audit_key)
+    append = pathlib.Path(filename).is_file()
+
+    with open(filename, mode='a') as csv_file:
+        headers = list_of_dicts[0].keys()
+        audit_log_writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        if not append:
+            audit_log_writer.writerow(headers)
+        for row in list_of_dicts:
+            audit_log_writer.writerow(row.values())
+
+
+# def record_current_wc_variation_prices(wcapi):
+#     """
+#     Intended only to record previous state of WC prices
+#     Extremely slow as per variation
+#     """
+#     all_products = get_all_wc_products(wcapi)
+#     # Filter to those with variations
+#     wc_var_products = [
+#         {"sku": p["sku"], "id": p["id"], "variation_ids": p["variations"]}
+#         for p in all_products
+#         if p["variations"]
+#     ]
+#     wc_variation_details = []
+#     for p in wc_var_products:
+#         # product_sku = p["sku"]
+#         product_id = p["id"]
+#         variation_ids = p["variation_ids"]
+#         variations = get_wc_variations_for_product(
+#             wcapi,
+#             product_id,
+#             variation_ids,
+#         )
+#         for variation in variations:
+#             wc_variation_details.append({
+#                 "product_id": product_id,
+#                 "variation_id": variation['id'],
+#                 "regular_price": variation['regular_price']
+#             })
+#         write_audit_csv("push_variation_prices_to_wc-2_wc_before", wc_variation_details)
+
+
 def push_variation_prices_to_wc(wcapi, fmdb, cli: bool = False) -> list | None:
     # Query vs_db for variation prices
     variation_products = get_acquisitions_with_large_variation(fmdb)
     log.debug(variation_products)
-    # Audit: Export CSV of variation prices pre update
-    # f = open('tmp/variation_prices_pre_update.csv','wb')
-    # w = csv.DictWriter(f, [
-    #     "sku",
-    #     # "crop",
-    #     "wc_product_id",
-    #     "wc_variation_lg_id",
-    #     "wc_variation_regular_id",
-    #     # "not_selling_in_shop",
-    #     "price",
-    #     "lg_variation_price",
-    # ])
-    # w.writerows(variation_products)
-    # f.close()
+
+    now = datetime.now() # current date and time
+    run_time = now.strftime("%Y-%m-%d__%H-%M-%S")
+    audit_key = f"wc_variation_prices_after_{run_time}"
+    audit_log_path = get_audit_log_path(audit_key)
+
+    # Audit: Export CSV of variation prices in DB pre update
+    # write_audit_csv("push_variation_prices_to_wc-1_db_before", variation_products)
+    # Audit: Export CSV of variation prices on WC pre update
+    # record_current_wc_variation_prices(wcapi)
 
     # Loop products with variations
-    for p in variation_products:
-        wc_pid = p["wc_product_id"]
+    try:
+        for p in variation_products:
+            wc_pid = p["wc_product_id"]
 
-        wc_var_reg_id = p["wc_variation_regular_id"]
-        wc_var_reg_price = p["price"]
-        wc_var_lg_id = p["wc_variation_lg_id"]
-        wc_var_lg_price = p["lg_variation_price"]
+            wc_var_reg_id = p["wc_variation_regular_id"]
+            wc_var_reg_price = p["price"]
+            wc_var_lg_id = p["wc_variation_lg_id"]
+            wc_var_lg_price = p["lg_variation_price"]
 
-        # Push regular product variation price
-        endpoint = f"products/{wc_pid}/variations/{wc_var_reg_id}"
-        data = {
-            "regular_price": str(wc_var_reg_price),
-        }
-        log.debug(data)
-        response = wcapi.put(endpoint, data)
-        log.debug(response)
-        log.debug(response.json())
+            def log_wc_variations_new_price(v):
+                variation_updates_concise = [
+                    {
+                        "sku": v["sku"],
+                        "id": v["id"],
+                        "regular_price": v["regular_price"],
+                        "permalink": v["permalink"],
+                    }
+                ]
+                write_audit_csv(audit_key, variation_updates_concise)
 
-        # Push large product variation price
-        endpoint = f"products/{wc_pid}/variations/{wc_var_lg_id}"
-        data = {
-            "regular_price": str(wc_var_lg_price),
-        }
-        response = wcapi.put(endpoint, data)
-        log.debug(response)
-        log.debug(response.json())
-        quit()
-
-    # PUT prices for regular and large variations to WC (via rest API update)
-    # Audit: Export CSV of variation prices post update
-
-
-def recapitalise_lg_skus(wcapi, cli: bool = False) -> list | None:
-    # Cache rest api call for products
-    prod_skus_pickle = "tmp/prod_skus.pickle"
-    if exists(prod_skus_pickle):
-        # if None:
-        with open(prod_skus_pickle, "rb") as file:
-            prod_skus = pickle.load(file)
-    else:
-        # Get all products
-        products = get_all_wc_products(wcapi)
-
-        # Filter to those with variations
-        prod_skus = [
-            {"sku": p["sku"], "id": p["id"], "variation_ids": p["variations"]}
-            for p in products
-            if p["variations"]
-        ]
-        log.debug(prod_skus)
-
-        with open(prod_skus_pickle, "wb") as file:
-            pickle.dump(prod_skus, file)
-
-    # Loop variations
-    variation_updates = []
-    for p in prod_skus:
-        # product_sku = p["sku"]
-        product_id = p["id"]
-        variation_ids = p["variation_ids"]
-        variations = get_wc_variations_for_product(
-            wcapi,
-            product_id,
-            variation_ids,
-        )
-        if len(variations) == 2:
-            regular_product_sku = [
-                v["sku"]
-                for v in variations
-                if not v["sku"].endswith(("-GR", "-Gr", "-gr"))
-            ][0]
-            large_variations = [
-                [v["id"], v["sku"]]
-                for v in variations
-                if v["sku"].endswith(("-GR", "-Gr", "-gr"))
-            ]
-            if not large_variations:
-                continue
-            large_variation = large_variations[0]
-            large_variation_sku = large_variation[1]
-
-            # Construct lg var sku from regular sku
-            new_lg_sku = f"{regular_product_sku}-Gr"
-
-            log.debug(
-                f"• Regular product sku: {regular_product_sku}\n• Large variation sku: {large_variation_sku}\n• Capitalised lg var sku: {new_lg_sku}"
-            )
-
-            # Check if lg var sku is lowercase?
-            if new_lg_sku == large_variation_sku:
-                log.info(f"SKU already correct ({new_lg_sku})")
-                continue
-
-            log.warn(
-                f"Large variation sku needs updating ({large_variation_sku} → {new_lg_sku})"
-            )
-
-            # generate rest api query to update
-
-            endpoint = f"products/{product_id}/variations/{large_variation[0]}"
-            data = {"sku": new_lg_sku}
+            # PUT prices for regular and large variations to WC (via rest API update)
+            # Push regular product variation price
+            endpoint = f"products/{wc_pid}/variations/{wc_var_reg_id}"
+            data = {
+                "regular_price": str(wc_var_reg_price),
+            }
+            log.debug(data)
             response = wcapi.put(endpoint, data)
-            variation_updates.append(response.json())
+            log.debug(response)
+            log.debug(response.json())
+            log_wc_variations_new_price(response.json())
 
-        log.info(variation_updates)
-        with open("tmp/sku_capitalise_updates.pickle", "wb") as file:
-            pickle.dump(variation_updates, file)
+            # Push large product variation price
+            endpoint = f"products/{wc_pid}/variations/{wc_var_lg_id}"
+            data = {
+                "regular_price": str(wc_var_lg_price),
+            }
+            response = wcapi.put(endpoint, data)
+            log.debug(response)
+            log.debug(response.json())
+            log_wc_variations_new_price(response.json())
+    except Exception:
+        pass
 
-    # post query
-
-    # # Assume for now that we only want to get orders that are in 'packing'
-    # orders = get_selected_orders(fmlinkdb)
-    # # orders = [{'link_wc_order_id': 46011, 'full_name': 'Roberta Mathieson', 'status': 'packing', 'selected': 'Yes'}]
-    # log.debug(f"{len(orders)=}")
-
-    # if orders:
-    #     wc_updates = wc_orders_update_status(wcapi, orders, target_status=target_status)
-    #     log.info("WooCommerce updated")
-    #     log.debug(wc_updates)
-    #     if not wc_updates:
-    #         return
-
-    #     if target_status == "completed":
-    #         link_result = link_db_update_completed_orders(fmlinkdb, wc_updates)
-    #         log.info(
-    #             f"Link database orders marked 'completed': {link_result} rows affected"
-    #         )
-    #     else:
-    #         link_db_change_status_selected_orders(fmlinkdb, target_status=target_status)
-
-    #     # return wc_response.get("update", [])
-    #     return wc_updates
+    return variation_products, audit_log_path
+    # Audit: Export CSV of variation prices post update
