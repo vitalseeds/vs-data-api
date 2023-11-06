@@ -115,9 +115,8 @@ def recapitalise_lg_skus(wcapi, cli: bool = False) -> list | None:
             variation_updates.append(response.json())
 
         log.info(variation_updates)
-        with open("tmp/sku_capitalise_updates", "wb") as file:
+        with open("tmp/sku_capitalise_updates.pickle", "wb") as file:
             pickle.dump(variation_updates, file)
-        quit()
 
     # post query
 
