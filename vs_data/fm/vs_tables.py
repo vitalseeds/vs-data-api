@@ -10,6 +10,9 @@ class Acquisitions(FilemakerTable):
     wc_variation_lg_id = "wc_variation_lg_id"
     wc_variation_regular_id = "wc_variation_regular_id"
     not_selling_in_shop = "not_selling_in_shop"
+    price = "Sale_price"
+    lg_variation_price = "Large_price"
+
 
 class PacketingBatches(FilemakerTable):
     table_name = "packeting_batches"
