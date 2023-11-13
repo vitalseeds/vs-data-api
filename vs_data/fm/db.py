@@ -87,8 +87,13 @@ def connection(connection_string: str) -> pyodbc.Connection:
         connection = pyodbc.connect(connection_string)
     except pyodbc.DatabaseError:
         log.error(f"Could not connect to FileMaker \n({connection_string})")
-        exit(1)
 
+        if os.name == "posix" or os.name == "darwin":
+            log.warn(
+                "If running MacOS, it is possible that unixodbc is installed instead of libiodbc\n"
+                "try `brew uninstall unixodbc && brew install libiodbc`"
+            )
+        exit(1)
     return connection
 
 
@@ -156,6 +161,7 @@ def zip_validate_columns(rows: list, columns: list, int_fields: list = None) -> 
                     # TODO: this sort of wrangling could be negated by pydantic
                     dict_rows[i][int_field] = int(field_value)
     return dict_rows
+
 
 def convert_pyodbc_cursor_results_to_lists(results):
     # TODO: not neccessary if not displaying in cli table (_select returns
