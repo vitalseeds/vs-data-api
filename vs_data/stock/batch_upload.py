@@ -67,7 +67,6 @@ def get_large_batches_awaiting_upload_join_acq(connection: object) -> list:
     # return [dict(zip(columns, r)) for r in rows]
     return fmdb.zip_validate_columns(rows, columns)
 
-
 def _unset_awaiting_upload_flag(connection, batch_ids=None, large_batch=False):
     if batch_ids is None:
         batch_ids = []

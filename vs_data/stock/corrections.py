@@ -11,6 +11,7 @@ from rich import print
 
 from vs_data import log
 from vs_data.cli.table import display_table
+from vs_data.fm import db
 from vs_data.fm import constants
 from vs_data.fm.constants import fname as _f
 from vs_data.fm.constants import tname as _t
@@ -141,29 +142,102 @@ def _check_product_updates(response, corrections, vs_key="wc_product_id"):
     return uploaded_corrections
 
 
-def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
+def get_most_recent_batch(connection: object, sku: str) -> list:
+    # NOT CURRENTLY IN USE
+    # TODO: should get sku from join on seed_lot, not packeting_batches
+    return fmdb.select(
+        connection,
+        "packeting_batches",
+        ["awaiting_upload", "batch_number", "packets", "pack_date", "left_in_batch"],
+        where=f"pack_date IS NOT NULL AND LOWER(sku)=LOWER('{sku}') AND left_in_batch>0",
+        order_by="pack_date DESC",
+        limit=1
+    )
+
+
+def get_current_batch_id(connection: object, sku: str, field_name="packing_batch") -> list:
+    # TODO: should get sku from join on seed_lot, not packeting_batches
+    acquisition = fmdb.select(
+        connection,
+        "acquisitions",
+        ["sku", field_name],
+        where=f"LOWER(sku)=LOWER('{sku}')",
+    )
+    return acquisition[0][field_name] if acquisition else None
+
+
+def get_current_large_batch_id(connection: object, sku: str) -> list:
+    return get_current_batch_id(connection, sku, field_name="large_packing_batch")
+
+
+def get_current_batch(connection: object, sku: str, table_name="packeting_batches") -> list:
+    current_batch_id = get_current_batch_id(connection, sku)
+    # TODO: join batch to get 'left in batch' value
+    batch = fmdb.select(
+        connection,
+        table_name,
+        ["batch_number", "sku", "packets", "left_in_batch"],
+        where=f"batch_number={current_batch_id}",
+    )
+    return batch[0] if len(batch) else None
+
+
+def get_current_large_batch(connection: object, sku: str) -> list:
+    return get_current_batch(connection, sku, table_name=_t("large_batches"))
+
+
+def amend_current_left_in_batch(connection: object, sku, correction, table_name="packeting_batches") -> [int|str, int]:
     """
-    Update WooCommerce stock from stock corrections.
-
-    Args:
-        FileMaker db connection
-        WooCommerce API instance
-
-    Query filemaker for stock corrections.
-    Get the current stock level for product/variation.
-    Add up stock increment per product from multiple corrections.
-    Update the stock_quantity for the WooCommerce product/variation.
+    Apply the correction amount to the 'left in batch' records for batch/order tracking
     """
-    print("apply_corrections_to_wc_stock")
-    stock_corrections = get_unprocessed_stock_corrections_join_acq_stock(connection)
+    # TODO: remove this, unneccessary
+    # https://github.com/vitalseeds/vs-data-api/issues/23#issuecomment-1808648652
+    batch_table = constants.tname(table_name)
+    left_in_batch = constants.fname(batch_table, "left_in_batch")
+    batch_number = constants.fname(batch_table, "batch_number")
+    packed = constants.fname(batch_table, "packets")
 
-    if not stock_corrections:
-        log.debug("No stock corrections await processing")
-        return False
+    correction_remainder = int(correction)
+    while correction_remainder:
+        current_batch = get_current_batch(connection, sku, table_name)
+        packets_in_batch = current_batch[packed]
+        correction_result = int(current_batch["left_in_batch"]) + correction_remainder
 
-    log.debug(f"stock_corrections {len(stock_corrections)}")
-    log.debug(stock_corrections)
+        if correction_result < 1:
+            # If there is not enough stock in the batch after amendment we will
+            # need to amend next batch as well
+            correction_remainder = correction_result
+            # set current_batch to next
+        elif correction_result > packets_in_batch:
+            # Positive stock amendment exceeds size of batch
+            # set current_batch to previous
+            correction_remainder = correction_result - packets_in_batch
+            correction_result = packets_in_batch
+        else:
+            # All done
+            correction_remainder = 0
 
+        batch_id = current_batch['batch_number']
+        sql = f"UPDATE {batch_table} SET {left_in_batch}={correction_result} WHERE {batch_number}={batch_id}"
+        cursor = connection.cursor()
+        print(sql)
+        cursor.execute(sql)
+        print(cursor.rowcount)
+        # return fmdb.select(
+        #     connection,
+        #     "acquisitions",
+        #     ["sku", "packing_batch"],
+        #     where=f"LOWER(sku)=LOWER('{sku}')",
+        # )
+    connection.commit()
+    return current_batch, correction_result
+
+
+def amend_current_left_in_large_batch(connection: object, sku, correction) -> [int | str, int]:
+    return amend_current_left_in_batch(connection, sku, correction, table_name="packeting_batches")
+
+
+def process_stock_corrections(connection, wcapi=None):
     # Separate large and regular packet stock corrections
     # validate that product actually has a product/variation
     regular_product_corrections = [
@@ -241,7 +315,90 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
         log.debug(lg_updates)
         uploaded_corrections.extend(lg_updates)
     log.debug(uploaded_corrections)
+    return uploaded_corrections
+
+
+def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
+    """
+    Update WooCommerce stock from stock corrections.
+
+    Args:
+        FileMaker db connection
+        WooCommerce API instance
+
+    Query filemaker for stock corrections.
+    Get the current stock level for product/variation.
+    Add up stock increment per product from multiple corrections.
+    Update the stock_quantity for the WooCommerce product/variation.
+    """
+    print("apply_corrections_to_wc_stock")
+    stock_corrections = get_unprocessed_stock_corrections_join_acq_stock(connection)
+
+    if not stock_corrections:
+        log.debug("No stock corrections await processing")
+        return False
+
+    log.debug(f"stock_corrections {len(stock_corrections)}")
+    log.debug(stock_corrections)
+    uploaded_corrections = process_stock_corrections(connection, wcapi)
+
     _set_wc_stock_updated_flag(connection, uploaded_corrections)
+
+    # import pickle
+    # from os.path import exists
+    # stock_corrections_pickle = "tmp/stock_corrections.pickle"
+    # if exists(stock_corrections_pickle):
+    #     with open(stock_corrections_pickle, 'rb') as file:
+    #         stock_corrections = pickle.load(file)
+    # else:
+    #     with open(stock_corrections_pickle, 'wb') as file:
+    #         pickle.dump(stock_corrections, file)
+
+    # from os.path import exists
+    # uploaded_corrections_pickle = "tmp/uploaded_corrections.pickle"
+    # if exists(uploaded_corrections_pickle):
+    #     with open(uploaded_corrections_pickle, 'rb') as file:
+    #         uploaded_corrections = pickle.load(file)
+    # else:
+    #     with open(uploaded_corrections_pickle, 'wb') as file:
+    #         pickle.dump(uploaded_corrections, file)
+
+    # print(stock_corrections)
+    # print(uploaded_corrections_pickle)
+
+    # For each uploaded correction
+    corrections = {c["id"]: c for c in stock_corrections}
+    print(uploaded_corrections)
+
+    for correction_id in uploaded_corrections:
+        correction = corrections[correction_id]
+        log.info(correction)
+        #   Get current batch
+        if correction["large_packet_correction"]:
+            log.info("large_packet_correction")
+
+            #
+            current_batch, left_in_batch = amend_current_left_in_large_batch(
+                connection,
+                correction["sku"],
+                # correction["stock_change"]
+                100
+            )
+            print(current_batch)
+            print(left_in_batch)
+            continue
+            # Amend 'left in batch' value
+
+        # current_batch_id = get_current_batch_id(connection, correction["sku"])
+        log.info("regular_packet_correction")
+        current_batch, left_in_batch = amend_current_left_in_batch(
+            connection,
+            correction["sku"],
+            correction["stock_change"]
+        )
+        log.debug(current_batch)
+        log.debug(left_in_batch)
+        # Amend 'left in batch' value
 
     # TODO: Also update stock value in FM directly from woocommerce value (lg/reg)
     # This will negate requirement for a preceding 'update stock' FM script

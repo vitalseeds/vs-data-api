@@ -12,6 +12,13 @@ class Acquisitions(FilemakerTable):
     not_selling_in_shop = "not_selling_in_shop"
     price = "Sale_price"
     lg_variation_price = "Large_price"
+    packing_batch = "packing_batch"  # previously "Packing_batch"
+    large_packing_batch = "Lrg_packing_batch"
+
+    # foreign_table_name: {pk: "local_field_name", fk: "foreign_field_name"}
+    # foreign_keys = {
+    #     "packeting_batch": {"pk": "packing_batch", "fk": "batch_id"},
+    # }
 
 
 class PacketingBatches(FilemakerTable):
@@ -24,20 +31,22 @@ class PacketingBatches(FilemakerTable):
     packets = "packets"
     to_pack = "to_pack"
     pack_date = "pack_date"
-    seed_lot = "seed_lot" # previously SeedLotFK - change to number
+    seed_lot = "seed_lot"  # previously SeedLotFK - change to number
+    left_in_batch = "left_in_batch"
 
 
 class LargeBatches(FilemakerTable):
     table_name = "large_batches"  # rename table occurence 'Growers_batches'
 
     awaiting_upload = "awaiting_upload"
-    sku = "sku" # previously SKUFK
+    sku = "sku"  # previously SKUFK
     sku_variation = "sku_variation"  # previously SKU_var
     batch_number = "batch_number"
     packets = "packets"  # previously 'packed'
     to_pack = "to_pack"  # previously 'packets'
     pack_date = "pack_date"
     seed_lot = "seed_lot"  # previously SeedLotFK - change to number
+    left_in_batch = "left_in_batch"  # previously 'Left in batch'
 
 
 class SeedLots(FilemakerTable):
