@@ -18,6 +18,7 @@ VSDATA_FM_LINK_CONNECTION_STRING = os.environ.get("VSDATA_FM_LINK_CONNECTION_STR
 
 INTEGER_FIELD_NAMES = [
     'wc_product_id',
+    'wc_variation_regular_id',
     'wc_variation_lg_id',
     'packets',
     'batch_number',

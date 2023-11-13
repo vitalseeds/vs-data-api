@@ -7,6 +7,7 @@ from vs_data.fm import db
 from vs_data import stock
 from vs_data import wc
 from vs_data import orders
+from vs_data import products
 
 
 import config
@@ -122,3 +123,17 @@ async def update_status_selected_orders(target_status:str, settings: config.Sett
         return {"orders": updated_orders, "message": f"{num_orders} orders were updated on WooCommerce"}
 
     return {"message": f"No orders were updated on WooCommerce."}
+
+
+@app.get("/products/variations/update-wc-price")
+async def update_wc_variation_prices(settings: config.Settings = Depends(get_settings)):
+    """
+    Update WooCommerce price for product variations from our database
+    """
+    connection = db.connection(settings.fm_connection_string)
+    variations, audit_log_path = products.push_variation_prices_to_wc(settings.wcapi, connection)
+
+    if not variations:
+        return {"message": "No variations were updated on WooCommerce"}
+    updated_num = len(variations)
+    return {"variations": variations, "message": f"{updated_num} products were updated on WooCommerce. \nSee {audit_log_path} for details"}
