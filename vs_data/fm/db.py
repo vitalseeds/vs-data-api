@@ -102,6 +102,7 @@ def _select_columns(
     table: str,
     columns: list,
     where: str = None,
+    order_by: str = None,
 ) -> tuple[list[str], list[list]]:
     """
     Construct SQL statement for a select query and return result.
@@ -112,7 +113,8 @@ def _select_columns(
     fm_table = constants.tname(table)
     field_list = ",".join([f'"{f}"' for f in fm_columns])
     where_clause = f"WHERE {where}" if where else ""
-    sql = f'SELECT {field_list} FROM "{fm_table}" {where_clause}'
+    order_by_clause = f"ORDER BY {order_by}" if order_by else ""
+    sql = f'SELECT {field_list} FROM "{fm_table}" {where_clause} {order_by_clause}'
     log.debug(sql)
     rows = connection.cursor().execute(sql).fetchall()
 
@@ -125,6 +127,7 @@ def select(
     table: str,
     columns: list,
     where: str = None,
+    order_by: str = None,
 ) -> dict:
     """
     Perform SQL select query and return result as list of dicts
@@ -132,7 +135,7 @@ def select(
     Accepts
     - connection, table, columns, where
     """
-    columns, rows = _select_columns(connection, table, columns, where)
+    columns, rows = _select_columns(connection, table, columns, where, order_by)
     objects = zip_validate_columns(rows, columns)
     return objects
 
