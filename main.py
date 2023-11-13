@@ -137,6 +137,8 @@ async def update_wc_variation_prices(settings: config.Settings = Depends(get_set
         return {"message": "No variations were updated on WooCommerce"}
     updated_num = len(variations)
     return {"variations": variations, "message": f"{updated_num} products were updated on WooCommerce. \nSee {audit_log_path} for details"}
+
+
 @app.get("/stock/apply-corrections")
 async def apply_stock_corrections_wc(settings: config.Settings = Depends(get_settings)):
     """
@@ -148,7 +150,8 @@ async def apply_stock_corrections_wc(settings: config.Settings = Depends(get_set
     )
 
     if not applied_corrections:
-        return {"message": "No variations were updated on WooCommerce"}
+        return {"message": "No corrections were applied to WooCommerce"}
+
     updated_num = len(applied_corrections)
     return {
         "applied_corrections": applied_corrections,

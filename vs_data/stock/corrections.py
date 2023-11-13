@@ -160,14 +160,14 @@ def _total_stock_increments(stock_corrections):
     return stock_increments
 
 
-def _check_product_updates(response, corrections):
+def _check_product_updates(response, corrections, vs_key="wc_product_id"):
     """
     Checks the WC response for updated products and compares that with submitted
     stock_corrections
     """
     updated_products = [product["id"] for product in response["update"]]
     uploaded_corrections = [
-        c["id"] for c in corrections if int(c["wc_product_id"]) in updated_products
+        c["id"] for c in corrections if int(c[vs_key]) in updated_products
     ]
     log.debug(uploaded_corrections)
     return uploaded_corrections
@@ -265,7 +265,11 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
             large_stock_increments,
             lg_variation_ids,
         )
-        lg_updates = _check_product_updates(response_large, large_variation_corrections)
+        lg_updates = _check_product_updates(
+            response_large,
+            large_variation_corrections,
+            vs_key="wc_variation_lg_id"
+        )
         log.debug(lg_updates)
         uploaded_corrections.extend(lg_updates)
     log.debug(uploaded_corrections)
