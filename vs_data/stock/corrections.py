@@ -57,38 +57,6 @@ def get_unprocessed_stock_corrections_join_acq_stock(connection):
     return fmdb.zip_validate_columns(rows, columns)
 
 
-def get_large_batches_awaiting_upload_join_acq(connection: object) -> list:
-    """
-    Query the FM database for large_batches
-    that are ready to be added to WooCommerce stock.
-
-    Returns a list
-    """
-    # TODO: duplication between columns definition and sql
-    columns = [
-        "awaiting_upload",
-        "batch_number",
-        "packets",
-        "sku",
-        "wc_product_id",
-        "wc_variation_lg_id",
-    ]
-    awaiting = _f("large_batches", "awaiting_upload")
-    where = f"lower({awaiting})='yes' AND b.pack_date IS NOT NULL"
-
-    sql = (
-        "SELECT B.awaiting_upload, B.batch_number, B.packets, S.sku, A.wc_product_id, A.wc_variation_lg_id "
-        f'FROM "{_t("large_batches")}" B '
-        f'LEFT JOIN "{_t("seed_lots")}" S ON B.seed_lot = S.lot_number '
-        'LEFT JOIN "acquisitions" A ON S.sku = A.SKU '
-        "WHERE " + where
-    )
-    rows = connection.cursor().execute(sql).fetchall()
-
-    # return [dict(zip(columns, r)) for r in rows]
-    return fmdb.zip_validate_columns(rows, columns)
-
-
 def _set_wc_stock_updated_flag(connection, correction_ids=None):
     if not correction_ids:
         return
