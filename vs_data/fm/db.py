@@ -22,7 +22,7 @@ INTEGER_FIELD_NAMES = [
     'wc_variation_regular_id',
     'wc_variation_lg_id',
     'packets',
-    'batch_number',
+    # 'batch_number',
     'link_wc_order_id',
     "wc_stock_updated",
     "vs_stock_updated",

@@ -75,6 +75,7 @@ class StockCorrections(FilemakerTable):
     stock_change = "stock_change"
     wc_stock_updated = "wc_stock_updated"
     vs_stock_updated = "vs_stock_updated"
+    comment = "comment"
 
 
 class LineItems():
@@ -88,4 +89,5 @@ class LineItems():
     quantity = "quantity"  # previously "Quantity"
     email = "email"
     item_cost = "item_cost"  # previously "Item cost"
+    note = "note"  # previously "Note"
     correction_id = "correction_id"  # new field (number)

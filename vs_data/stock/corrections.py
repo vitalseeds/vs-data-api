@@ -37,6 +37,7 @@ def get_unprocessed_stock_corrections_join_acq_stock(connection):
         "sku",
         "large_packet_correction",
         "stock_change",
+        "comment",
         "wc_stock_updated",
         "vs_stock_updated",
         "wc_product_id",
@@ -51,7 +52,7 @@ def get_unprocessed_stock_corrections_join_acq_stock(connection):
     # TODO: case sensitive validation of sku in FileMaker would negate LOWER()
     # This would be much more performant as could use indexes
     sql = (
-        "SELECT SC.id, SC.sku, sc.large_packet_correction, sc.stock_change, "
+        "SELECT SC.id, SC.sku, sc.large_packet_correction, sc.stock_change, sc.comment, "
         "SC.wc_stock_updated, SC.vs_stock_updated, "
         "A.wc_product_id, A.wc_variation_lg_id, "
         "S.stock_regular, S.stock_large "
@@ -149,19 +150,6 @@ def _check_product_updates(response, corrections, vs_key="wc_product_id"):
     return uploaded_corrections
 
 
-def get_most_recent_batch(connection: object, sku: str) -> list:
-    # NOT CURRENTLY IN USE
-    # TODO: should get sku from join on seed_lot, not packeting_batches
-    return fmdb.select(
-        connection,
-        "packeting_batches",
-        ["awaiting_upload", "batch_number", "packets", "pack_date", "left_in_batch"],
-        where=f"pack_date IS NOT NULL AND LOWER(sku)=LOWER('{sku}') AND left_in_batch>0",
-        order_by="pack_date DESC",
-        limit=1
-    )
-
-
 def get_current_batch_id(connection: object, sku: str, field_name="packing_batch") -> list:
     # TODO: should get sku from join on seed_lot, not packeting_batches
     acquisition = fmdb.select(
@@ -177,71 +165,76 @@ def get_current_large_batch_id(connection: object, sku: str) -> list:
     return get_current_batch_id(connection, sku, field_name="large_packing_batch")
 
 
-def get_current_batch(connection: object, sku: str, table_name="packeting_batches") -> list:
+def get_current_batch(connection: object, sku: str) -> list:
     current_batch_id = get_current_batch_id(connection, sku)
+    log.info(current_batch_id)
     # TODO: join batch to get 'left in batch' value
     batch = fmdb.select(
         connection,
-        table_name,
+        "packeting_batches",
         ["batch_number", "sku", "packets", "left_in_batch"],
-        where=f"batch_number={current_batch_id}",
+        where=f"batch_number={int(current_batch_id)}",
     )
+    log.info(batch)
     return batch[0] if len(batch) else None
 
 
 def get_current_large_batch(connection: object, sku: str) -> list:
-    return get_current_batch(connection, sku, table_name=_t("large_batches"))
+    current_batch_id = get_current_batch_id(connection, sku, field_name="large_packing_batch")
+    log.info(current_batch_id)
+    # TODO: join batch to get 'left in batch' value
+    batch = fmdb.select(
+        connection,
+        "large_batches",
+        ["batch_number", "sku", "packets", "left_in_batch"],
+        # Large batch ID is a string eg  'gr1234'
+        where=f"batch_number='{current_batch_id.upper()}'",
+    )
+    log.info(batch)
+    return batch[0] if len(batch) else None
 
 
-def amend_current_left_in_batch(connection: object, sku, correction, table_name="packeting_batches") -> [int|str, int]:
+def amend_left_in_batch(connection: object, sku, correction, large_batch=False) -> [int|str, int]:
     """
     Apply the correction amount to the 'left in batch' records for batch/order tracking
     """
-    # TODO: remove this, unneccessary
-    # https://github.com/vitalseeds/vs-data-api/issues/23#issuecomment-1808648652
+    table_name = "large_batches" if large_batch else "packeting_batches"
     batch_table = constants.tname(table_name)
+
     left_in_batch = constants.fname(batch_table, "left_in_batch")
     batch_number = constants.fname(batch_table, "batch_number")
-    packed = constants.fname(batch_table, "packets")
 
-    correction_remainder = int(correction)
-    while correction_remainder:
-        current_batch = get_current_batch(connection, sku, table_name)
-        packets_in_batch = current_batch[packed]
-        correction_result = int(current_batch["left_in_batch"]) + correction_remainder
+    if large_batch:
+        current_batch = get_current_large_batch(connection, sku)
+    else:
+        current_batch = get_current_batch(connection, sku)
+    if not current_batch:
+        log.warn(f"current_batch not found for {sku} (large_batch={large_batch})")
+    correction_result = int(current_batch["left_in_batch"]) + int(correction)
 
-        if correction_result < 1:
-            # If there is not enough stock in the batch after amendment we will
-            # need to amend next batch as well
-            correction_remainder = correction_result
-            # set current_batch to next
-        elif correction_result > packets_in_batch:
-            # Positive stock amendment exceeds size of batch
-            # set current_batch to previous
-            correction_remainder = correction_result - packets_in_batch
-            correction_result = packets_in_batch
-        else:
-            # All done
-            correction_remainder = 0
+    batch_id = current_batch['batch_number']
 
-        batch_id = current_batch['batch_number']
+    if large_batch:
+        # large batch uses string as ID eg 'GR1234'
+        sql = f"UPDATE {batch_table} SET {left_in_batch}={correction_result} WHERE {batch_number}='{batch_id}'"
+    else:
         sql = f"UPDATE {batch_table} SET {left_in_batch}={correction_result} WHERE {batch_number}={batch_id}"
-        cursor = connection.cursor()
-        print(sql)
-        cursor.execute(sql)
-        print(cursor.rowcount)
-        # return fmdb.select(
-        #     connection,
-        #     "acquisitions",
-        #     ["sku", "packing_batch"],
-        #     where=f"LOWER(sku)=LOWER('{sku}')",
-        # )
+
+    cursor = connection.cursor()
+    log.debug(sql)
+    cursor.execute(sql)
+    # return fmdb.select(
+    #     connection,
+    #     "acquisitions",
+    #     ["sku", "packing_batch"],
+    #     where=f"LOWER(sku)=LOWER('{sku}')",
+    # )
     connection.commit()
     return current_batch, correction_result
 
 
 def amend_current_left_in_large_batch(connection: object, sku, correction) -> [int | str, int]:
-    return amend_current_left_in_batch(connection, sku, correction, table_name="packeting_batches")
+    return amend_left_in_batch(connection, sku, correction, large_batch=True)
 
 
 def push_stock_corrections(stock_corrections, connection, wcapi=None):
@@ -355,19 +348,12 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
     # For each uploaded correction
     corrections = {c["id"]: c for c in stock_corrections}
     print(uploaded_corrections)
+    if not uploaded_corrections:
+        return []
     # todays_date = datetime.now().strftime('%d/%m/%Y')
     todays_date = datetime.now().strftime('%Y/%m/%d')
 
     line_item_inserts = []
-    # line_item_fields = (
-    #     "wc_order_id",
-    #     "sku",
-    #     "pack_size",
-    #     "date",
-    #     "quantity",
-    #     "email",
-    #     "item_cost"
-    # )
     for correction_id in uploaded_corrections:
         correction = corrections[correction_id]
         #  Example
@@ -388,9 +374,22 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
         if correction["large_packet_correction"]:
             log.info("large_packet_correction")
             pack_size = PACK_SIZE_OPTIONS["large"]
+            # TODO: change current local stock:stock_large
+
+            current_batch, left_in_batch = amend_current_left_in_large_batch(
+                connection,
+                correction["sku"],
+                correction["stock_change"]
+            )
         else:
             log.info("regular_packet_correction")
             pack_size = PACK_SIZE_OPTIONS["regular"]
+            # TODO: change current local stock:stock_regular
+            current_batch, left_in_batch = amend_left_in_batch(
+                connection,
+                correction["sku"],
+                correction["stock_change"]
+            )
 
         # quantity in line items table represents order quantity
         # rather than resultant change to stock, so inverse
@@ -404,11 +403,16 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
             ADMIN_EMAIL,                # email
             # correction["item_cost"],  # item_cost
             correction["id"],           # correction_id
+            f"{correction['comment']} (stock_correction:{correction['id']})",  # note
+            # TODO: Transaction_Type = 'Correction'
+            # TODO: Stock_level
         ))
 
     log.info(line_item_inserts)
-    insert_rows = [f"('{l[0]}', '{l[1]}', {l[2]}, {int(l[3])}, '{l[4]}', {l[5]} )" for l in line_item_inserts]
+    insert_rows = [f"('{l[0]}', '{l[1]}', {l[2]}, {int(l[3])}, '{l[4]}', {l[5]}, '{l[6]}' )" for l in line_item_inserts]
     insert_string = ", ".join(insert_rows)
+    log.debug(insert_rows)
+    log.debug(insert_string)
 
     insert_query = dedent(f"""
     INSERT INTO {_t("line_items")}
@@ -418,7 +422,8 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
         "{_f("line_items", "date")}",
         {_f("line_items", "quantity")},
         {_f("line_items", "email")},
-        {_f("line_items", "correction_id")}
+        {_f("line_items", "correction_id")},
+        {_f("line_items", "note")}
     )
     VALUES
     {insert_string}

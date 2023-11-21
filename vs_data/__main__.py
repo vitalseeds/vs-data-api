@@ -218,7 +218,7 @@ def run_sql(ctx, sql:str, commit:bool, fetchall=False):
     results = fmdb.cursor().execute(sql)
     # Only relevant for a select query
     if fetchall:
-        print(results.fetch_all())
+        print(results.fetchall())
         return
     print(results)
     if commit:
