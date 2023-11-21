@@ -75,3 +75,17 @@ class StockCorrections(FilemakerTable):
     stock_change = "stock_change"
     wc_stock_updated = "wc_stock_updated"
     vs_stock_updated = "vs_stock_updated"
+
+
+class LineItems():
+    table_name = "LineItems_Orders"
+
+    wc_order_id = "order_number"  # previously "Order number"
+    sku = "SKU_fk"
+    pack_size = "pack_size"  # previously "Pack_size"
+    date = "date"  # previously "Date"
+    # date_stamp = "date_stamp"  # previously "Date_stamp" (timsetamp automatically generated)
+    quantity = "quantity"  # previously "Quantity"
+    email = "email"
+    item_cost = "item_cost"  # previously "Item cost"
+    correction_id = "correction_id"  # new field (number)

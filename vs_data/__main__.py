@@ -203,10 +203,11 @@ def push_variation_prices(ctx):
 
 
 @cli.command()
+@click.option("--fetchall", is_flag=True, help="Commit SQL query results ")
 @click.option("--commit", is_flag=True, help="Commit SQL query results ")
 @click.argument('sql')
 @click.pass_context
-def run_sql(ctx, sql:str, commit:bool):
+def run_sql(ctx, sql:str, commit:bool, fetchall=False):
     """
     Run arbitrary SQL
     """
@@ -214,7 +215,11 @@ def run_sql(ctx, sql:str, commit:bool):
     # cursor = fmdb.cursor()
     print(sql)
 
-    results = fmdb.cursor().execute(sql).fetchall()
+    results = fmdb.cursor().execute(sql)
+    # Only relevant for a select query
+    if fetchall:
+        print(results.fetch_all())
+        return
     print(results)
     if commit:
         fmdb.commit()

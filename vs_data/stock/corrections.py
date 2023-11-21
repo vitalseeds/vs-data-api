@@ -6,8 +6,10 @@ These will be run (via shell commands) from FM scripts
 
 import logging
 from collections import defaultdict
-
 from rich import print
+from textwrap import dedent
+from datetime import datetime
+import os
 
 from vs_data import log
 from vs_data.cli.table import display_table
@@ -22,6 +24,11 @@ from inspect import cleandoc as dedent
 
 WC_MAX_API_RESULT_COUNT = 100
 LARGE_VARIATION_SKU_SUFFIX = "Gr"
+PACK_SIZE_OPTIONS =  {
+    "regular": "Regular packet",
+    "large": "Large pack",
+}
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "admin")
 
 
 def get_unprocessed_stock_corrections_join_acq_stock(connection):
@@ -237,7 +244,7 @@ def amend_current_left_in_large_batch(connection: object, sku, correction) -> [i
     return amend_current_left_in_batch(connection, sku, correction, table_name="packeting_batches")
 
 
-def process_stock_corrections(stock_corrections, connection, wcapi=None):
+def push_stock_corrections(stock_corrections, connection, wcapi=None):
     # Separate large and regular packet stock corrections
     # validate that product actually has a product/variation
     regular_product_corrections = [
@@ -340,65 +347,89 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
 
     log.debug(f"stock_corrections {len(stock_corrections)}")
     log.debug(stock_corrections)
-    uploaded_corrections = process_stock_corrections(stock_corrections, connection, wcapi)
+    uploaded_corrections = push_stock_corrections(stock_corrections, connection, wcapi)
 
+    # IMPORTANT: updated flag prevents the correction being re-run
     _set_wc_stock_updated_flag(connection, uploaded_corrections)
-
-    # import pickle
-    # from os.path import exists
-    # stock_corrections_pickle = "tmp/stock_corrections.pickle"
-    # if exists(stock_corrections_pickle):
-    #     with open(stock_corrections_pickle, 'rb') as file:
-    #         stock_corrections = pickle.load(file)
-    # else:
-    #     with open(stock_corrections_pickle, 'wb') as file:
-    #         pickle.dump(stock_corrections, file)
-
-    # from os.path import exists
-    # uploaded_corrections_pickle = "tmp/uploaded_corrections.pickle"
-    # if exists(uploaded_corrections_pickle):
-    #     with open(uploaded_corrections_pickle, 'rb') as file:
-    #         uploaded_corrections = pickle.load(file)
-    # else:
-    #     with open(uploaded_corrections_pickle, 'wb') as file:
-    #         pickle.dump(uploaded_corrections, file)
-
-    # print(stock_corrections)
-    # print(uploaded_corrections_pickle)
 
     # For each uploaded correction
     corrections = {c["id"]: c for c in stock_corrections}
     print(uploaded_corrections)
+    # todays_date = datetime.now().strftime('%d/%m/%Y')
+    todays_date = datetime.now().strftime('%Y/%m/%d')
 
+    line_item_inserts = []
+    # line_item_fields = (
+    #     "wc_order_id",
+    #     "sku",
+    #     "pack_size",
+    #     "date",
+    #     "quantity",
+    #     "email",
+    #     "item_cost"
+    # )
     for correction_id in uploaded_corrections:
         correction = corrections[correction_id]
+        #  Example
+        # {
+        #     'id': 9,
+        #     'sku': 'BeBO',
+        #     'large_packet_correction': None,
+        #     'stock_change': 3.0,
+        #     'wc_stock_updated': None,
+        #     'vs_stock_updated': None,
+        #     'wc_product_id': 10351,
+        #     'wc_variation_lg_id': 55146,
+        #     'stock_regular': 155,
+        #     'stock_large': -1
+        # }
         log.info(correction)
-        #   Get current batch
+
         if correction["large_packet_correction"]:
             log.info("large_packet_correction")
+            pack_size = PACK_SIZE_OPTIONS["large"]
+        else:
+            log.info("regular_packet_correction")
+            pack_size = PACK_SIZE_OPTIONS["regular"]
 
-            #
-            current_batch, left_in_batch = amend_current_left_in_large_batch(
-                connection,
-                correction["sku"],
-                # correction["stock_change"]
-                100
-            )
-            print(current_batch)
-            print(left_in_batch)
-            continue
-            # Amend 'left in batch' value
+        # quantity in line items table represents order quantity
+        # rather than resultant change to stock, so inverse
+        correction_quantity = correction["stock_change"] * -1
 
-        # current_batch_id = get_current_batch_id(connection, correction["sku"])
-        log.info("regular_packet_correction")
-        current_batch, left_in_batch = amend_current_left_in_batch(
-            connection,
-            correction["sku"],
-            correction["stock_change"]
-        )
-        log.debug(current_batch)
-        log.debug(left_in_batch)
-        # Amend 'left in batch' value
+        line_item_inserts.append((
+            correction["sku"],          # sku
+            pack_size,                  # pack_size
+            f"DATE '{todays_date}'",    # date
+            correction_quantity,        # quantity
+            ADMIN_EMAIL,                # email
+            # correction["item_cost"],  # item_cost
+            correction["id"],           # correction_id
+        ))
+
+    log.info(line_item_inserts)
+    insert_rows = [f"('{l[0]}', '{l[1]}', {l[2]}, {int(l[3])}, '{l[4]}', {l[5]} )" for l in line_item_inserts]
+    insert_string = ", ".join(insert_rows)
+
+    insert_query = dedent(f"""
+    INSERT INTO {_t("line_items")}
+    (
+        {_f("line_items", "sku")},
+        {_f("line_items", "pack_size")},
+        "{_f("line_items", "date")}",
+        {_f("line_items", "quantity")},
+        {_f("line_items", "email")},
+        {_f("line_items", "correction_id")}
+    )
+    VALUES
+    {insert_string}
+    """)
+
+    log.debug(insert_query)
+    print(insert_query)
+    cursor = connection.cursor()
+    cursor.execute(insert_query)
+    # print(cursor.rowcount)
+    connection.commit()
 
     # TODO: Also update stock value in FM directly from woocommerce value (lg/reg)
     # This will negate requirement for a preceding 'update stock' FM script
