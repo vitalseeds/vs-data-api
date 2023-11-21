@@ -160,6 +160,24 @@ def push_variation_prices(ctx):
 
 
 @cli.command()
+@click.option("--commit", is_flag=True, help="Commit SQL query results ")
+@click.argument('sql')
+@click.pass_context
+def run_sql(ctx, sql:str, commit:bool):
+    """
+    Run arbitrary SQL
+    """
+    fmdb = ctx.parent.obj.get("fmdb")
+    # cursor = fmdb.cursor()
+    print(sql)
+
+    results = fmdb.cursor().execute(sql).fetchall()
+    print(results)
+    if commit:
+        fmdb.commit()
+
+
+@cli.command()
 @click.pass_context
 def test_fm(ctx):
     """
