@@ -237,7 +237,7 @@ def amend_current_left_in_large_batch(connection: object, sku, correction) -> [i
     return amend_current_left_in_batch(connection, sku, correction, table_name="packeting_batches")
 
 
-def process_stock_corrections(connection, wcapi=None):
+def process_stock_corrections(stock_corrections, connection, wcapi=None):
     # Separate large and regular packet stock corrections
     # validate that product actually has a product/variation
     regular_product_corrections = [
@@ -340,7 +340,7 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
 
     log.debug(f"stock_corrections {len(stock_corrections)}")
     log.debug(stock_corrections)
-    uploaded_corrections = process_stock_corrections(connection, wcapi)
+    uploaded_corrections = process_stock_corrections(stock_corrections, connection, wcapi)
 
     _set_wc_stock_updated_flag(connection, uploaded_corrections)
 
