@@ -318,6 +318,39 @@ def push_stock_corrections(stock_corrections, connection, wcapi=None):
     return uploaded_corrections
 
 
+def amend_local_stock(connection, local_stock_amend: dict, local_large_stock_amend: dict):
+    """
+    Set the stock value for a sku in the local database to reflect the uploaded
+    stock amendment.
+
+    This value will be overwritten once a day anyway when stock values are
+    updated from WC.
+
+    Accepts a dict for regular/large products in the form {sku: stock_change}
+    """
+    def _update_stock_field(sku, field_name, stock_change):
+        log.debug(sku)
+        log.debug(stock_change)
+        field_name = _f("stock", field_name)
+        update_query = dedent(f"""
+        UPDATE {_t("stock")}
+        SET {field_name} = {field_name} + {stock_change}
+        WHERE LOWER(sku)=LOWER('{sku}')
+        """)
+        cursor = connection.cursor()
+        cursor.execute(update_query)
+        connection.commit()
+
+    for sku in local_stock_amend:
+        stock_change = int(local_stock_amend[sku])
+        _update_stock_field(sku, "stock_regular", stock_change)
+
+    for sku in local_large_stock_amend:
+        stock_change = int(local_large_stock_amend[sku])
+        _update_stock_field(sku, "stock_large", stock_change)
+
+
+
 def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
     """
     Update WooCommerce stock from stock corrections.
@@ -341,19 +374,21 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
     log.debug(f"stock_corrections {len(stock_corrections)}")
     log.debug(stock_corrections)
     uploaded_corrections = push_stock_corrections(stock_corrections, connection, wcapi)
+    if not uploaded_corrections:
+        return []
 
     # IMPORTANT: updated flag prevents the correction being re-run
     _set_wc_stock_updated_flag(connection, uploaded_corrections)
 
     # For each uploaded correction
     corrections = {c["id"]: c for c in stock_corrections}
-    print(uploaded_corrections)
-    if not uploaded_corrections:
-        return []
+
     # todays_date = datetime.now().strftime('%d/%m/%Y')
     todays_date = datetime.now().strftime('%Y/%m/%d')
 
     line_item_inserts = []
+    local_stock_amend = defaultdict(lambda: 0)
+    local_large_stock_amend = defaultdict(lambda: 0)
     for correction_id in uploaded_corrections:
         correction = corrections[correction_id]
         #  Example
@@ -370,12 +405,12 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
         #     'stock_large': -1
         # }
         log.info(correction)
-
         if correction["large_packet_correction"]:
             log.info("large_packet_correction")
             pack_size = PACK_SIZE_OPTIONS["large"]
+            # Add up stock changes to apply locally (possible more than one per product)
+            local_large_stock_amend[correction["sku"]] += correction["stock_change"]
             # TODO: change current local stock:stock_large
-
             current_batch, left_in_batch = amend_current_left_in_large_batch(
                 connection,
                 correction["sku"],
@@ -384,6 +419,8 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
         else:
             log.info("regular_packet_correction")
             pack_size = PACK_SIZE_OPTIONS["regular"]
+            # Add up stock changes to apply locally (possible more than one per product)
+            local_stock_amend[correction["sku"]] += correction["stock_change"]
             # TODO: change current local stock:stock_regular
             current_batch, left_in_batch = amend_left_in_batch(
                 connection,
@@ -392,7 +429,7 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
             )
 
         # quantity in line items table represents order quantity
-        # rather than resultant change to stock, so inverse
+        # rather than resultant change to stock, so inverse it for use in audit line item
         correction_quantity = correction["stock_change"] * -1
 
         line_item_inserts.append((
@@ -407,6 +444,8 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
             # TODO: Transaction_Type = 'Correction'
             # TODO: Stock_level
         ))
+
+    amend_local_stock(connection, local_stock_amend, local_large_stock_amend)
 
     log.info(line_item_inserts)
     insert_rows = [f"('{l[0]}', '{l[1]}', {l[2]}, {int(l[3])}, '{l[4]}', {l[5]}, '{l[6]}' )" for l in line_item_inserts]
