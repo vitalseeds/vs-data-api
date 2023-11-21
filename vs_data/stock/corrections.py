@@ -165,33 +165,33 @@ def get_current_large_batch_id(connection: object, sku: str) -> list:
     return get_current_batch_id(connection, sku, field_name="large_packing_batch")
 
 
-def get_current_batch(connection: object, sku: str) -> list:
-    current_batch_id = get_current_batch_id(connection, sku)
-    log.info(current_batch_id)
-    # TODO: join batch to get 'left in batch' value
-    batch = fmdb.select(
-        connection,
-        "packeting_batches",
-        ["batch_number", "sku", "packets", "left_in_batch"],
-        where=f"batch_number={int(current_batch_id)}",
-    )
-    log.info(batch)
-    return batch[0] if len(batch) else None
+# def get_current_batch(connection: object, sku: str) -> list:
+#     current_batch_id = get_current_batch_id(connection, sku)
+#     log.info(current_batch_id)
+#     # TODO: join batch to get 'left in batch' value
+#     batch = fmdb.select(
+#         connection,
+#         "packeting_batches",
+#         ["batch_number", "sku", "packets", "left_in_batch"],
+#         where=f"batch_number={int(current_batch_id)}",
+#     )
+#     log.info(batch)
+#     return batch[0] if len(batch) else None
 
 
-def get_current_large_batch(connection: object, sku: str) -> list:
-    current_batch_id = get_current_batch_id(connection, sku, field_name="large_packing_batch")
-    log.info(current_batch_id)
-    # TODO: join batch to get 'left in batch' value
-    batch = fmdb.select(
-        connection,
-        "large_batches",
-        ["batch_number", "sku", "packets", "left_in_batch"],
-        # Large batch ID is a string eg  'gr1234'
-        where=f"batch_number='{current_batch_id.upper()}'",
-    )
-    log.info(batch)
-    return batch[0] if len(batch) else None
+# def get_current_large_batch(connection: object, sku: str) -> list:
+#     current_batch_id = get_current_batch_id(connection, sku, field_name="large_packing_batch")
+#     log.info(current_batch_id)
+#     # TODO: join batch to get 'left in batch' value
+#     batch = fmdb.select(
+#         connection,
+#         "large_batches",
+#         ["batch_number", "sku", "packets", "left_in_batch"],
+#         # Large batch ID is a string eg  'gr1234'
+#         where=f"batch_number='{current_batch_id.upper()}'",
+#     )
+#     log.info(batch)
+#     return batch[0] if len(batch) else None
 
 
 def amend_left_in_batch(connection: object, sku, correction, large_batch=False) -> [int|str, int]:
@@ -205,35 +205,26 @@ def amend_left_in_batch(connection: object, sku, correction, large_batch=False) 
     batch_number = constants.fname(batch_table, "batch_number")
 
     if large_batch:
-        current_batch = get_current_large_batch(connection, sku)
+        current_batch_id = get_current_large_batch_id(connection, sku)
     else:
-        current_batch = get_current_batch(connection, sku)
-    if not current_batch:
+        current_batch_id = get_current_batch_id(connection, sku)
+    if not current_batch_id:
         log.warn(f"current_batch not found for {sku} (large_batch={large_batch})")
-    correction_result = int(current_batch["left_in_batch"]) + int(correction)
-
-    batch_id = current_batch['batch_number']
 
     if large_batch:
         # large batch uses string as ID eg 'GR1234'
-        sql = f"UPDATE {batch_table} SET {left_in_batch}={correction_result} WHERE {batch_number}='{batch_id}'"
+        sql = f"UPDATE {batch_table} SET {left_in_batch}={left_in_batch} + {int(correction)} WHERE {batch_number}='{current_batch_id}'"
     else:
-        sql = f"UPDATE {batch_table} SET {left_in_batch}={correction_result} WHERE {batch_number}={batch_id}"
+        sql = f"UPDATE {batch_table} SET {left_in_batch}={left_in_batch} + {int(correction)} WHERE {batch_number}={current_batch_id}"
 
     cursor = connection.cursor()
     log.debug(sql)
     cursor.execute(sql)
-    # return fmdb.select(
-    #     connection,
-    #     "acquisitions",
-    #     ["sku", "packing_batch"],
-    #     where=f"LOWER(sku)=LOWER('{sku}')",
-    # )
     connection.commit()
-    return current_batch, correction_result
+    return current_batch_id
 
 
-def amend_current_left_in_large_batch(connection: object, sku, correction) -> [int | str, int]:
+def amend_left_in_large_batch(connection: object, sku, correction) -> [int | str, int]:
     return amend_left_in_batch(connection, sku, correction, large_batch=True)
 
 
@@ -350,7 +341,6 @@ def amend_local_stock(connection, local_stock_amend: dict, local_large_stock_ame
         _update_stock_field(sku, "stock_large", stock_change)
 
 
-
 def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
     """
     Update WooCommerce stock from stock corrections.
@@ -410,8 +400,7 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
             pack_size = PACK_SIZE_OPTIONS["large"]
             # Add up stock changes to apply locally (possible more than one per product)
             local_large_stock_amend[correction["sku"]] += correction["stock_change"]
-            # TODO: change current local stock:stock_large
-            current_batch, left_in_batch = amend_current_left_in_large_batch(
+            amend_left_in_large_batch(
                 connection,
                 correction["sku"],
                 correction["stock_change"]
@@ -421,8 +410,7 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
             pack_size = PACK_SIZE_OPTIONS["regular"]
             # Add up stock changes to apply locally (possible more than one per product)
             local_stock_amend[correction["sku"]] += correction["stock_change"]
-            # TODO: change current local stock:stock_regular
-            current_batch, left_in_batch = amend_left_in_batch(
+            amend_left_in_batch(
                 connection,
                 correction["sku"],
                 correction["stock_change"]
