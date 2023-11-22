@@ -91,3 +91,5 @@ class LineItems():
     item_cost = "item_cost"  # previously "Item cost"
     note = "note"  # previously "Note"
     correction_id = "correction_id"  # new field (number)
+    # stock_level = "Stock_level"
+    transaction_type = "transaction_type"  # previously 'Transaction_Type'

@@ -429,14 +429,16 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
             # correction["item_cost"],  # item_cost
             correction["id"],           # correction_id
             f"{correction['comment']} (stock_correction:{correction['id']})",  # note
-            # TODO: Transaction_Type = 'Correction'
-            # TODO: Stock_level
+            "Correction",               # Transaction_Type
+            # TODO: Stock_level - set automatically in filemaker on creation to
+            # avoid another query?
+            # correction["stock_change"] # "Stock_level"
         ))
 
     amend_local_stock(connection, local_stock_amend, local_large_stock_amend)
 
     log.info(line_item_inserts)
-    insert_rows = [f"('{l[0]}', '{l[1]}', {l[2]}, {int(l[3])}, '{l[4]}', {l[5]}, '{l[6]}' )" for l in line_item_inserts]
+    insert_rows = [f"('{l[0]}', '{l[1]}', {l[2]}, {int(l[3])}, '{l[4]}', {l[5]}, '{l[6]}', '{l[7]}')" for l in line_item_inserts]
     insert_string = ", ".join(insert_rows)
     log.debug(insert_rows)
     log.debug(insert_string)
@@ -450,7 +452,8 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
         {_f("line_items", "quantity")},
         {_f("line_items", "email")},
         {_f("line_items", "correction_id")},
-        {_f("line_items", "note")}
+        {_f("line_items", "note")},
+        {_f("line_items", "transaction_type")}
     )
     VALUES
     {insert_string}
