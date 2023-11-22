@@ -358,10 +358,11 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
     stock_corrections = get_unprocessed_stock_corrections_join_acq_stock(connection)
 
     if not stock_corrections:
-        log.debug("No stock corrections await processing")
+        log.info("No stock corrections await processing")
         return False
 
-    log.debug(f"stock_corrections {len(stock_corrections)}")
+    log.info(f"Applying {len(stock_corrections)} stock_corrections")
+    log.debug("stock_corrections:")
     log.debug(stock_corrections)
     uploaded_corrections = push_stock_corrections(stock_corrections, connection, wcapi)
     if not uploaded_corrections:
@@ -405,6 +406,7 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
                 correction["sku"],
                 correction["stock_change"]
             )
+            stock_level = correction["stock_large"] + correction["stock_change"]
         else:
             log.info("regular_packet_correction")
             pack_size = PACK_SIZE_OPTIONS["regular"]
@@ -415,6 +417,7 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
                 correction["sku"],
                 correction["stock_change"]
             )
+            stock_level = correction["stock_regular"] + correction["stock_change"]
 
         # quantity in line items table represents order quantity
         # rather than resultant change to stock, so inverse it for use in audit line item
@@ -429,16 +432,14 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
             # correction["item_cost"],  # item_cost
             correction["id"],           # correction_id
             f"{correction['comment']} (stock_correction:{correction['id']})",  # note
-            "Correction",               # Transaction_Type
-            # TODO: Stock_level - set automatically in filemaker on creation to
-            # avoid another query?
-            # correction["stock_change"] # "Stock_level"
+            "Correction",               # transaction_type
+            stock_level                 # stock_level
         ))
 
     amend_local_stock(connection, local_stock_amend, local_large_stock_amend)
 
     log.info(line_item_inserts)
-    insert_rows = [f"('{l[0]}', '{l[1]}', {l[2]}, {int(l[3])}, '{l[4]}', {l[5]}, '{l[6]}', '{l[7]}')" for l in line_item_inserts]
+    insert_rows = [f"('{l[0]}', '{l[1]}', {l[2]}, {int(l[3])}, '{l[4]}', {l[5]}, '{l[6]}', '{l[7]}', {int(l[8])})" for l in line_item_inserts]
     insert_string = ", ".join(insert_rows)
     log.debug(insert_rows)
     log.debug(insert_string)
@@ -453,7 +454,8 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
         {_f("line_items", "email")},
         {_f("line_items", "correction_id")},
         {_f("line_items", "note")},
-        {_f("line_items", "transaction_type")}
+        {_f("line_items", "transaction_type")},
+        {_f("line_items", "stock_level")}
     )
     VALUES
     {insert_string}
