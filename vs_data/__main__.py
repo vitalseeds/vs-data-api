@@ -180,8 +180,8 @@ def apply_stock_corrections(ctx):
     """
     fmdb = ctx.parent.obj.get("fmdb")
     wcapi = ctx.parent.obj.get("wcapi") or exit(1)
-
-    stock.apply_corrections_to_wc_stock(fmdb, wcapi, cli=True)
+    with fmdb:
+        stock.apply_corrections_to_wc_stock(fmdb, wcapi, cli=True)
 
 
 @cli.command()
@@ -212,17 +212,16 @@ def run_sql(ctx, sql:str, commit:bool, fetchall=False):
     Run arbitrary SQL
     """
     fmdb = ctx.parent.obj.get("fmdb")
-    # cursor = fmdb.cursor()
-    print(sql)
-
-    results = fmdb.cursor().execute(sql)
-    # Only relevant for a select query
-    if fetchall:
-        print(results.fetchall())
-        return
-    print(results)
-    if commit:
-        fmdb.commit()
+    with fmdb:
+        print(sql)
+        results = fmdb.cursor().execute(sql)
+        # Only relevant for a select query
+        if fetchall:
+            print(results.fetchall())
+            return
+        print(results)
+        if commit:
+            fmdb.commit()
 
 
 @cli.command()

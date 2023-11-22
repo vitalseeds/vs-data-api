@@ -354,7 +354,7 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
     Add up stock increment per product from multiple corrections.
     Update the stock_quantity for the WooCommerce product/variation.
     """
-    print("apply_corrections_to_wc_stock")
+    log.info("Applying stock corrections")
     stock_corrections = get_unprocessed_stock_corrections_join_acq_stock(connection)
 
     if not stock_corrections:

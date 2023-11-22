@@ -145,15 +145,13 @@ async def apply_stock_corrections_wc(settings: config.Settings = Depends(get_set
     Apply stock corrections detailed in VS database to WC products and variations.
     """
     connection = db.connection(settings.fm_connection_string)
-    applied_corrections = stock.apply_corrections_to_wc_stock(
-        connection, settings.wcapi
-    )
-
-    if not applied_corrections:
-        return {"message": "No corrections were applied to WooCommerce"}
-
-    updated_num = len(applied_corrections)
-    return {
-        "applied_corrections": applied_corrections,
-        "message": f"{updated_num} stock corrections were applied to WooCommerce products/variations.",
-    }
+    with connection:
+        applied_corrections = stock.apply_corrections_to_wc_stock(
+            connection, settings.wcapi
+        )
+        if not applied_corrections:
+            return {"message": "No corrections were applied to WooCommerce"}
+        return {
+            "applied_corrections": applied_corrections,
+            "message": f"{len(applied_corrections)} stock corrections were applied to WooCommerce products/variations.",
+        }
