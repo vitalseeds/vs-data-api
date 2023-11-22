@@ -37,7 +37,7 @@ def cli(ctx, fmdb, fmlinkdb, wc_url, wc_key, wc_secret, isolate):
     ctx.ensure_object(dict)
     if not isolate:
         ctx.obj["fmdb"] = db.connection(fmdb)
-        ctx.obj["wcapi"] = api.get_api(wc_url, wc_key, wc_secret)
+        ctx.obj["wcapi"] = api.get_api(wc_url, wc_key, wc_secret, check_status=False)
 
 
 @cli.command()
@@ -51,6 +51,35 @@ def get_wc_products(ctx, product_ids):
     product_ids = [int(p) for p in product_ids.split(',')]
     wcapi = ctx.parent.obj["wcapi"]
     return stock.get_wc_products_by_id(wcapi, product_ids)
+
+# TODO: import util functions like this from another module and use
+# functools.wrap to add to cli group
+@cli.command()
+@click.option("--large", is_flag=True)
+@click.argument('sku')
+@click.pass_context
+def get_wc_stock(ctx, sku:str, large:bool=False):
+    """
+    Get WooCommerce stock value
+    """
+    if large:
+        print("large stock count not implemented yet")
+    fmdb = ctx.parent.obj["fmdb"]
+    wcapi = ctx.parent.obj["wcapi"]
+    acquisitions = fmdb.cursor().execute(
+        "SELECT wc_product_id, wc_variation_lg_id FROM ACQUISITIONS "
+        f"WHERE wc_product_id IS NOT NULL AND sku = '{sku}'"
+    ).fetchall()
+    if not acquisitions:
+        print("No acquisitions found")
+        return
+    product_ids = [p["wc_product_id"] for p in acquisitions]
+    wc_products = stock.get_wc_products_by_id(wcapi, product_ids)
+    if wc_products:
+        wc_product_stock = {p["id"]:p["stock_quantity"] for p in wc_products}
+        print(wc_product_stock)
+        return
+    print("No WC product found")
 
 
 @cli.command()
@@ -122,7 +151,7 @@ def stock_csv(ctx, uncache):
     To clear cache and run afresh call with '--uncache' flag.
     """
     fmdb = ctx.parent.obj.get("fmdb")
-    wcapi = ctx.parent.obj.get("wcapi")
+    wcapi = ctx.parent.obj.get("wcapi") or exit(1)
 
     stock.compare_wc_fm_stock(fmdb, wcapi, cli=True, uncache=uncache)
 
@@ -136,9 +165,23 @@ def update_order_status(ctx, status):
     """
     # fmdb = ctx.parent.obj.get("fmdb")
     fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
-    wcapi = ctx.parent.obj.get("wcapi")
+    wcapi = ctx.parent.obj.get("wcapi") or exit(1)
 
     orders.update_packed_orders_status(fmlinkdb, wcapi, cli=True, status=status)
+
+
+@cli.command()
+@click.pass_context
+def apply_stock_corrections(ctx):
+    """
+    Get stock corrections from filemaker, push to WooCommerce.
+
+    Fetch new stock value and update Filemaker stock table.
+    """
+    fmdb = ctx.parent.obj.get("fmdb")
+    wcapi = ctx.parent.obj.get("wcapi") or exit(1)
+    with fmdb:
+        stock.apply_corrections_to_wc_stock(fmdb, wcapi, cli=True)
 
 
 @cli.command()
@@ -160,21 +203,25 @@ def push_variation_prices(ctx):
 
 
 @cli.command()
+@click.option("--fetchall", is_flag=True, help="Commit SQL query results ")
 @click.option("--commit", is_flag=True, help="Commit SQL query results ")
 @click.argument('sql')
 @click.pass_context
-def run_sql(ctx, sql:str, commit:bool):
+def run_sql(ctx, sql:str, commit:bool, fetchall=False):
     """
     Run arbitrary SQL
     """
     fmdb = ctx.parent.obj.get("fmdb")
-    # cursor = fmdb.cursor()
-    print(sql)
-
-    results = fmdb.cursor().execute(sql).fetchall()
-    print(results)
-    if commit:
-        fmdb.commit()
+    with fmdb:
+        print(sql)
+        results = fmdb.cursor().execute(sql)
+        # Only relevant for a select query
+        if fetchall:
+            print(results.fetchall())
+            return
+        print(results)
+        if commit:
+            fmdb.commit()
 
 
 @cli.command()

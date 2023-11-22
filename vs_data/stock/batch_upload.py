@@ -67,7 +67,6 @@ def get_large_batches_awaiting_upload_join_acq(connection: object) -> list:
     # return [dict(zip(columns, r)) for r in rows]
     return fmdb.zip_validate_columns(rows, columns)
 
-
 def _unset_awaiting_upload_flag(connection, batch_ids=None, large_batch=False):
     if batch_ids is None:
         batch_ids = []
@@ -97,8 +96,10 @@ def get_wc_products_by_id(wcapi: object, ids: list):
     )
     if response.status_code == 200:
         return response.json()
+    log.warn("WC api did not respond")
 
 
+# TODO: remove product_ids param and use key of lg_variation_ids, see get_wc_large_variations_stock
 def get_wc_large_variations_by_product(wcapi: object, product_ids: list, lg_variation_ids: dict):
     """
     Gets product variations including stock quantity.
@@ -244,7 +245,7 @@ def update_wc_stock_for_new_batches(connection, wcapi=None, product_variation=No
     else:
         response = wc_regular_product_update_stock(wcapi, products_stock, stock_increments)
 
-    # Check response for batches whose products have had stock updated on WC
+    # Log response for batches whose products have had stock updated on WC
     if large_variation:
         updated_variations = [product["id"] for product in response["update"]]
         log.debug("updated product variations:")

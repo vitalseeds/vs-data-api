@@ -17,12 +17,18 @@ VSDATA_FM_CONNECTION_STRING = os.environ.get("VSDATA_FM_CONNECTION_STRING", None
 VSDATA_FM_LINK_CONNECTION_STRING = os.environ.get("VSDATA_FM_LINK_CONNECTION_STRING", None)
 
 INTEGER_FIELD_NAMES = [
+    "id",
     'wc_product_id',
     'wc_variation_regular_id',
     'wc_variation_lg_id',
     'packets',
-    'batch_number',
+    # 'batch_number',
     'link_wc_order_id',
+    "wc_stock_updated",
+    "vs_stock_updated",
+    "stock_regular",
+    "stock_large",
+    "large_packet_correction",
 ]
 
 
@@ -77,8 +83,17 @@ def connection(connection_string: str) -> pyodbc.Connection:
     if not connection_string:
         return False
 
-    # log.debug(connection_string)
-    connection = pyodbc.connect(connection_string)
+    try:
+        connection = pyodbc.connect(connection_string)
+    except pyodbc.DatabaseError:
+        log.error(f"Could not connect to FileMaker \n({connection_string})")
+
+        if os.name == "posix" or os.name == "darwin":
+            log.warn(
+                "If running MacOS, it is possible that unixodbc is installed instead of libiodbc\n"
+                "try `brew uninstall unixodbc && brew install libiodbc`"
+            )
+        exit(1)
     return connection
 
 
@@ -87,6 +102,7 @@ def _select_columns(
     table: str,
     columns: list,
     where: str = None,
+    order_by: str = None,
 ) -> tuple[list[str], list[list]]:
     """
     Construct SQL statement for a select query and return result.
@@ -97,7 +113,8 @@ def _select_columns(
     fm_table = constants.tname(table)
     field_list = ",".join([f'"{f}"' for f in fm_columns])
     where_clause = f"WHERE {where}" if where else ""
-    sql = f'SELECT {field_list} FROM "{fm_table}" {where_clause}'
+    order_by_clause = f"ORDER BY {order_by}" if order_by else ""
+    sql = f'SELECT {field_list} FROM "{fm_table}" {where_clause} {order_by_clause}'
     log.debug(sql)
     rows = connection.cursor().execute(sql).fetchall()
 
@@ -110,6 +127,7 @@ def select(
     table: str,
     columns: list,
     where: str = None,
+    order_by: str = None,
 ) -> dict:
     """
     Perform SQL select query and return result as list of dicts
@@ -117,7 +135,7 @@ def select(
     Accepts
     - connection, table, columns, where
     """
-    columns, rows = _select_columns(connection, table, columns, where)
+    columns, rows = _select_columns(connection, table, columns, where, order_by)
     objects = zip_validate_columns(rows, columns)
     return objects
 
@@ -135,6 +153,8 @@ def zip_validate_columns(rows: list, columns: list, int_fields: list = None) -> 
     # Intersect to get columns that should be treated as ids
     int_fields_present = [c for c in columns if c in int_fields]
     dict_rows = [dict(zip(columns, r)) for r in rows]
+
+    # TODO: vectorise this somehow (pandas?) for performance
     if int_fields_present:
         for i, row in enumerate(dict_rows):
             for int_field in int_fields_present:
@@ -144,6 +164,7 @@ def zip_validate_columns(rows: list, columns: list, int_fields: list = None) -> 
                     # TODO: this sort of wrangling could be negated by pydantic
                     dict_rows[i][int_field] = int(field_value)
     return dict_rows
+
 
 def convert_pyodbc_cursor_results_to_lists(results):
     # TODO: not neccessary if not displaying in cli table (_select returns
