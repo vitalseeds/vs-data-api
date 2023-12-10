@@ -89,6 +89,29 @@ def _set_wc_stock_updated_flag(connection, correction_ids=None):
     connection.commit()
 
 
+def _set_vs_stock_updated_flag(connection, correction_ids=None):
+    if not correction_ids:
+        return
+
+    table_name = "stock_corrections"
+    fm_table = _t(table_name)
+    vs_stock_updated = _f(table_name, "vs_stock_updated")
+    id = _f(table_name, "id")
+    sql = ""
+    for correction in correction_ids:
+        try:
+            sql = f"UPDATE {fm_table} SET {vs_stock_updated}=1 WHERE {id} = {correction}"
+            cursor = connection.cursor()
+            log.info(sql)
+            cursor.execute(sql)
+            log.info(cursor.rowcount)
+        except Exception:
+            # ensure other rows are still processed if there is an issue, eg
+            # missing product id
+            pass
+    connection.commit()
+
+
 def get_wc_products_by_id(wcapi: object, ids: list):
     ids = [str(id) for id in ids]
     comma_separated_ids = ",".join(ids)
@@ -439,6 +462,9 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
     amend_local_stock(connection, local_stock_amend, local_large_stock_amend)
 
     log.info(line_item_inserts)
+    # TODO: this is unreadable - should probably use dict for line items
+    # Create string for 'VALUES' component of insert query
+    # Quote string values
     insert_rows = [f"('{l[0]}', '{l[1]}', {l[2]}, {int(l[3])}, '{l[4]}', {l[5]}, '{l[6]}', '{l[7]}', {int(l[8])})" for l in line_item_inserts]
     insert_string = ", ".join(insert_rows)
     log.debug(insert_rows)
@@ -462,11 +488,11 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
     """)
 
     log.debug(insert_query)
-    print(insert_query)
     cursor = connection.cursor()
     cursor.execute(insert_query)
     # print(cursor.rowcount)
     connection.commit()
+    _set_vs_stock_updated_flag(connection, [l[5] for l in line_item_inserts])
 
     # TODO: Also update stock value in FM directly from woocommerce value (lg/reg)
     # This will negate requirement for a preceding 'update stock' FM script
