@@ -1,12 +1,13 @@
 """Test suite for the vs_data package."""
 
 import os
+from typing import Any, Union
 from urllib.parse import urljoin, urlparse
 
 from responses import RequestsMock
 
 try:
-    import tomli as _toml
+    import tomli as _toml  # noqa
 except ImportError:
     # python 3.11
     import tomllib as _toml
@@ -14,7 +15,9 @@ except ImportError:
 from vs_data.fm import constants
 
 
-def _add_from_file_match_params(responses: RequestsMock, file_path: "Union[str, bytes, os.PathLike[Any]]", *args, **kwargs) -> None:
+def _add_from_file_match_params(
+    responses: RequestsMock, file_path: Union[str, bytes, os.PathLike[Any]], *args, **kwargs
+) -> None:
     """
     Replacement for responses.RequestsMock._add_from_file
 

@@ -12,9 +12,9 @@ from rich import print
 from vs_data import log
 from vs_data.cli.table import display_table
 from vs_data.fm import constants
+from vs_data.fm import db as fmdb
 from vs_data.fm.constants import fname as _f
 from vs_data.fm.constants import tname as _t
-from vs_data.fm import db as fmdb
 
 WC_MAX_API_RESULT_COUNT = 100
 
@@ -66,6 +66,7 @@ def get_large_batches_awaiting_upload_join_acq(connection: object) -> list:
 
     # return [dict(zip(columns, r)) for r in rows]
     return fmdb.zip_validate_columns(rows, columns)
+
 
 def _unset_awaiting_upload_flag(connection, batch_ids=None, large_batch=False):
     if batch_ids is None:
@@ -121,7 +122,7 @@ def get_wc_large_variations_by_product(wcapi: object, product_ids: list, lg_vari
             stock_quantity = response.json()["stock_quantity"]
             product_large_variations[product_id] = {
                 "variation_id": large_variation_id,
-                "stock_quantity": stock_quantity
+                "stock_quantity": stock_quantity,
             }
     return product_large_variations
 
@@ -146,9 +147,7 @@ def wc_large_product_update_stock(wcapi, products: dict[dict], stock_increments,
 
         variation_id = lg_variation_ids[product_id]
         endpoint = f"products/{product_id}/variations/{variation_id}"
-        data = {
-            "stock_quantity": new_stock_quantity
-        }
+        data = {"stock_quantity": new_stock_quantity}
         response = wcapi.put(endpoint, data)
         variation_updates.append(response.json())
 
@@ -207,11 +206,7 @@ def update_wc_stock_for_new_batches(connection, wcapi=None, product_variation=No
 
     # Get current wc stock quantity
     if large_variation:
-        products_large_variation_stock = get_wc_large_variations_by_product(
-            wcapi,
-            batch_product_ids,
-            lg_variation_ids
-        )
+        products_large_variation_stock = get_wc_large_variations_by_product(wcapi, batch_product_ids, lg_variation_ids)
         log.debug(products_large_variation_stock)
         if not products_large_variation_stock:
             log.debug("No product variations found for batches awaiting upload")
@@ -241,7 +236,9 @@ def update_wc_stock_for_new_batches(connection, wcapi=None, product_variation=No
     stock_increments = _total_stock_increments(batches)
 
     if large_variation:
-        response = wc_large_product_update_stock(wcapi, products_large_variation_stock, stock_increments, lg_variation_ids)
+        response = wc_large_product_update_stock(
+            wcapi, products_large_variation_stock, stock_increments, lg_variation_ids
+        )
     else:
         response = wc_regular_product_update_stock(wcapi, products_stock, stock_increments)
 
@@ -278,8 +275,10 @@ def update_wc_stock_for_new_batches(connection, wcapi=None, product_variation=No
     if len(response["update"]):
         return response["update"]
 
+
 # --------------------------------------------
 # TODO: move following functions to their own file fetch_wc_ids.py
+
 
 def get_product_sku_map_from_linkdb(fmlinkdb):
     table = "link:Products"
@@ -328,7 +327,7 @@ def update_acquisitions_wc_variations(connection, variation_id_map):
     for row in large_variations:
         # The large pack variations have calculated sku based on product sku + '-Gr'
         # TODO: abstract large pack sku construction
-        base_sku = row['sku'].replace("-Gr", "")
+        base_sku = row["sku"].replace("-Gr", "")
         sql = f"UPDATE {fm_table} SET {large_variation_field}={row[wc_variation_id]} WHERE {parent_product_sku} = '{base_sku}'"
         print(sql)
         cursor = connection.cursor()
@@ -338,7 +337,7 @@ def update_acquisitions_wc_variations(connection, variation_id_map):
 
     for row in regular_variations:
         # Regular pack sku should be the same as parent product
-        base_sku = row['sku']
+        base_sku = row["sku"]
         sql = f"UPDATE {fm_table} SET {regular_variation_field}={row[wc_variation_id]} WHERE {parent_product_sku} = '{base_sku}'"
         print(sql)
         cursor = connection.cursor()

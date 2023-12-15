@@ -1,13 +1,10 @@
+from datetime import date
 from typing import Optional
 
-from sqlmodel import Field, Session, SQLModel, create_engine
-import sqlalchemy
-from datetime import date
-
 import pypyodbc
-
+import sqlalchemy
 from sqlalchemy.connectors.pyodbc import PyODBCConnector
-
+from sqlmodel import Field, Session, SQLModel, create_engine
 
 # class PyPyODBCConnector(PyODBCConnector):
 #     driver = "pypyodbc"
@@ -61,9 +58,7 @@ database = "vs_db"
 engine_stmt = f"mssql+pyodbc://{username}:{password}@{dsn}/{database}?driver={driver}"
 
 # engine = sqlalchemy.create_engine(engine_stmt, module=pypyodbc)
-engine = sqlalchemy.create_engine(
-    "mssql+pyodbc://DSN=vs_stock;UID=vs_data;PWD=1234", module=pypyodbc
-)
+engine = sqlalchemy.create_engine("mssql+pyodbc://DSN=vs_stock;UID=vs_data;PWD=1234", module=pypyodbc)
 SQLModel.metadata.create_all(engine)
 
 # # https://stackoverflow.com/questions/4493614/sqlalchemy-equivalent-of-pyodbc-connect-string-using-freetds

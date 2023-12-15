@@ -1,20 +1,14 @@
-from functools import lru_cache
 from datetime import datetime
+from functools import lru_cache
+
 from fastapi import Depends, FastAPI
 from starlette.responses import FileResponse
 
-from vs_data.fm import db
-from vs_data import stock
-from vs_data import wc
-from vs_data import orders
-from vs_data import products
-
-
 import config
+from vs_data import orders, products, stock, wc
+from vs_data.fm import db
 
-app = FastAPI(
-    title="VS Data API"
-)
+app = FastAPI(title="VS Data API")
 
 
 @lru_cache()
@@ -86,7 +80,7 @@ async def upload_wc_stock_variation_large(settings: config.Settings = Depends(ge
 
 
 @app.get("/stock/report/all")
-async def download(clear_cache:bool = True, settings:config.Settings = Depends(get_settings)):
+async def download(clear_cache: bool = True, settings: config.Settings = Depends(get_settings)):
     """
     Query stock values:
     - filemaker
@@ -101,13 +95,13 @@ async def download(clear_cache:bool = True, settings:config.Settings = Depends(g
     """
     connection = db.connection(settings.fm_connection_string)
     export_file_path = stock.compare_wc_fm_stock(connection, settings.wcapi, csv=True, uncache=clear_cache)
-    date_suffix = datetime.now().strftime('%m-%d-%Y_%H-%M-%S')
+    date_suffix = datetime.now().strftime("%m-%d-%Y_%H-%M-%S")
     file_name = f"vsdata_stock-report-all_{date_suffix}.csv"
-    return FileResponse(path=export_file_path, filename=file_name, media_type='text/csv')
+    return FileResponse(path=export_file_path, filename=file_name, media_type="text/csv")
 
 
 @app.get("/orders/selected/update/status/{target_status}")
-async def update_status_selected_orders(target_status:str, settings: config.Settings = Depends(get_settings)):
+async def update_status_selected_orders(target_status: str, settings: config.Settings = Depends(get_settings)):
     """
     Update order statuses.
 
@@ -122,7 +116,7 @@ async def update_status_selected_orders(target_status:str, settings: config.Sett
         num_orders = len(updated_orders)
         return {"orders": updated_orders, "message": f"{num_orders} orders were updated on WooCommerce"}
 
-    return {"message": f"No orders were updated on WooCommerce."}
+    return {"message": "No orders were updated on WooCommerce."}
 
 
 @app.get("/products/variations/update-wc-price")
@@ -136,7 +130,10 @@ async def update_wc_variation_prices(settings: config.Settings = Depends(get_set
     if not variations:
         return {"message": "No variations were updated on WooCommerce"}
     updated_num = len(variations)
-    return {"variations": variations, "message": f"{updated_num} products were updated on WooCommerce. \nSee {audit_log_path} for details"}
+    return {
+        "variations": variations,
+        "message": f"{updated_num} products were updated on WooCommerce. \nSee {audit_log_path} for details",
+    }
 
 
 @app.get("/stock/apply-corrections")
@@ -146,9 +143,7 @@ async def apply_stock_corrections_wc(settings: config.Settings = Depends(get_set
     """
     connection = db.connection(settings.fm_connection_string)
     with connection:
-        applied_corrections = stock.apply_corrections_to_wc_stock(
-            connection, settings.wcapi
-        )
+        applied_corrections = stock.apply_corrections_to_wc_stock(connection, settings.wcapi)
         if not applied_corrections:
             return {"message": "No corrections were applied to WooCommerce"}
         return {

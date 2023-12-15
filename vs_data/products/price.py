@@ -1,24 +1,24 @@
-from datetime import datetime
 import csv
-import pathlib
-from vs_data.stock.misc import get_all_products, get_all_wc_products
-from vs_data.cli.table import display_product_table, display_table
 import json
-import pandas as pd
-import pickle
-from os.path import exists
 import os
-from vs_data.fm.db import convert_pyodbc_cursor_results_to_lists
+import pathlib
+import pickle
+from datetime import datetime
+from os.path import exists
+
+import numpy as np
+import pandas as pd
+from datascroller import scroll
+from rich import print
+
+from vs_data import log
+from vs_data.cli.table import display_product_table, display_table
+from vs_data.fm import constants
 from vs_data.fm import db as fmdb
 from vs_data.fm.constants import fname as _f
 from vs_data.fm.constants import tname as _t
-from vs_data import log
-from rich import print
-import numpy as np
-from datascroller import scroll
-from vs_data.stock.misc import wcapi_aggregate_paginated_response
-from datetime import datetime
-from vs_data.fm import constants
+from vs_data.fm.db import convert_pyodbc_cursor_results_to_lists
+from vs_data.stock.misc import get_all_products, get_all_wc_products, wcapi_aggregate_paginated_response
 
 LAST_BATCH_UPDATE_LOG = "tmp/orders_batch_update_response.json"
 
@@ -66,16 +66,16 @@ def get_acquisitions_with_large_variation(connection):
 
 def get_audit_log_path(audit_key):
     audit_log_dir = os.environ.get("AUDIT_LOG_DIR", "tmp")
-    return f'{audit_log_dir}/{audit_key}.csv'
+    return f"{audit_log_dir}/{audit_key}.csv"
 
 
 def write_audit_csv(audit_key, list_of_dicts):
     filename = get_audit_log_path(audit_key)
     append = pathlib.Path(filename).is_file()
 
-    with open(filename, mode='a') as csv_file:
+    with open(filename, mode="a") as csv_file:
         headers = list_of_dicts[0].keys()
-        audit_log_writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        audit_log_writer = csv.writer(csv_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
         if not append:
             audit_log_writer.writerow(headers)
         for row in list_of_dicts:
@@ -118,7 +118,7 @@ def push_variation_prices_to_wc(wcapi, fmdb, cli: bool = False) -> list | None:
     variation_products = get_acquisitions_with_large_variation(fmdb)
     log.debug(variation_products)
 
-    now = datetime.now() # current date and time
+    now = datetime.now()  # current date and time
     run_time = now.strftime("%Y-%m-%d__%H-%M-%S")
     audit_key = f"wc_variation_prices_after_{run_time}"
     audit_log_path = get_audit_log_path(audit_key)

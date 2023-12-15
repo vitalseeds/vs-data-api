@@ -6,13 +6,9 @@ import os
 import click
 from rich import print
 
-from vs_data import stock
-from vs_data import orders
-from vs_data import products
-from vs_data.fm import constants
-from vs_data.fm import db
+from vs_data import orders, products, stock
+from vs_data.fm import constants, db
 from vs_data.wc import api
-
 
 # TODO: consider using an orm
 # eg sqlalchemy
@@ -41,24 +37,25 @@ def cli(ctx, fmdb, fmlinkdb, wc_url, wc_key, wc_secret, isolate):
 
 
 @cli.command()
-@click.argument('product_ids')
+@click.argument("product_ids")
 @click.pass_context
 def get_wc_products(ctx, product_ids):
     """
     Update stock from new batches (regular size packets)
     """
-    fmdb = ctx.parent.obj["fmdb"]
-    product_ids = [int(p) for p in product_ids.split(',')]
+    # fmdb = ctx.parent.obj["fmdb"]
+    product_ids = [int(p) for p in product_ids.split(",")]
     wcapi = ctx.parent.obj["wcapi"]
     return stock.get_wc_products_by_id(wcapi, product_ids)
+
 
 # TODO: import util functions like this from another module and use
 # functools.wrap to add to cli group
 @cli.command()
 @click.option("--large", is_flag=True)
-@click.argument('sku')
+@click.argument("sku")
 @click.pass_context
-def get_wc_stock(ctx, sku:str, large:bool=False):
+def get_wc_stock(ctx, sku: str, large: bool = False):
     """
     Get WooCommerce stock value
     """
@@ -66,17 +63,21 @@ def get_wc_stock(ctx, sku:str, large:bool=False):
         print("large stock count not implemented yet")
     fmdb = ctx.parent.obj["fmdb"]
     wcapi = ctx.parent.obj["wcapi"]
-    acquisitions = fmdb.cursor().execute(
-        "SELECT wc_product_id, wc_variation_lg_id FROM ACQUISITIONS "
-        f"WHERE wc_product_id IS NOT NULL AND sku = '{sku}'"
-    ).fetchall()
+    acquisitions = (
+        fmdb.cursor()
+        .execute(
+            "SELECT wc_product_id, wc_variation_lg_id FROM ACQUISITIONS "
+            f"WHERE wc_product_id IS NOT NULL AND sku = '{sku}'"
+        )
+        .fetchall()
+    )
     if not acquisitions:
         print("No acquisitions found")
         return
     product_ids = [p["wc_product_id"] for p in acquisitions]
     wc_products = stock.get_wc_products_by_id(wcapi, product_ids)
     if wc_products:
-        wc_product_stock = {p["id"]:p["stock_quantity"] for p in wc_products}
+        wc_product_stock = {p["id"]: p["stock_quantity"] for p in wc_products}
         print(wc_product_stock)
         return
     print("No WC product found")
@@ -108,8 +109,8 @@ def update_stock_large_packets(ctx, force):
         print("nothing to upload")
         return
     print(batches)
-    confirm = input('Would you like to upload the stock from these batches? (Y/n)')
-    if confirm.lower() == 'y' or force:
+    confirm = input("Would you like to upload the stock from these batches? (Y/n)")
+    if confirm.lower() == "y" or force:
         stock.update_wc_stock_for_new_batches(fmdb, wcapi, product_variation="large")
 
 
@@ -128,7 +129,6 @@ def import_wc_product_ids(ctx):
 
     # Update acquisitions with wc_product_id
     stock.update_acquisitions_wc_id(fmdb, regular_product_skus)
-
 
     # Get the WC:variation_id for each SKU from the link database
     variations = stock.get_product_variation_map_from_linkdb(fmlinkdb)
@@ -205,9 +205,9 @@ def push_variation_prices(ctx):
 @cli.command()
 @click.option("--fetchall", is_flag=True, help="Commit SQL query results ")
 @click.option("--commit", is_flag=True, help="Commit SQL query results ")
-@click.argument('sql')
+@click.argument("sql")
 @click.pass_context
-def run_sql(ctx, sql:str, commit:bool, fetchall=False):
+def run_sql(ctx, sql: str, commit: bool, fetchall=False):
     """
     Run arbitrary SQL
     """
@@ -230,7 +230,7 @@ def test_fm(ctx):
     """
     Test FileMaker connection
     """
-    fmdb = ctx.parent.obj["fmdb"]
+    fmdb = ctx.parent.obj["fmdb"]  # noqa
 
 
 if __name__ == "__main__":

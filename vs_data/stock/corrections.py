@@ -5,26 +5,25 @@ These will be run (via shell commands) from FM scripts
 """
 
 import logging
-from collections import defaultdict
-from rich import print
-from textwrap import dedent
-from datetime import datetime
 import os
+from collections import defaultdict
+from datetime import datetime
+from textwrap import dedent
+
+from rich import print
 
 from vs_data import log
 from vs_data.cli.table import display_table
-from vs_data.fm import db
 from vs_data.fm import constants
+from vs_data.fm import db
+from vs_data.fm import db as fmdb
 from vs_data.fm.constants import fname as _f
 from vs_data.fm.constants import tname as _t
-from vs_data.fm import db as fmdb
-from vs_data.stock.batch_upload import wc_large_product_update_stock
-from vs_data.stock.batch_upload import wc_regular_product_update_stock
-from inspect import cleandoc as dedent
+from vs_data.stock.batch_upload import wc_large_product_update_stock, wc_regular_product_update_stock
 
 WC_MAX_API_RESULT_COUNT = 100
 LARGE_VARIATION_SKU_SUFFIX = "Gr"
-PACK_SIZE_OPTIONS =  {
+PACK_SIZE_OPTIONS = {
     "regular": "Regular packet",
     "large": "Large pack",
 }
@@ -166,9 +165,7 @@ def _check_product_updates(response, corrections, vs_key="wc_product_id"):
     stock_corrections
     """
     updated_products = [product["id"] for product in response["update"]]
-    uploaded_corrections = [
-        c["id"] for c in corrections if int(c[vs_key]) in updated_products
-    ]
+    uploaded_corrections = [c["id"] for c in corrections if int(c[vs_key]) in updated_products]
     log.debug(uploaded_corrections)
     return uploaded_corrections
 
@@ -217,7 +214,7 @@ def get_current_large_batch_id(connection: object, sku: str) -> list:
 #     return batch[0] if len(batch) else None
 
 
-def amend_left_in_batch(connection: object, sku, correction, large_batch=False) -> [int|str, int]:
+def amend_left_in_batch(connection: object, sku, correction, large_batch=False) -> [int | str, int]:
     """
     Apply the correction amount to the 'left in batch' records for batch/order tracking
     """
@@ -255,25 +252,17 @@ def push_stock_corrections(stock_corrections, connection, wcapi=None):
     # Separate large and regular packet stock corrections
     # validate that product actually has a product/variation
     regular_product_corrections = [
-        sc
-        for sc in stock_corrections
-        if not sc["large_packet_correction"] and sc["wc_product_id"]
+        sc for sc in stock_corrections if not sc["large_packet_correction"] and sc["wc_product_id"]
     ]
     large_variation_corrections = [
-        sc
-        for sc in stock_corrections
-        if sc["large_packet_correction"] and sc["wc_variation_lg_id"]
+        sc for sc in stock_corrections if sc["large_packet_correction"] and sc["wc_variation_lg_id"]
     ]
     invalid_variation_corrections = [
-        sc["sku"]
-        for sc in stock_corrections
-        if sc["large_packet_correction"] and not sc["wc_variation_lg_id"]
+        sc["sku"] for sc in stock_corrections if sc["large_packet_correction"] and not sc["wc_variation_lg_id"]
     ]
 
     wc_product_ids = [c["wc_product_id"] for c in regular_product_corrections]
-    lg_variation_id_map = {
-        c["wc_product_id"]: c["wc_variation_lg_id"] for c in large_variation_corrections
-    }
+    lg_variation_id_map = {c["wc_product_id"]: c["wc_variation_lg_id"] for c in large_variation_corrections}
 
     def log_submitted_corrections():
         log.debug("regular_product_corrections:")
@@ -291,41 +280,26 @@ def push_stock_corrections(stock_corrections, connection, wcapi=None):
     uploaded_corrections = []
 
     # Get current wc stock quantity
-    if wc_product_ids and (
-        products_stock := get_wc_products_by_id(wcapi, wc_product_ids)
-    ):
+    if wc_product_ids and (products_stock := get_wc_products_by_id(wcapi, wc_product_ids)):
         regular_stock_increments = _total_stock_increments(regular_product_corrections)
         # log.debug(products_stock)
         log.debug(regular_stock_increments)
-        response_regular = wc_regular_product_update_stock(
-            wcapi, products_stock, regular_stock_increments
-        )
-        uploaded_corrections.extend(
-            _check_product_updates(response_regular, regular_product_corrections)
-        )
+        response_regular = wc_regular_product_update_stock(wcapi, products_stock, regular_stock_increments)
+        uploaded_corrections.extend(_check_product_updates(response_regular, regular_product_corrections))
 
     # Get current wc stock quantity for large variations
     if lg_variation_id_map:
-        products_large_variation_stock = get_wc_large_variations_stock(
-            wcapi, lg_variation_id_map
-        )
+        products_large_variation_stock = get_wc_large_variations_stock(wcapi, lg_variation_id_map)
         large_stock_increments = _total_stock_increments(large_variation_corrections)
         log.debug(large_stock_increments)
-        lg_variation_ids = {
-            c["wc_product_id"]: c["wc_variation_lg_id"]
-            for c in large_variation_corrections
-        }
+        lg_variation_ids = {c["wc_product_id"]: c["wc_variation_lg_id"] for c in large_variation_corrections}
         response_large = wc_large_product_update_stock(
             wcapi,
             products_large_variation_stock,
             large_stock_increments,
             lg_variation_ids,
         )
-        lg_updates = _check_product_updates(
-            response_large,
-            large_variation_corrections,
-            vs_key="wc_variation_lg_id"
-        )
+        lg_updates = _check_product_updates(response_large, large_variation_corrections, vs_key="wc_variation_lg_id")
         log.debug(lg_updates)
         uploaded_corrections.extend(lg_updates)
     log.debug(uploaded_corrections)
@@ -342,15 +316,18 @@ def amend_local_stock(connection, local_stock_amend: dict, local_large_stock_ame
 
     Accepts a dict for regular/large products in the form {sku: stock_change}
     """
+
     def _update_stock_field(sku, field_name, stock_change):
         log.debug(sku)
         log.debug(stock_change)
         field_name = _f("stock", field_name)
-        update_query = dedent(f"""
+        update_query = dedent(
+            f"""
         UPDATE {_t("stock")}
         SET {field_name} = {field_name} + {stock_change}
         WHERE LOWER(sku)=LOWER('{sku}')
-        """)
+        """
+        )
         cursor = connection.cursor()
         cursor.execute(update_query)
         connection.commit()
@@ -398,7 +375,7 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
     corrections = {c["id"]: c for c in stock_corrections}
 
     # todays_date = datetime.now().strftime('%d/%m/%Y')
-    todays_date = datetime.now().strftime('%Y/%m/%d')
+    todays_date = datetime.now().strftime("%Y/%m/%d")
 
     line_item_inserts = []
     local_stock_amend = defaultdict(lambda: 0)
@@ -424,40 +401,34 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
             pack_size = PACK_SIZE_OPTIONS["large"]
             # Add up stock changes to apply locally (possible more than one per product)
             local_large_stock_amend[correction["sku"]] += correction["stock_change"]
-            amend_left_in_large_batch(
-                connection,
-                correction["sku"],
-                correction["stock_change"]
-            )
+            amend_left_in_large_batch(connection, correction["sku"], correction["stock_change"])
             stock_level = correction["stock_large"] + correction["stock_change"]
         else:
             log.info("regular_packet_correction")
             pack_size = PACK_SIZE_OPTIONS["regular"]
             # Add up stock changes to apply locally (possible more than one per product)
             local_stock_amend[correction["sku"]] += correction["stock_change"]
-            amend_left_in_batch(
-                connection,
-                correction["sku"],
-                correction["stock_change"]
-            )
+            amend_left_in_batch(connection, correction["sku"], correction["stock_change"])
             stock_level = correction["stock_regular"] + correction["stock_change"]
 
         # quantity in line items table represents order quantity
         # rather than resultant change to stock, so inverse it for use in audit line item
         correction_quantity = correction["stock_change"] * -1
 
-        line_item_inserts.append((
-            correction["sku"],          # sku
-            pack_size,                  # pack_size
-            f"DATE '{todays_date}'",    # date
-            correction_quantity,        # quantity
-            ADMIN_EMAIL,                # email
-            # correction["item_cost"],  # item_cost
-            correction["id"],           # correction_id
-            f"{correction['comment']} (stock_correction:{correction['id']})",  # note
-            "Correction",               # transaction_type
-            stock_level                 # stock_level
-        ))
+        line_item_inserts.append(
+            (
+                correction["sku"],  # sku
+                pack_size,  # pack_size
+                f"DATE '{todays_date}'",  # date
+                correction_quantity,  # quantity
+                ADMIN_EMAIL,  # email
+                # correction["item_cost"],  # item_cost
+                correction["id"],  # correction_id
+                f"{correction['comment']} (stock_correction:{correction['id']})",  # note
+                "Correction",  # transaction_type
+                stock_level,  # stock_level
+            )
+        )
 
     amend_local_stock(connection, local_stock_amend, local_large_stock_amend)
 
@@ -465,12 +436,16 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
     # TODO: this is unreadable - should probably use dict for line items
     # Create string for 'VALUES' component of insert query
     # Quote string values
-    insert_rows = [f"('{l[0]}', '{l[1]}', {l[2]}, {int(l[3])}, '{l[4]}', {l[5]}, '{l[6]}', '{l[7]}', {int(l[8])})" for l in line_item_inserts]
+    insert_rows = [
+        f"('{l[0]}', '{l[1]}', {l[2]}, {int(l[3])}, '{l[4]}', {l[5]}, '{l[6]}', '{l[7]}', {int(l[8])})"
+        for l in line_item_inserts  # noqa
+    ]
     insert_string = ", ".join(insert_rows)
     log.debug(insert_rows)
     log.debug(insert_string)
 
-    insert_query = dedent(f"""
+    insert_query = dedent(
+        f"""
     INSERT INTO {_t("line_items")}
     (
         {_f("line_items", "sku")},
@@ -485,14 +460,15 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
     )
     VALUES
     {insert_string}
-    """)
+    """
+    )
 
     log.debug(insert_query)
     cursor = connection.cursor()
     cursor.execute(insert_query)
     # print(cursor.rowcount)
     connection.commit()
-    _set_vs_stock_updated_flag(connection, [l[5] for l in line_item_inserts])
+    _set_vs_stock_updated_flag(connection, [l[5] for l in line_item_inserts])  # noqa
 
     # TODO: Also update stock value in FM directly from woocommerce value (lg/reg)
     # This will negate requirement for a preceding 'update stock' FM script

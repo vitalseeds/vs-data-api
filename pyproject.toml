@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+# Currently just added to pass toml validation
+name = "vs-data-api"
+version = "1.0"
+dependencies = [
+    "fastapi==0.90.1",
+    "uvicorn==0.23.2",
+    "pydantic==1.10.4",
+    "WooCommerce==3.0.0",
+    "pandas==1.5.2",
+    "rich==13.3.1",
+    "datascroller==1.4.1",
+    "click",
+    "pypyodbc @ https://github.com/tombola/pypyodbc/archive/main.zip",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pudb",
+    "ipython",
+    "pre-commit",
+]
+test = [
+    "pytest",
+    "pytest-cov",
+    "responses",
+]
+
+[tool.black]
+line-length = 120
+
+[tool.isort]
+profile = "black"
+line_length = 120
+known_first_party = ["vsdata"]
+
+[tool.flake8]
+max-line-length = 120
+ignore = "E203,F401"  # Ignore flake8 error for un-imported packages
+# extend-ignore = "E203,F401"
+
+# To make this application at installable, we would need to move the modules to source directory or define find rules
+
+[tool.setuptools]
+py-modules = ["__init__"] # list of python modules (file names without the extension) to include
+
+# [tool.setuptools.packages.find]
+# # where = ["."]  # list of folders that contain the packages (["."] by default)
+# include = ["vs_data"]  # package names should match these glob patterns (["*"] by default)
+# exclude = []  # exclude packages matching these glob patterns (empty by default)
+# namespaces = false  # to disable scanning PEP 420 namespaces (true by default)

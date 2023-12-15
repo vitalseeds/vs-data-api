@@ -1,7 +1,9 @@
-from woocommerce import API
-from vs_data import log
 import urllib
+
 from requests.exceptions import HTTPError
+from woocommerce import API
+
+from vs_data import log
 
 
 def get_api(url, key, secret, check_status=False):

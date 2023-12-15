@@ -4,8 +4,7 @@ Table names etc that are relied on by vs-data.
 Some (commented) may need to be created in filemaker.
 """
 
-from . import vs_tables
-from . import link_tables
+from . import link_tables, vs_tables
 
 
 def strip_prefix(table_ref: str) -> str:

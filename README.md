@@ -110,7 +110,11 @@ from FM.
 
 Install python dependencies.
 
-  - `pip install -r requirements.txt`
+  - `pip install -e`
+
+Install python developer and test dependencies.
+
+  - `pip install -e ".[dev,test]"`
 
 ## Usage
 
