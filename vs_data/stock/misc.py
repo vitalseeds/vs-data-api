@@ -165,7 +165,7 @@ def get_all_products(connection, cli=False):
         "wc_variation_lg_id",
         "wc_variation_regular_id",
     ]
-    sku = constants.fname("acquisitions", "sku")
+    # sku = constants.fname("acquisitions", "sku")
     where = ""
     if cli:
         return fmdb._select_columns(connection, table, columns, where)

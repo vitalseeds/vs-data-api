@@ -90,10 +90,10 @@ def compare_wc_fm_stock(fmdb, wcapi, cli: bool = False, csv: bool = False, uncac
 
     Heavily cached using pickles.
     """
-    column_pickle = f"tmp/compare_acq_columns.pickle"
-    results_pickle = f"tmp/compare_acq_results.pickle"
-    products_pickle = f"tmp/compare_wc_products.pickle"
-    variations_pickle = f"tmp/compare_wc_variations.pickle"
+    column_pickle = "tmp/compare_acq_columns.pickle"
+    results_pickle = "tmp/compare_acq_results.pickle"
+    products_pickle = "tmp/compare_wc_products.pickle"
+    variations_pickle = "tmp/compare_wc_variations.pickle"
 
     if uncache:
         if os.path.exists(column_pickle):

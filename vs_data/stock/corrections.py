@@ -8,7 +8,6 @@ import logging
 import os
 from collections import defaultdict
 from datetime import datetime
-from inspect import cleandoc as dedent
 from textwrap import dedent
 
 from rich import print
@@ -439,7 +438,7 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
     # Quote string values
     insert_rows = [
         f"('{l[0]}', '{l[1]}', {l[2]}, {int(l[3])}, '{l[4]}', {l[5]}, '{l[6]}', '{l[7]}', {int(l[8])})"
-        for l in line_item_inserts
+        for l in line_item_inserts  # noqa
     ]
     insert_string = ", ".join(insert_rows)
     log.debug(insert_rows)
@@ -469,7 +468,7 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
     cursor.execute(insert_query)
     # print(cursor.rowcount)
     connection.commit()
-    _set_vs_stock_updated_flag(connection, [l[5] for l in line_item_inserts])
+    _set_vs_stock_updated_flag(connection, [l[5] for l in line_item_inserts])  # noqa
 
     # TODO: Also update stock value in FM directly from woocommerce value (lg/reg)
     # This will negate requirement for a preceding 'update stock' FM script

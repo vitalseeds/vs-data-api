@@ -85,7 +85,7 @@ def link_db_update_completed_orders(fmlinkdb: object, wc_updated_orders: list) -
     link_wc_order_id = _f("link:orders", "link_wc_order_id")
     status = _f("link:orders", "status")
     selected = _f("link:orders", "selected")
-    last_api_result = _f("link:orders", "last_api_result")
+    # last_api_result = _f("link:orders", "last_api_result")
     date_completed_gmt = _f("link:orders", "date_completed_gmt")
     date_completed = _f("link:orders", "date_completed")
 

@@ -116,7 +116,7 @@ async def update_status_selected_orders(target_status: str, settings: config.Set
         num_orders = len(updated_orders)
         return {"orders": updated_orders, "message": f"{num_orders} orders were updated on WooCommerce"}
 
-    return {"message": f"No orders were updated on WooCommerce."}
+    return {"message": "No orders were updated on WooCommerce."}
 
 
 @app.get("/products/variations/update-wc-price")

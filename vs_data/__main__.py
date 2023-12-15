@@ -43,7 +43,7 @@ def get_wc_products(ctx, product_ids):
     """
     Update stock from new batches (regular size packets)
     """
-    fmdb = ctx.parent.obj["fmdb"]
+    # fmdb = ctx.parent.obj["fmdb"]
     product_ids = [int(p) for p in product_ids.split(",")]
     wcapi = ctx.parent.obj["wcapi"]
     return stock.get_wc_products_by_id(wcapi, product_ids)
@@ -230,7 +230,7 @@ def test_fm(ctx):
     """
     Test FileMaker connection
     """
-    fmdb = ctx.parent.obj["fmdb"]
+    fmdb = ctx.parent.obj["fmdb"]  # noqa
 
 
 if __name__ == "__main__":

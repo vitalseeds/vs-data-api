@@ -26,6 +26,7 @@ dev = [
 test = [
     "pytest",
     "pytest-cov",
+    "responses",
 ]
 
 [tool.black]
@@ -38,6 +39,8 @@ known_first_party = ["vsdata"]
 
 [tool.flake8]
 max-line-length = 120
+ignore = "E203,F401"  # Ignore flake8 error for un-imported packages
+# extend-ignore = "E203,F401"
 
 # To make this application at installable, we would need to move the modules to source directory or define find rules
 

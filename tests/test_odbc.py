@@ -25,8 +25,6 @@ from . import _add_from_file_match_params, flag_batches_for_upload
 #     assert batches
 
 
-
-
 ACQUISITIONS_SCHEMA = {
     "sku": "TEXT NOT NULL",
     "crop": "TEXT",
