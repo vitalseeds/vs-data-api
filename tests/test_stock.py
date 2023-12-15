@@ -11,8 +11,7 @@ from rich import print
 
 from vs_data import log, stock
 
-from . import _add_from_file_match_params
-from . import flag_batches_for_upload
+from . import _add_from_file_match_params, flag_batches_for_upload
 
 
 @pytest.mark.fmdb

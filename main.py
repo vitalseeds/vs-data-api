@@ -1,16 +1,12 @@
-from functools import lru_cache
 from datetime import datetime
+from functools import lru_cache
+
 from fastapi import Depends, FastAPI
 from starlette.responses import FileResponse
 
-from vs_data.fm import db
-from vs_data import stock
-from vs_data import wc
-from vs_data import orders
-from vs_data import products
-
-
 import config
+from vs_data import orders, products, stock, wc
+from vs_data.fm import db
 
 app = FastAPI(title="VS Data API")
 

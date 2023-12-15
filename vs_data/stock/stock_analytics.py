@@ -1,18 +1,20 @@
-from vs_data.stock.misc import get_all_products, get_all_wc_products
-from vs_data.stock.batch_upload import get_wc_large_variations_by_product
-from vs_data.cli.table import display_product_table, display_table
 import json
-import pandas as pd
+import os
 import pickle
 from os.path import exists
-import os
-from vs_data.fm.db import convert_pyodbc_cursor_results_to_lists
+
+import numpy as np
+import pandas as pd
+from datascroller import scroll
+from rich import print
+
+from vs_data import log
+from vs_data.cli.table import display_product_table, display_table
 from vs_data.fm.constants import fname as _f
 from vs_data.fm.constants import tname as _t
-from vs_data import log
-from rich import print
-import numpy as np
-from datascroller import scroll
+from vs_data.fm.db import convert_pyodbc_cursor_results_to_lists
+from vs_data.stock.batch_upload import get_wc_large_variations_by_product
+from vs_data.stock.misc import get_all_products, get_all_wc_products
 
 REPORT_CSV_FILE_PATH = "tmp/exports/report.csv"
 

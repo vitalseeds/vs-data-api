@@ -1,6 +1,10 @@
 """Test cases for the __main__ module."""
 import json
+import sqlite3
+from inspect import cleandoc as dedent
+from sqlite3 import Error
 
+import pypyodbc as pyodbc
 import pytest
 import requests
 import responses
@@ -12,10 +16,7 @@ from rich import print
 from vs_data import log, stock
 from vs_data.fm import db
 
-from . import _add_from_file_match_params
-from . import flag_batches_for_upload
-from inspect import cleandoc as dedent
-import pypyodbc as pyodbc
+from . import _add_from_file_match_params, flag_batches_for_upload
 
 # @pytest.mark.fmdb
 # def test_get_batches_awaiting_upload_join_acq(vsdb_connection):
@@ -24,9 +25,7 @@ import pypyodbc as pyodbc
 #     assert batches
 
 
-import sqlite3
 
-from sqlite3 import Error
 
 ACQUISITIONS_SCHEMA = {
     "sku": "TEXT NOT NULL",

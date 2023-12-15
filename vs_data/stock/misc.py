@@ -4,11 +4,13 @@ Useful functions for stock management.
 Created during development but not yet needed.
 """
 
-from vs_data.fm import db as fmdb
-from vs_data.fm import constants
-from rich import print
-from vs_data import log
 import itertools
+
+from rich import print
+
+from vs_data import log
+from vs_data.fm import constants
+from vs_data.fm import db as fmdb
 
 WC_MAX_API_RESULT_COUNT = 100
 

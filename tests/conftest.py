@@ -1,11 +1,11 @@
 import os
 
 import pytest
+import responses
 
 from vs_data.fm import db
 from vs_data.fm.db import pyodbc
 from vs_data.wc import api
-import responses
 
 # import betamax
 

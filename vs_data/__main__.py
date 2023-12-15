@@ -6,13 +6,9 @@ import os
 import click
 from rich import print
 
-from vs_data import stock
-from vs_data import orders
-from vs_data import products
-from vs_data.fm import constants
-from vs_data.fm import db
+from vs_data import orders, products, stock
+from vs_data.fm import constants, db
 from vs_data.wc import api
-
 
 # TODO: consider using an orm
 # eg sqlalchemy

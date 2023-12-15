@@ -1,13 +1,10 @@
+from datetime import date
 from typing import Optional
 
-from sqlmodel import Field, Session, SQLModel, create_engine
-import sqlalchemy
-from datetime import date
-
 import pypyodbc
-
+import sqlalchemy
 from sqlalchemy.connectors.pyodbc import PyODBCConnector
-
+from sqlmodel import Field, Session, SQLModel, create_engine
 
 # class PyPyODBCConnector(PyODBCConnector):
 #     driver = "pypyodbc"
