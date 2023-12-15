@@ -14,6 +14,7 @@ from vs_data import log, stock
 from . import _add_from_file_match_params
 from . import flag_batches_for_upload
 
+
 @pytest.mark.fmdb
 def test_get_batches_awaiting_upload_join_acq(vsdb_connection):
     flag_batches_for_upload(vsdb_connection, [3515, 3516, 3517])
@@ -44,10 +45,12 @@ def test_update_wc_stock_for_new_batches(wcapi, vsdb_connection, mocked_response
     flag_batches_for_upload(vsdb_connection, [3515, 3516, 3517])
 
     # Mock wcapi requests
-    _add_from_file_match_params(responses, file_path="tests/fixtures/test_wcapi_stock/batch_awaiting_upload_wc_products.toml",
+    _add_from_file_match_params(
+        responses,
+        file_path="tests/fixtures/test_wcapi_stock/batch_awaiting_upload_wc_products.toml",
         match=[
             matchers.query_param_matcher({"include": "28388.0,1716.0,10271.0"}, strict_match=False),
-        ]
+        ],
     )
     responses._add_from_file(file_path="tests/fixtures/test_wcapi_stock/batch_post_product_stock.toml")
 

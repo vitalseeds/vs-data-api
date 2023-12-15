@@ -66,16 +66,16 @@ def get_acquisitions_with_large_variation(connection):
 
 def get_audit_log_path(audit_key):
     audit_log_dir = os.environ.get("AUDIT_LOG_DIR", "tmp")
-    return f'{audit_log_dir}/{audit_key}.csv'
+    return f"{audit_log_dir}/{audit_key}.csv"
 
 
 def write_audit_csv(audit_key, list_of_dicts):
     filename = get_audit_log_path(audit_key)
     append = pathlib.Path(filename).is_file()
 
-    with open(filename, mode='a') as csv_file:
+    with open(filename, mode="a") as csv_file:
         headers = list_of_dicts[0].keys()
-        audit_log_writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        audit_log_writer = csv.writer(csv_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
         if not append:
             audit_log_writer.writerow(headers)
         for row in list_of_dicts:
@@ -118,7 +118,7 @@ def push_variation_prices_to_wc(wcapi, fmdb, cli: bool = False) -> list | None:
     variation_products = get_acquisitions_with_large_variation(fmdb)
     log.debug(variation_products)
 
-    now = datetime.now() # current date and time
+    now = datetime.now()  # current date and time
     run_time = now.strftime("%Y-%m-%d__%H-%M-%S")
     audit_key = f"wc_variation_prices_after_{run_time}"
     audit_log_path = get_audit_log_path(audit_key)

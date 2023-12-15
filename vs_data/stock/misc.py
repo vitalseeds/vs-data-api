@@ -12,14 +12,15 @@ import itertools
 
 WC_MAX_API_RESULT_COUNT = 100
 
+
 # back port of 3.12 itertools.batched
 # https://docs.python.org/3.12/library/itertools.html#itertools.batched
 def batched(iterable, n):
     # batched('ABCDEFG', 3) --> ABC DEF G
     if n < 1:
-        raise ValueError('n must be at least one')
+        raise ValueError("n must be at least one")
     it = iter(iterable)
-    while (batch := tuple(itertools.islice(it, n))):
+    while batch := tuple(itertools.islice(it, n)):
         yield batch
 
 
@@ -49,6 +50,7 @@ def get_wc_products_in_stock(wcapi):
         },
     )
 
+
 def wcapi_aggregate_paginated_response(func):
     """
     Repeat calls a decorated function to get all pages of WooCommerce API response.
@@ -59,6 +61,7 @@ def wcapi_aggregate_paginated_response(func):
         - wcapi object
         - page number
     """
+
     def wrapper(wcapi, page=0, *args, **kwargs):
         items = []
         page = 0
@@ -76,6 +79,7 @@ def wcapi_aggregate_paginated_response(func):
 
         log.debug(f"{num_products=}, {len(items)=}")
         return items
+
     return wrapper
 
 
@@ -89,6 +93,7 @@ def wcapi_batch_post(func):
 
     and return a requests response.
     """
+
     def wrapper(wcapi, updates, *args, **kwargs):
         items = []
         log.debug(batched(updates, WC_MAX_API_RESULT_COUNT))
@@ -102,6 +107,7 @@ def wcapi_batch_post(func):
                 log.debug(f"{updates=}")
 
         return items
+
     return wrapper
 
 

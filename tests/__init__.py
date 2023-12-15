@@ -14,7 +14,9 @@ except ImportError:
 from vs_data.fm import constants
 
 
-def _add_from_file_match_params(responses: RequestsMock, file_path: "Union[str, bytes, os.PathLike[Any]]", *args, **kwargs) -> None:
+def _add_from_file_match_params(
+    responses: RequestsMock, file_path: "Union[str, bytes, os.PathLike[Any]]", *args, **kwargs
+) -> None:
     """
     Replacement for responses.RequestsMock._add_from_file
 

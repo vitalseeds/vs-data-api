@@ -42,7 +42,7 @@ def get_selected_orders(fmlinkdb):
 
 
 @wcapi_batch_post
-def wc_orders_update_status(wcapi, orders:dict[dict], target_status:str) -> dict|None:
+def wc_orders_update_status(wcapi, orders: dict[dict], target_status: str) -> dict | None:
     order_updates = []
     for order in orders:
         order_updates.append(
@@ -60,20 +60,20 @@ def wc_orders_update_status(wcapi, orders:dict[dict], target_status:str) -> dict
         # Reduce log noise by picking out pertinent details
         updates = [
             {
-                "id": u.get("id", ""), # 46015
-                "order_key": u.get("order_key", ""), # wc_order_12345abcdef
-                "status": u.get("status", ""), # "completed"
-                "date_completed": u.get("date_completed", ""), # "2023-02-14T13:47:24"
-                "date_completed_gmt": u.get("date_completed_gmt", ""), # "2023-02-14T13:47:24"
+                "id": u.get("id", ""),  # 46015
+                "order_key": u.get("order_key", ""),  # wc_order_12345abcdef
+                "status": u.get("status", ""),  # "completed"
+                "date_completed": u.get("date_completed", ""),  # "2023-02-14T13:47:24"
+                "date_completed_gmt": u.get("date_completed_gmt", ""),  # "2023-02-14T13:47:24"
             }
             for u in response.get("update", [])
         ]
         return updates
 
 
-def _fm_completion_date_or_now(date:str|None):
+def _fm_completion_date_or_now(date: str | None):
     if not date:
-        return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Filemaker does not acknowledge timezone
     return date.replace("T", " ")
 
@@ -90,7 +90,7 @@ def link_db_update_completed_orders(fmlinkdb: object, wc_updated_orders: list) -
 
     rows_affected = 0
     for order in wc_updated_orders:
-        completion_date = _fm_completion_date_or_now(order.get('date_completed', None))
+        completion_date = _fm_completion_date_or_now(order.get("date_completed", None))
         sql = (
             f'UPDATE "{orders_table}" '
             f"SET {status}='{order['status']}', "
@@ -109,7 +109,8 @@ def link_db_update_completed_orders(fmlinkdb: object, wc_updated_orders: list) -
     log.debug(f"{rows_affected=}")
     return rows_affected
 
-def link_db_change_status_selected_orders(fmlinkdb: object, target_status:str) -> int:
+
+def link_db_change_status_selected_orders(fmlinkdb: object, target_status: str) -> int:
     orders_table = _t("link:orders")
     selected = _f("link:orders", "selected")
     status = _f("link:orders", "status")
@@ -129,7 +130,7 @@ def link_db_change_status_selected_orders(fmlinkdb: object, target_status:str) -
     return rows_affected
 
 
-def update_packed_orders_status(fmlinkdb, wcapi, cli: bool=False, target_status:str="completed") -> list|None:
+def update_packed_orders_status(fmlinkdb, wcapi, cli: bool = False, target_status: str = "completed") -> list | None:
     # Assume for now that we only want to get orders that are in 'packing'
     orders = get_selected_orders(fmlinkdb)
     # orders = [{'link_wc_order_id': 46011, 'full_name': 'Roberta Mathieson', 'status': 'packing', 'selected': 'Yes'}]

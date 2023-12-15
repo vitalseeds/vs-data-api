@@ -78,7 +78,7 @@ class StockCorrections(FilemakerTable):
     comment = "comment"
 
 
-class LineItems():
+class LineItems:
     table_name = "LineItems_Orders"
 
     wc_order_id = "order_number"  # previously "Order number"

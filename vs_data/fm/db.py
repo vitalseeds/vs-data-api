@@ -18,12 +18,12 @@ VSDATA_FM_LINK_CONNECTION_STRING = os.environ.get("VSDATA_FM_LINK_CONNECTION_STR
 
 INTEGER_FIELD_NAMES = [
     "id",
-    'wc_product_id',
-    'wc_variation_regular_id',
-    'wc_variation_lg_id',
-    'packets',
+    "wc_product_id",
+    "wc_variation_regular_id",
+    "wc_variation_lg_id",
+    "packets",
     # 'batch_number',
-    'link_wc_order_id',
+    "link_wc_order_id",
     "wc_stock_updated",
     "vs_stock_updated",
     "stock_regular",
@@ -32,9 +32,7 @@ INTEGER_FIELD_NAMES = [
 ]
 
 
-def construct_dsn_connection_string(
-    dsn: str = "", user: str = "", pwd: str = ""
-) -> str:
+def construct_dsn_connection_string(dsn: str = "", user: str = "", pwd: str = "") -> str:
     """
     Format a connection string to connect via a DSN
     """
@@ -44,9 +42,7 @@ def construct_dsn_connection_string(
     return f"DSN={dsn};UID={user};PWD={pwd}"
 
 
-def construct_db_connection_string(
-    db_name: str, db_user: str, db_password: str, db_host: str = "localhost"
-) -> str:
+def construct_db_connection_string(db_name: str, db_user: str, db_password: str, db_host: str = "localhost") -> str:
     """
     Format a connection string to connect directly to database.
 
