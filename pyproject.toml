@@ -1,11 +1,29 @@
 [build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
-# Currently just added to pass toml validation
 name = "vs-data-api"
-version = "1.0"
+dynamic = ["version"]
+description = ''
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "tombola", email = "tombola@github" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
 dependencies = [
     "fastapi==0.90.1",
     "uvicorn==0.23.2",
@@ -23,33 +41,157 @@ dev = [
     "pudb",
     "ipython",
     "pre-commit",
+    "objexplore",
 ]
 test = [
     "pytest",
     "pytest-cov",
     "responses",
+    "httpx",
+    "toml",
+]
+
+[project.urls]
+Documentation = "https://github.com/tombola/vs-data-api#readme"
+Issues = "https://github.com/tombola/vs-data-api/issues"
+Source = "https://github.com/tombola/vs-data-api"
+
+[project.scripts]
+vs = "vs_data_api.cli:cli"
+
+[tool.hatch.version]
+path = "src/vs_data_api/__about__.py"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.envs.default]
+dependencies = [
+  "coverage[toml]>=6.5",
+  "pytest",
+]
+[tool.hatch.envs.default.scripts]
+test = "pytest {args:tests}"
+test-cov = "coverage run -m pytest {args:tests}"
+cov-report = [
+  "- coverage combine",
+  "coverage report",
+]
+cov = [
+  "test-cov",
+  "cov-report",
+]
+
+[[tool.hatch.envs.all.matrix]]
+python = ["3.7", "3.8", "3.9", "3.10", "3.11"]
+
+[tool.hatch.envs.lint]
+detached = true
+dependencies = [
+  "black>=23.1.0",
+  "mypy>=1.0.0",
+  "ruff>=0.0.243",
+]
+[tool.hatch.envs.lint.scripts]
+typing = "mypy --install-types --non-interactive {args:src/vs_data_api tests}"
+style = [
+  "ruff {args:.}",
+  "black --check --diff {args:.}",
+]
+fmt = [
+  "black {args:.}",
+  "ruff --fix {args:.}",
+  "style",
+]
+all = [
+  "style",
+  "typing",
 ]
 
 [tool.black]
+target-version = ["py37"]
 line-length = 120
+skip-string-normalization = true
+
+[tool.ruff]
+target-version = "py37"
+line-length = 120
+select = [
+  "A",
+  "ARG",
+  "B",
+  "C",
+  "DTZ",
+  "E",
+  "EM",
+  "F",
+  "FBT",
+  "I",
+  "ICN",
+  "ISC",
+  "N",
+  "PLC",
+  "PLE",
+  "PLR",
+  "PLW",
+  "Q",
+  "RUF",
+  "S",
+  "T",
+  "TID",
+  "UP",
+  "W",
+  "YTT",
+]
+ignore = [
+  # Allow non-abstract empty methods in abstract base classes
+  "B027",
+  # Allow boolean positional values in function calls, like `dict.get(... True)`
+  "FBT003",
+  # Ignore checks for possible passwords
+  "S105", "S106", "S107",
+  # Ignore complexity
+  "C901", "PLR0911", "PLR0912", "PLR0913", "PLR0915",
+]
+unfixable = [
+  # Don't touch unused imports
+  "F401",
+]
+
+[tool.flake8]
+max-line-length = 120
+ignore = "E203,F401"
 
 [tool.isort]
 profile = "black"
 line_length = 120
-known_first_party = ["vsdata"]
+known-first-party = ["vs_data_api", "vs_data"]
 
-[tool.flake8]
-max-line-length = 120
-ignore = "E203,F401"  # Ignore flake8 error for un-imported packages
-# extend-ignore = "E203,F401"
+[tool.ruff.isort]
+known-first-party = ["vs_data_api", "vs_data"]
 
-# To make this application at installable, we would need to move the modules to source directory or define find rules
+[tool.ruff.flake8-tidy-imports]
+ban-relative-imports = "all"
 
-[tool.setuptools]
-py-modules = ["__init__"] # list of python modules (file names without the extension) to include
+[tool.ruff.per-file-ignores]
+# Tests can use magic values, assertions, and relative imports
+"tests/**/*" = ["PLR2004", "S101", "TID252"]
 
-# [tool.setuptools.packages.find]
-# # where = ["."]  # list of folders that contain the packages (["."] by default)
-# include = ["vs_data"]  # package names should match these glob patterns (["*"] by default)
-# exclude = []  # exclude packages matching these glob patterns (empty by default)
-# namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
+[tool.coverage.run]
+source_pkgs = ["vs_data_api", "tests"]
+branch = true
+parallel = true
+omit = [
+  "src/vs_data_api/__about__.py",
+]
+
+[tool.coverage.paths]
+vs_data_api = ["src/vs_data_api", "*/vs-data-api/src/vs_data_api"]
+tests = ["tests", "*/vs-data-api/tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
