@@ -15,6 +15,13 @@ COLOURS = (
 RAINBOW = True
 
 
+def row_float_to_int(row):
+    """
+    Cast all float values in row to integer
+    """
+    return [int(v) if isinstance(v, float) else v for v in row]
+
+
 def display_table(rows, headers=None, title=None, float_to_int=True):
     """
     Display a rich table.
@@ -44,11 +51,8 @@ def display_table(rows, headers=None, title=None, float_to_int=True):
     # table.add_column("Box Office", justify="right", style="green")
 
     for row in rows:
-        if float_to_int:
-            row = [int(v) if isinstance(v, float) else v for v in row]
-
+        row = row_float_to_int(row) if float_to_int else row
         row = [str(v) for v in row]
-        # table.add_row(*rows)
         table.add_row(*row)
 
     # table.add_row("May 25, 2018", "Solo: A Star Wars Story", "$393,151,347")
