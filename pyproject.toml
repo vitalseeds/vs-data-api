@@ -22,6 +22,7 @@ dependencies = [
 dev = [
     "pudb",
     "ipython",
+    "pre-commit",
 ]
 test = [
     "pytest",
@@ -44,8 +45,8 @@ ignore = "E203,F401"  # Ignore flake8 error for un-imported packages
 
 # To make this application at installable, we would need to move the modules to source directory or define find rules
 
-# [tool.setuptools]
-# py-modules = ["__init__"] # list of python modules (file names without the extension) to include
+[tool.setuptools]
+py-modules = ["__init__"] # list of python modules (file names without the extension) to include
 
 # [tool.setuptools.packages.find]
 # # where = ["."]  # list of folders that contain the packages (["."] by default)
