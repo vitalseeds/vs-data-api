@@ -230,6 +230,8 @@ def amend_left_in_batch(connection: object, sku, correction, large_batch=False) 
         current_batch_id = get_current_batch_id(connection, sku)
     if not current_batch_id:
         log.warn(f"current_batch not found for {sku} (large_batch={large_batch})")
+        # It is possible for there not to be a current batch, eg product is a calendar
+        return None
 
     if large_batch:
         # large batch uses string as ID eg 'GR1234'
