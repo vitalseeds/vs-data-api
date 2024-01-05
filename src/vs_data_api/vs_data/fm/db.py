@@ -9,8 +9,8 @@ import os
 
 import pypyodbc as pyodbc
 
-from vs_data import log
-from vs_data.fm import constants
+from vs_data_api.vs_data import log
+from vs_data_api.vs_data.fm import constants
 
 VSDATA_FM_CONNECTION_STRING = os.environ.get("VSDATA_FM_CONNECTION_STRING", None)
 VSDATA_FM_LINK_CONNECTION_STRING = os.environ.get("VSDATA_FM_LINK_CONNECTION_STRING", None)

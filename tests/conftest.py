@@ -3,9 +3,9 @@ import os
 import pytest
 import responses
 
-from vs_data.fm import db
-from vs_data.fm.db import pyodbc
-from vs_data.wc import api
+from vs_data_api.vs_data.fm import db
+from vs_data_api.vs_data.fm.db import pyodbc
+from vs_data_api.vs_data.wc import api
 
 # import betamax
 
