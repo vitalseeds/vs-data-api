@@ -4,7 +4,7 @@ import pydantic
 from pydantic import BaseSettings, Field, PrivateAttr
 from woocommerce import API as wc_api
 
-from vs_data import log, wc
+from vs_data_api.vs_data import log, wc
 
 
 class Settings(BaseSettings):

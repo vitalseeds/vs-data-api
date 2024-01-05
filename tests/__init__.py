@@ -12,7 +12,7 @@ except ImportError:
     # python 3.11
     import tomllib as _toml
 
-from vs_data.fm import constants
+from vs_data_api.vs_data.fm import constants
 
 
 def _add_from_file_match_params(

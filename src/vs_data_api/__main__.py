@@ -4,6 +4,6 @@
 import sys
 
 if __name__ == "__main__":
-    from vs_data_api.cli import vs_data_api
+    from vs_data_api.vs_data.cli import vs_data_api
 
     sys.exit(vs_data_api())

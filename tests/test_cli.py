@@ -2,7 +2,7 @@
 import pytest
 from click.testing import CliRunner
 
-from vs_data import __main__
+from vs_data_api.vs_data import __main__
 
 
 @pytest.fixture

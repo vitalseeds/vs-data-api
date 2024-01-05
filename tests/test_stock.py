@@ -9,7 +9,7 @@ from objexplore import explore
 from responses import _recorder, matchers
 from rich import print
 
-from vs_data import log, stock
+from vs_data_api.vs_data import log, stock
 
 from . import _add_from_file_match_params, flag_batches_for_upload
 

@@ -12,14 +12,14 @@ from textwrap import dedent
 
 from rich import print
 
-from vs_data import log
-from vs_data.cli.table import display_table
-from vs_data.fm import constants
-from vs_data.fm import db
-from vs_data.fm import db as fmdb
-from vs_data.fm.constants import fname as _f
-from vs_data.fm.constants import tname as _t
-from vs_data.stock.batch_upload import wc_large_product_update_stock, wc_regular_product_update_stock
+from vs_data_api.vs_data import log
+from vs_data_api.vs_data.cli.table import display_table
+from vs_data_api.vs_data.fm import constants
+from vs_data_api.vs_data.fm import db
+from vs_data_api.vs_data.fm import db as fmdb
+from vs_data_api.vs_data.fm.constants import fname as _f
+from vs_data_api.vs_data.fm.constants import tname as _t
+from vs_data_api.vs_data.stock.batch_upload import wc_large_product_update_stock, wc_regular_product_update_stock
 
 WC_MAX_API_RESULT_COUNT = 100
 LARGE_VARIATION_SKU_SUFFIX = "Gr"

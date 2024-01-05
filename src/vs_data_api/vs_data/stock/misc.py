@@ -8,9 +8,9 @@ import itertools
 
 from rich import print
 
-from vs_data import log
-from vs_data.fm import constants
-from vs_data.fm import db as fmdb
+from vs_data_api.vs_data import log
+from vs_data_api.vs_data.fm import constants
+from vs_data_api.vs_data.fm import db as fmdb
 
 WC_MAX_API_RESULT_COUNT = 100
 
