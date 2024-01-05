@@ -61,6 +61,8 @@ async def root():
 async def get_product_by_id(product_id: int, settings: config.Settings = Depends(get_settings)):
     """
     Gets a product from the aquisitions table
+
+    Currently unnused stub.
     """
     return {"product": product_id}
 

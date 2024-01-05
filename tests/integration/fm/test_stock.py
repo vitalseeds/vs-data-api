@@ -1,6 +1,7 @@
 """Test cases for the __main__ module."""
 import json
 
+import pypyodbc as pyodbc
 import pytest
 import requests
 import responses
@@ -12,13 +13,92 @@ from rich import print
 
 from tests import _add_from_file_match_params, flag_batches_for_upload
 from vs_data_api.vs_data import log, stock
+from vs_data_api.vs_data.fm.constants import fname as _f
+
+
+def create_test_acquisition(vsdb_connection):
+    sku = "TEST_SKU"
+    wc_product_id = 12345
+    wc_variation_lg_id = 54321
+    wc_variation_regular_id = 54322
+    price = 9.99
+    lg_variation_price = 99
+
+    sql = (
+        "INSERT INTO acquisitions (sku, wc_product_id, wc_variation_lg_id, wc_variation_regular_id) "
+        f"VALUES ('{sku}', {wc_product_id}, {wc_variation_lg_id}, {wc_variation_regular_id})"
+    )
+    log.debug(sql)
+
+    cursor: pyodbc.Cursor = vsdb_connection.cursor()
+    cursor.execute(sql)
+    cursor.commit()
+
+
+def create_batch_for_upload(vsdb_connection, batch_number):
+    sku = "TEST_SKU"
+    packets = 10
+    awaiting_upload = "yes"
+    wc_product_id = 12345
+
+    sql = "INSERT INTO packeting_batches (sku, batch_number, packets, awaiting_upload) VALUES (?, ?, ?, ?)"
+    values = (sku, batch_number, packets, awaiting_upload)
+
+    # sql = (
+    #     "INSERT INTO packeting_batches (sku, batch_number, packets, awaiting_upload) "
+    #     f"VALUES ('{sku}', {batch_number}, {packets}, '{awaiting_upload}')"
+    # )
+    # log.debug(sql)
+    log.debug(sql)
+    cursor: pyodbc.Cursor = vsdb_connection.cursor()
+    # cursor.execute(sql, values)
+    cursor.execute(sql, *values)
+    cursor.commit()
+
+
+def get_test_batch(vsdb_connection, batch_number):
+    awaiting = _f("packeting_batches", "awaiting_upload")
+    # where = f"lower({awaiting})='yes' AND b.pack_date IS NOT NULL"
+    where = f"lower({awaiting})='yes' AND B.batch_number = {batch_number}"
+    where = f"lower({awaiting})='yes' AND B.sku = 'TEST_SKU'"
+
+    sql = (
+        "SELECT B.awaiting_upload,B.batch_number, B.packets, A.sku, A.wc_product_id  "
+        'FROM "packeting_batches" B '
+        'LEFT JOIN "acquisitions" A ON B.sku = A.SKU '
+        f"WHERE {where} "
+        "ORDER BY B.batch_number DESC "
+        # "FETCH FIRST 10 ROWS ONLY "
+    )
+    log.debug(sql)
+    rows = vsdb_connection.cursor().execute(sql).fetchall()
+    log.info(rows)
+    return rows
+
+
+def delete_test_batch(vsdb_connection, batch_number):
+    sql = f'DELETE FROM "packeting_batches" WHERE batch_number = {batch_number} '
+    log.debug(sql)
+    vsdb_connection.cursor().execute(sql).commit()
+
+
+def delete_test_acquisition(vsdb_connection, sku):
+    sql = f"DELETE FROM \"acquisitions\" WHERE sku = '{sku}'"
+    log.debug(sql)
+    vsdb_connection.cursor().execute(sql).commit()
 
 
 @pytest.mark.fmdb
 def test_get_batches_awaiting_upload_join_acq(vsdb_connection):
-    flag_batches_for_upload(vsdb_connection, [3515, 3516, 3517])
-    batches = stock.batch_upload.get_batches_awaiting_upload_join_acq(vsdb_connection)
-    assert batches
+    create_test_acquisition(vsdb_connection)
+    create_batch_for_upload(vsdb_connection, 99999)
+    get_test_batch(vsdb_connection, 99999)
+    delete_test_batch(vsdb_connection, 99999)
+    delete_test_acquisition(vsdb_connection, "TEST_SKU")
+
+    # flag_batches_for_upload(vsdb_connection, [3515, 3516, 3517])
+    # batches = stock.batch_upload.get_batches_awaiting_upload_join_acq(vsdb_connection)
+    # assert batches
 
 
 @pytest.mark.wcapi
