@@ -54,7 +54,7 @@ def flag_batches_for_upload(connection, batch_ids: list):
     awaiting_upload = constants.fname("packeting_batches", "awaiting_upload")
     batch_number = constants.fname("packeting_batches", "batch_number")
     sql = ""
-    for batch in [3515, 3516, 3517]:
+    for batch in batch_ids:
         sql = f"UPDATE {fm_table} SET {awaiting_upload}='Yes' WHERE {batch_number} = {batch}"
         cursor = connection.cursor()
         print(sql)

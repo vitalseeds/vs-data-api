@@ -5,13 +5,13 @@ import pytest
 import requests
 import responses
 import toml
-from objexplore import explore
+
+# from objexplore import explore
 from responses import _recorder, matchers
 from rich import print
 
+from tests import _add_from_file_match_params, flag_batches_for_upload
 from vs_data_api.vs_data import log, stock
-
-from . import _add_from_file_match_params, flag_batches_for_upload
 
 
 @pytest.mark.fmdb
@@ -28,6 +28,7 @@ def test_get_products_by_id(wcapi):
     assert products
 
 
+@pytest.mark.fmdb
 @pytest.mark.record
 @responses._recorder.record(file_path="tests/fixtures/test_wcapi_stock_batch_awaiting_upload_wc_products.toml")
 def test_record__update_wc_stock_for_new_batches(wcapi, vsdb_connection, mocked_responses):
@@ -38,6 +39,7 @@ def test_record__update_wc_stock_for_new_batches(wcapi, vsdb_connection, mocked_
     # TODO: Separate first and second requests into separate toml files
 
 
+@pytest.mark.fmdb
 @responses.activate
 def test_update_wc_stock_for_new_batches(wcapi, vsdb_connection, mocked_responses):
     # TODO: remove when vsdb connection is mocked

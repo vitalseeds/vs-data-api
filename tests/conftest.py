@@ -21,6 +21,28 @@ VSDATA_WC_KEY = os.environ["VSDATA_TEST_WC_KEY"]
 VSDATA_WC_SECRET = os.environ["VSDATA_TEST_WC_SECRET"]
 
 
+def pytest_addoption(parser):
+    parser.addoption("--fmdb", action="store_true", dest="fmdb", default=False, help="enable fmdb decorated tests")
+    parser.addoption("--wcapi", action="store_true", dest="wcapi", default=False, help="enable wcapi decorated tests")
+    parser.addoption(
+        "--dbmock", action="store_true", dest="dbmock", default=False, help="enable dbmock decorated tests"
+    )
+
+
+def pytest_configure(config):
+    mark_expression = []
+    if not config.option.fmdb:
+        mark_expression.append("not fmdb")
+    if not config.option.wcapi:
+        mark_expression.append("not wcapi")
+    if not config.option.dbmock:
+        mark_expression.append("not dbmock")
+    combined_markexp = " and ".join(mark_expression)
+    if combined_markexp:
+        print(f"-m '{combined_markexp}'")
+    setattr(config.option, "markexpr", combined_markexp)
+
+
 @pytest.fixture
 def vsdb_connection() -> pyodbc.Connection:
     """Fixture to provide integration with a REAL filemaker database"""
