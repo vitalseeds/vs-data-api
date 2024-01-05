@@ -22,11 +22,39 @@ def get_settings():
 #     return wrap_and_call
 
 
+from fastapi import Request
+from fastapi.responses import JSONResponse
+
+
+@app.exception_handler(Exception)
+async def vsdata_exception_handler(request: Request, exc: Exception):
+    from textwrap import dedent
+
+    # Return a parseable message to Filemaker
+    return JSONResponse(
+        status_code=500,
+        content={
+            "message": dedent(
+                f"""
+                Filemaker requested an action from vsdata (python),
+                but an error occurred.
+
+                {request.method}: {request.url}
+
+                Error message:
+                {exc!r}.
+                """
+            )
+        },
+    )
+
+
 @app.get("/")
 async def root():
     """
     Tests that API is running and accepting requests
     """
+    raise AssertionError("Status not ok")
     return {"message": "VS Data API running"}
 
 

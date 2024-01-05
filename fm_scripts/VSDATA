@@ -1,0 +1,15 @@
+Set Variable [ $param; Value:Get ( ScriptParameter ) ]
+If [ not IsEmpty ( $param ) ]
+Set Variable [ $URL; Value:Get ( ScriptParameter ) ]
+Insert from URL [ $RESPONSE; $URL ] [ Select; No dialog ]
+Set Variable [ $lastError; Value:Get ( LastError ) ]
+If [ $lastError ≠ 0 ]
+#Insert from URL Error
+Set Variable [ $errorText; Value:"Could not connect to vsdata.¶¶Check that the python app is running." ]
+Show Custom Dialog [ Title: "HTTP Request Error"; Message: $errorText; Default Button: “OK”, Commit: “Yes” ] Exit Script [ Result: $errorText ]
+End If
+Set Variable [ $MESSAGE; Value:JSONGetElement ( $RESPONSE; "message") ]
+Show Custom Dialog [ Title: $URL; Message: $MESSAGE; Default Button: “OK”, Commit: “Yes” ] Else
+Show Custom Dialog [ Title: "Action was not run"; Message: "No action was specified for VSDATA to run. Pass one of the endpoints defined in VSDATA/GLOBALS as a parameter.
+"; Default Button: “OK”, Commit: “No” ]
+End If

@@ -1,0 +1,5 @@
+// Request an action via an vs_data_api endpoint
+// See VSDATA script for request handling
+// See GLOBALS (called on FM file open script trigger)
+
+Perform Script [ “VSDATA”; Parameter: $$VSDATA_UPLOAD_STOCK ]
