@@ -52,6 +52,7 @@ def vsdb_connection() -> pyodbc.Connection:
 @pytest.fixture
 def linkdb_connection() -> pyodbc.Connection:
     """Fixture to provide integration with a REAL filemaker database"""
+
     return db.connection(VSDATA_FM_LINK_CONNECTION_STRING)
 
 

@@ -165,7 +165,7 @@ ignore = "E203,F401"
 [tool.isort]
 profile = "black"
 line_length = 120
-known-first-party = ["vs_data_api", "vs_data"]
+known_first_party = ["vs_data_api", "vs_data"]
 
 [tool.ruff.isort]
 known-first-party = ["vs_data_api", "vs_data"]

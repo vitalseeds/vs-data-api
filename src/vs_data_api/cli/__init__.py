@@ -8,11 +8,11 @@ import os
 
 import click
 from rich import print
+
+from vs_data_api.__about__ import __version__
 from vs_data_api.vs_data import orders, products, stock
 from vs_data_api.vs_data.fm import constants, db
 from vs_data_api.vs_data.wc import api
-
-from vs_data_api.__about__ import __version__
 
 
 @click.group()
