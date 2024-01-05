@@ -17,7 +17,7 @@ more easily maintained, tested and extended.
 Run the FastAPI server:
 
 ```
-uvicorn main:app --reload
+uvicorn src.vs_data_api.main:app --reload
 ```
 
 Call the API from a FileMaker script:
