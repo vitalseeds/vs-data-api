@@ -1,6 +1,13 @@
-Set Variable [ $$VSDATA_HOST; Value:"http://127.0.0.1:8000" ]
+# GLOBALS in file vs_db
 
-// #Set some variables for URLs that scripts can call
-Set Variable [ $$VSDATA_UPLOAD_STOCK; Value:$$VSDATA_HOST & "/batch/upload-wc-stock" ]
-Set Variable [ $$VSDATA_UPLOAD_STOCK_LARGE; Value:$$VSDATA_HOST & "/batch/upload-wc-stock/variation/large" ]
-Set Variable [ $$VSDATA_GET_AWAITING_UPLOAD; Value:$$VSDATA_HOST & "/batch/awaiting_upload" ] Set Variable [ $$VSDATA_STATUS; Value:$$VSDATA_HOST & "/" ]
+# "http: //127.0.0.1:PORT"
+Set Variable [ $SVSDATA_HOST; Value: "https: //127.0.0.1:8432" ]
+
+/# Set some variables for URLs that scripts can call
+Set Variable [ $SVSDATA_UPLOAD_STOCK; Value: $$VSDATA_HOST & "/batch/upload-wc-stock" ]
+Set Variable [ $SVSDATA_UPLOAD_STOCK_LARGE;
+Value: $$VSDATA_HOST & "/batch/upload-wc-stock/variation/large" ]
+Set Variable [ $SVSDATA_GET_AWAITING_UPLOAD;
+Value: $$VSDATA_HOST & "/batch/awaiting_upload" ]
+
+Set Variable [ $SVSDATA_STATUS; Value: $$VSDATA_HOST & "/" ]

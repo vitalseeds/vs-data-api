@@ -11,7 +11,6 @@ Hopefully this will mean that
 FM integration (SQL queries etc) can be neatly encapsulated in `vs-data` and
 more easily maintained, tested and extended.
 
-
 ## Basic usage
 
 Run the FastAPI server:
@@ -58,7 +57,7 @@ way as it would connect to filemaker (ODBC). Installation instructions for the
 driver should be available in the downloaded package, but briefly:
 
 - install [ODBC
-Manager](https://odbcmanager.net/about.php)
+  Manager](https://odbcmanager.net/about.php)
 - run installer
 - add a _user_ driver from `/usr/local/lib/libsqlite3odbc-0.9993.dylib`
 - create a DSN using that driver (optional)
@@ -72,14 +71,13 @@ Eg `brew uninstall unixodbc`.
 
 # VS-data
 
-*Previously its own [installable package][2], now moved into the this repo to allow simpler maintenance.*
+_Previously its own [installable package][2], now moved into the this repo to allow simpler maintenance._
 
 This is a python package that serves as a bridge between inventory management in
 FileMaker, and order details on vitalseeds.co.uk.
 
 Aims to replace opaque and proprietary FM 'scripts' - specifically where they
 interact with the WooCommerce/WP website.
-
 
 ## Requirements
 
@@ -97,24 +95,36 @@ To connect to WooCommerce:
 
 - [API credentials][wcapi]
 
-
 ## Installation
 
 Set environment variables. See `.env.example` for full list. Alternatively these options can be passed as arguments eg when calling
 from FM.
 
-  - `VSDATA_FM_CONNECTION_STRING`
-  - `VSDATA_WC_URL`
-  - `VSDATA_WC_KEY`
-  - `VSDATA_WC_SECRET`
+- `VSDATA_FM_CONNECTION_STRING`
+- `VSDATA_WC_URL`
+- `VSDATA_WC_KEY`
+- `VSDATA_WC_SECRET`
 
 Install python dependencies.
 
-  - `pip install -e`
+- `pip install -e`
 
 Install python developer and test dependencies.
 
-  - `pip install -e ".[dev,test]"`
+- `pip install -e ".[dev,test]"`
+
+[Create an SSL
+certificate](https://dev.to/rajshirolkar/fastapi-over-https-for-development-on-windows-2p7d)
+so that the fastapi endpoints can use HTTPS when run by uvicorn. Suggest save to
+the ssl folder, or you can use the env vars
+`SSL_KEYFILE` `SSL_CERTFILE` to specify the path to these two files.
+
+### Setup in FileMaker
+
+Filemaker can trigger actions by requesting fastapi endpoints (running locally).
+
+Filemaker does not support import/export of scripts, so you will need to set
+these up yourself. See the `fm_scripts` directory for examples.
 
 ## Usage
 
@@ -142,7 +152,6 @@ Run test config via dotenv to test new endpoints etc against a dummy database an
   - be edited and searched as text, ie with a full featured code editor like [VScode](https://code.visualstudio.com/)
   - be **much** more performant
   - be iterated and improved more simply
-
 
 [1]: https://fastapi.tiangolo.com/
 [2]: https://github.com/vitalseeds/vs-data

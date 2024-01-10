@@ -25,3 +25,5 @@ tmp
 /docs/_build/
 /src/*.egg-info/
 __pycache__/
+
+*.pem
