@@ -54,7 +54,6 @@ async def root():
     """
     Tests that API is running and accepting requests
     """
-    raise AssertionError("Status not ok")
     return {"message": "VS Data API running"}
 
 
