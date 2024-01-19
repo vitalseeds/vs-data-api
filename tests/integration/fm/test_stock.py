@@ -1,4 +1,5 @@
 """Test cases for the __main__ module."""
+import datetime
 import json
 
 import pypyodbc as pyodbc
@@ -11,9 +12,33 @@ import toml
 from responses import _recorder, matchers
 from rich import print
 
-from tests import _add_from_file_match_params, flag_batches_for_upload
+from tests import _add_from_file_match_params, flag_only_test_batches_for_upload
 from vs_data_api.vs_data import log, stock
 from vs_data_api.vs_data.fm.constants import fname as _f
+
+
+# TODO: Move this to a method on a cursor class to overload pypypyodbc cursor
+def param_types_from_var(sql_string: str, values: tuple):
+    """
+    FileMaker ODBC does not tell us what types the fields are, so quote them etc
+    using argument type instead.
+
+    (see pypyodbc for 'self.connection.support_SQLDescribeParam')
+    """
+    quoted_values = []
+    for value in values:
+        if isinstance(value, str):
+            quoted_values.append(f"'{value}'")
+            continue
+        # TODO: test for formatting dates
+        elif isinstance(value, datetime.datetime):
+            quoted_values.append(f"TIMESTAMP '{value.strftime("%Y-%m-%d %H:%M:%S")}'")
+        elif isinstance(value, datetime.date):
+            quoted_values.append(f"DATE '{value.strftime("%Y/%m/%d")}'")
+        quoted_values.append(value)
+
+    # We used the ? placeholder for compatibility with pyodbc, so replace with {} for .format
+    return sql_string.replace("?", "{}").format(*quoted_values)
 
 
 def create_test_acquisition(vsdb_connection):
@@ -40,9 +65,10 @@ def create_batch_for_upload(vsdb_connection, batch_number):
     packets = 10
     awaiting_upload = "yes"
     wc_product_id = 12345
+    pack_date = datetime.date.today()
 
-    sql = "INSERT INTO packeting_batches (sku, batch_number, packets, awaiting_upload) VALUES (?, ?, ?, ?)"
-    values = (sku, batch_number, packets, awaiting_upload)
+    sql = "INSERT INTO packeting_batches (sku, batch_number, packets, awaiting_upload, pack_date) VALUES (?, ?, ?, ?, ?)"
+    values = (sku, batch_number, packets, awaiting_upload, pack_date)
 
     # sql = (
     #     "INSERT INTO packeting_batches (sku, batch_number, packets, awaiting_upload) "
@@ -51,8 +77,9 @@ def create_batch_for_upload(vsdb_connection, batch_number):
     # log.debug(sql)
     log.debug(sql)
     cursor: pyodbc.Cursor = vsdb_connection.cursor()
-    # cursor.execute(sql, values)
-    cursor.execute(sql, *values)
+
+    cursor.execute(param_types_from_var(sql, values))
+    # cursor.execute(sql, *values)
     cursor.commit()
 
 
@@ -90,15 +117,22 @@ def delete_test_acquisition(vsdb_connection, sku):
 
 @pytest.mark.fmdb
 def test_get_batches_awaiting_upload_join_acq(vsdb_connection):
-    create_test_acquisition(vsdb_connection)
-    create_batch_for_upload(vsdb_connection, 99999)
-    get_test_batch(vsdb_connection, 99999)
+
     delete_test_batch(vsdb_connection, 99999)
     delete_test_acquisition(vsdb_connection, "TEST_SKU")
 
-    # flag_batches_for_upload(vsdb_connection, [3515, 3516, 3517])
-    # batches = stock.batch_upload.get_batches_awaiting_upload_join_acq(vsdb_connection)
-    # assert batches
+    create_test_acquisition(vsdb_connection)
+    create_batch_for_upload(vsdb_connection, 99999)
+    # test_batch = get_test_batch(vsdb_connection, 99999)
+    # assert test_batch
+    # assert len(test_batch)==1
+    # log.info(test_batch)
+
+    flag_only_test_batches_for_upload(vsdb_connection, [99999])
+
+    batches = stock.batch_upload.get_batches_awaiting_upload_join_acq(vsdb_connection)
+    assert batches
+    assert len(batches)==1
 
 
 @pytest.mark.wcapi
@@ -114,7 +148,7 @@ def test_get_products_by_id(wcapi):
 def test_record__update_wc_stock_for_new_batches(wcapi, vsdb_connection, mocked_responses):
     # TODO: mark this test 'record'
     # TODO: exclude 'record' mark from default pytest
-    flag_batches_for_upload(vsdb_connection, [3515, 3516, 3517])
+    flag_only_test_batches_for_upload(vsdb_connection, [3515, 3516, 3517])
     stock.update_wc_stock_for_new_batches(vsdb_connection, wcapi)
     # TODO: Separate first and second requests into separate toml files
 
@@ -123,17 +157,17 @@ def test_record__update_wc_stock_for_new_batches(wcapi, vsdb_connection, mocked_
 @responses.activate
 def test_update_wc_stock_for_new_batches(wcapi, vsdb_connection, mocked_responses):
     # TODO: remove when vsdb connection is mocked
-    flag_batches_for_upload(vsdb_connection, [3515, 3516, 3517])
+    flag_only_test_batches_for_upload(vsdb_connection, [3515, 3516, 3517])
 
-    # Mock wcapi requests
-    _add_from_file_match_params(
-        responses,
-        file_path="tests/fixtures/test_wcapi_stock/batch_awaiting_upload_wc_products.toml",
-        match=[
-            matchers.query_param_matcher({"include": "28388.0,1716.0,10271.0"}, strict_match=False),
-        ],
-    )
-    responses._add_from_file(file_path="tests/fixtures/test_wcapi_stock/batch_post_product_stock.toml")
+    # # Mock wcapi requests
+    # _add_from_file_match_params(
+    #     responses,
+    #     file_path="tests/fixtures/test_wcapi_stock/batch_awaiting_upload_wc_products.toml",
+    #     match=[
+    #         matchers.query_param_matcher({"include": "28388.0,1716.0,10271.0"}, strict_match=False),
+    #     ],
+    # )
+    # responses._add_from_file(file_path="tests/fixtures/test_wcapi_stock/batch_post_product_stock.toml")
 
     stock.update_wc_stock_for_new_batches(vsdb_connection, wcapi)
 

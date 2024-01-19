@@ -7,7 +7,7 @@ from urllib.parse import urljoin, urlparse
 from responses import RequestsMock
 
 try:
-    import tomli as _toml  # noqa
+    import tomli as _toml
 except ImportError:
     # python 3.11
     import tomllib as _toml
@@ -49,10 +49,13 @@ def _add_from_file_match_params(
         )
 
 
-def flag_batches_for_upload(connection, batch_ids: list):
-    fm_table = constants.tname("packeting_batches")
+def flag_only_test_batches_for_upload(connection, batch_ids: list, table_name: str = "packeting_batches"):
+    fm_table = constants.tname(table_name)
     awaiting_upload = constants.fname("packeting_batches", "awaiting_upload")
     batch_number = constants.fname("packeting_batches", "batch_number")
+    cursor = connection.cursor()
+    cursor.execute(f"UPDATE {fm_table} SET {awaiting_upload}=NULL")
+    connection.commit()
     sql = ""
     for batch in batch_ids:
         sql = f"UPDATE {fm_table} SET {awaiting_upload}='Yes' WHERE {batch_number} = {batch}"
