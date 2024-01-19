@@ -79,8 +79,11 @@ def _unset_awaiting_upload_flag(connection, batch_ids=None, large_batch=False):
     awaiting_upload = _f(table_name, "awaiting_upload")
     batch_number = _f(table_name, "batch_number")
     sql = ""
-    for batch in batch_ids:
-        sql = f"UPDATE {fm_table} SET {awaiting_upload}='no' WHERE {batch_number} = {batch}"
+    for batch_id in batch_ids:
+        if large_batch:
+            # quote batch_id if this is a large batch (eg 'GR1234')
+            batch_id = f"'{batch_id}'"
+        sql = f"UPDATE {fm_table} SET {awaiting_upload}='no' WHERE {batch_number} = {batch_id}"
         cursor = connection.cursor()
         log.info(sql)
         cursor.execute(sql)
