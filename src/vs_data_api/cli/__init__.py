@@ -228,7 +228,10 @@ def test_fm(ctx):
     """
     Test FileMaker connection
     """
-    fmdb = ctx.parent.obj["fmdb"]  # noqa
+    fmdb = ctx.parent.obj["fmdb"]
+    if not fmdb:
+        print("No FileMaker connection")
+        return
 
 
 if __name__ == "__main__":
