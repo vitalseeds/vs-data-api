@@ -9,20 +9,19 @@ import pytest
 import requests
 import responses
 import toml
-from objexplore import explore
 from responses import _recorder, matchers
 from rich import print
 
 from vs_data_api.vs_data import log, stock
 from vs_data_api.vs_data.fm import db
 
-from . import _add_from_file_match_params, flag_batches_for_upload
-
 # @pytest.mark.fmdb
 # def test_get_batches_awaiting_upload_join_acq(vsdb_connection):
 #     flag_batches_for_upload(vsdb_connection, [3515, 3516, 3517])
 #     batches = stock.batch_upload.get_batches_awaiting_upload_join_acq(vsdb_connection)
 #     assert batches
+
+pytestmark = [pytest.mark.dbmock]
 
 
 ACQUISITIONS_SCHEMA = {
@@ -36,12 +35,10 @@ ACQUISITIONS_SCHEMA = {
 ACQUISITIONS_COLUMNS = ACQUISITIONS_SCHEMA.keys()
 
 
-@pytest.mark.fmdb
-def test_connect_to_filemaker(vsdb_connection):
-    """
-    Tests that can access filemaker over ODBC
-    """
-    assert isinstance(vsdb_connection, pyodbc.Connection)
+@pytest.mark.dbmock
+def test_db_connect():
+    connection = sqlite3.connect("vs_stock.db")
+    assert connection.total_changes == 0
 
 
 def test_connect_to_sqlite_with_odbc():
@@ -70,6 +67,7 @@ def create_acquisitions_table(fmdb_mock):
     log.debug("Created acquisitions table")
 
 
+@pytest.mark.fmdb
 def create_acquisitions_sample_from_filemaker(fmdb, fmdb_mock):
     create_acquisitions_table(fmdb_mock)
     _, rows = db._select_columns(fmdb, "acquisitions", columns=ACQUISITIONS_COLUMNS)
@@ -87,6 +85,7 @@ def create_acquisitions_sample_from_filemaker(fmdb, fmdb_mock):
     log.debug("Added acquisitions from filemaker")
 
 
+@pytest.mark.fmdb
 def test_create_sqlite_mock(vsdb_connection):
     """
     Requires an sqlite odbc driver for pyodbc to talk to test db
@@ -116,6 +115,7 @@ def test_select_columns():
     assert results
 
 
+@pytest.mark.fmdb
 @pytest.mark.record
 def test_record__generate_batch_table(vsdb_connection):
     # TODO: mark this test 'record'

@@ -5,8 +5,8 @@ from fastapi import Depends, FastAPI
 from starlette.responses import FileResponse
 
 from vs_data_api import config
-from vs_data_api.vs_data.fm import db
 from vs_data_api.vs_data import orders, products, stock, wc
+from vs_data_api.vs_data.fm import db
 
 app = FastAPI(title="VS Data API")
 
@@ -61,6 +61,8 @@ async def root():
 async def get_product_by_id(product_id: int, settings: config.Settings = Depends(get_settings)):
     """
     Gets a product from the aquisitions table
+
+    Currently unnused stub.
     """
     return {"product": product_id}
 

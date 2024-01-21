@@ -66,12 +66,29 @@ path = "src/vs_data_api/__about__.py"
 allow-direct-references = true
 
 [tool.hatch.envs.default]
+[tool.hatch.envs.default.scripts]
+test = "echo \"Not currently in TEST environment\nUse -e or HATCH_ENV to specify 'test' environment\""
+
+[tool.hatch.envs.test]
 dependencies = [
   "coverage[toml]>=6.5",
   "pytest",
+  "pytest-cov",
+  "responses",
+  "httpx",
+  "toml",
+  "pudb",
 ]
-[tool.hatch.envs.default.scripts]
+env-include = [
+  "VSDATA_TEST_*",
+]
+env-exclude = [
+  "LIVE_*",
+]
+[tool.hatch.envs.test.scripts]
 test = "pytest {args:tests}"
+
+test_int = "pytest {args:tests} --fmdb"
 test-cov = "coverage run -m pytest {args:tests}"
 cov-report = [
   "- coverage combine",
@@ -165,7 +182,7 @@ ignore = "E203,F401"
 [tool.isort]
 profile = "black"
 line_length = 120
-known-first-party = ["vs_data_api", "vs_data"]
+known_first_party = ["vs_data_api", "vs_data"]
 
 [tool.ruff.isort]
 known-first-party = ["vs_data_api", "vs_data"]
