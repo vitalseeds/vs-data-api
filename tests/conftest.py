@@ -40,7 +40,7 @@ def pytest_configure(config):
     combined_markexp = " and ".join(mark_expression)
     if combined_markexp:
         print(f"-m '{combined_markexp}'")
-    setattr(config.option, "markexpr", combined_markexp)
+    config.option.markexpr = combined_markexp
 
 
 @pytest.fixture

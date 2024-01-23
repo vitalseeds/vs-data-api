@@ -7,6 +7,7 @@ import pytest
 import requests
 import responses
 import toml
+from pypika import Field, Order, Query, Schema, Table, Tables
 
 # from objexplore import explore
 from responses import _recorder, matchers
@@ -15,6 +16,8 @@ from rich import print
 from tests import _add_from_file_match_params, flag_only_test_batches_for_upload
 from vs_data_api.vs_data import log, stock
 from vs_data_api.vs_data.fm.constants import fname as _f
+
+TEST_BATCH_ID = 99999
 
 
 # TODO: Move this to a method on a cursor class to overload pypypyodbc cursor
@@ -32,9 +35,9 @@ def param_types_from_var(sql_string: str, values: tuple):
             continue
         # TODO: test for formatting dates
         elif isinstance(value, datetime.datetime):
-            quoted_values.append(f"TIMESTAMP '{value.strftime("%Y-%m-%d %H:%M:%S")}'")
+            quoted_values.append(f"TIMESTAMP '{value.strftime('%Y-%m-%d %H:%M:%S')}'")
         elif isinstance(value, datetime.date):
-            quoted_values.append(f"DATE '{value.strftime("%Y/%m/%d")}'")
+            quoted_values.append(f"DATE '{value.strftime('%Y/%m/%d')}'")
         quoted_values.append(value)
 
     # We used the ? placeholder for compatibility with pyodbc, so replace with {} for .format
@@ -84,21 +87,30 @@ def create_batch_for_upload(vsdb_connection, batch_number):
 
 
 def get_test_batch(vsdb_connection, batch_number):
-    awaiting = _f("packeting_batches", "awaiting_upload")
-    # where = f"lower({awaiting})='yes' AND b.pack_date IS NOT NULL"
-    where = f"lower({awaiting})='yes' AND B.batch_number = {batch_number}"
-    where = f"lower({awaiting})='yes' AND B.sku = 'TEST_SKU'"
+    # awaiting = _f("packeting_batches", "awaiting_upload")
+    # # where = f"lower({awaiting})='yes' AND b.pack_date IS NOT NULL"
+    # where = f"lower({awaiting})='yes' AND B.batch_number = {batch_number}"
+    # where = f"lower({awaiting})='yes' AND B.sku = 'TEST_SKU'"
 
-    sql = (
-        "SELECT B.awaiting_upload,B.batch_number, B.packets, A.sku, A.wc_product_id  "
-        'FROM "packeting_batches" B '
-        'LEFT JOIN "acquisitions" A ON B.sku = A.SKU '
-        f"WHERE {where} "
-        "ORDER BY B.batch_number DESC "
-        # "FETCH FIRST 10 ROWS ONLY "
-    )
-    log.debug(sql)
-    rows = vsdb_connection.cursor().execute(sql).fetchall()
+    # sql = (
+    #     "SELECT B.awaiting_upload,B.batch_number, B.packets, A.sku, A.wc_product_id  "
+    #     'FROM "packeting_batches" B '
+    #     'LEFT JOIN "acquisitions" A ON B.sku = A.SKU '
+    #     f"WHERE {where} "
+    #     "ORDER BY B.batch_number DESC "
+    #     # "FETCH FIRST 10 ROWS ONLY "
+    # )
+    # log.debug(sql)
+
+    packeting_batches, acquisitions = Tables("packeting_batches", "acquisitions")
+    sql = Query.from_("packeting_batches").select("awaiting_upload", "batch_number", "packets").where(
+        packeting_batches.awaiting_upload == "yes"
+    ).where(
+        packeting_batches.batch_number == TEST_BATCH_ID
+    ).orderby("id", order=Order.desc)
+
+
+    rows = vsdb_connection.cursor().execute(sql.get_sql()).fetchall()
     log.info(rows)
     return rows
 
@@ -118,17 +130,18 @@ def delete_test_acquisition(vsdb_connection, sku):
 @pytest.mark.fmdb
 def test_get_batches_awaiting_upload_join_acq(vsdb_connection):
 
-    delete_test_batch(vsdb_connection, 99999)
+    delete_test_batch(vsdb_connection, TEST_BATCH_ID)
     delete_test_acquisition(vsdb_connection, "TEST_SKU")
 
     create_test_acquisition(vsdb_connection)
-    create_batch_for_upload(vsdb_connection, 99999)
-    # test_batch = get_test_batch(vsdb_connection, 99999)
-    # assert test_batch
-    # assert len(test_batch)==1
-    # log.info(test_batch)
+    create_batch_for_upload(vsdb_connection, TEST_BATCH_ID)
 
-    flag_only_test_batches_for_upload(vsdb_connection, [99999])
+    test_batch = get_test_batch(vsdb_connection, TEST_BATCH_ID)
+    assert test_batch
+    assert len(test_batch)==1
+    log.info(test_batch)
+
+    flag_only_test_batches_for_upload(vsdb_connection, [TEST_BATCH_ID])
 
     batches = stock.batch_upload.get_batches_awaiting_upload_join_acq(vsdb_connection)
     assert batches
