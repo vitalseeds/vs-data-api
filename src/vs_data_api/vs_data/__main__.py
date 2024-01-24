@@ -230,7 +230,20 @@ def test_fm(ctx):
     """
     Test FileMaker connection
     """
-    fmdb = ctx.parent.obj["fmdb"]  # noqa
+    print("Testing FileMaker connection")
+    # fmdb = ctx.parent.obj["fmdb"]
+
+
+@cli.command()
+@click.option("--order-id", type=int, help="Order id to export")
+@click.pass_context
+def export_wholesale_orders(ctx, order_id: int):
+    """
+    Export wholesale orders as CSV for import into Xero
+    """
+
+    fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
+    orders.wholesale.export_wholesale_orders(fmlinkdb, order_id, cli=True)
 
 
 if __name__ == "__main__":

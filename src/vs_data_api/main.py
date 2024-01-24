@@ -179,3 +179,15 @@ async def apply_stock_corrections_wc(settings: config.Settings = Depends(get_set
             "applied_corrections": applied_corrections,
             "message": f"{len(applied_corrections)} stock corrections were applied to WooCommerce products/variations.",
         }
+
+
+@app.get("/orders/wholesale/export/{order_id}")
+async def export_wholesale_orders(order_id: str, settings: config.Settings = Depends(get_settings)):
+    """
+    Export wholesale orders as CSV for import into Xero
+    """
+    fmlinkdb = db.connection(settings.fm_link_connection_string)
+
+    exported_orders = orders.wholesale.export_wholesale_orders(fmlinkdb, order_id, cli=True)
+
+    return {"message": "No orders were updated on WooCommerce."}

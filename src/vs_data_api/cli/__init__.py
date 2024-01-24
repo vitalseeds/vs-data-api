@@ -201,15 +201,17 @@ def push_variation_prices(ctx):
 
 
 @cli.command()
+@click.option("--link", is_flag=True, help="Run against WC link database")
 @click.option("--fetchall", is_flag=True, help="Commit SQL query results ")
 @click.option("--commit", is_flag=True, help="Commit SQL query results ")
 @click.argument("sql")
 @click.pass_context
-def run_sql(ctx, sql: str, commit: bool, fetchall=False):
+def run_sql(ctx, sql: str, commit: bool, fetchall=False, link: bool=False):
     """
     Run arbitrary SQL
     """
-    fmdb = ctx.parent.obj.get("fmdb")
+
+    fmdb = db.connection(ctx.parent.params["fmlinkdb"]) if link else ctx.parent.obj.get("fmdb")
     with fmdb:
         print(sql)
         results = fmdb.cursor().execute(sql)
@@ -220,18 +222,43 @@ def run_sql(ctx, sql: str, commit: bool, fetchall=False):
         print(results)
         if commit:
             fmdb.commit()
+    return
 
 
 @cli.command()
+@click.option("--link", is_flag=True, help="Check WC link database")
 @click.pass_context
-def test_fm(ctx):
+def test_fm(ctx, link: bool):
     """
     Test FileMaker connection
     """
-    fmdb = ctx.parent.obj["fmdb"]
-    if not fmdb:
-        print("No FileMaker connection")
+    if link:
+        fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
+        if fmlinkdb:
+            print("Link database connection OK")
+            return
+        print("Link database connection failed")
         return
+
+    fmdb = ctx.parent.obj["fmdb"]
+    if fmdb:
+        print("FileMaker connection OK")
+        return
+    print("No FileMaker connection")
+    return
+
+
+
+@cli.command()
+@click.option("--order-id", type=int, help="Order id to export")
+@click.pass_context
+def export_wholesale_orders(ctx, order_id: int):
+    """
+    Export wholesale orders as CSV for import into Xero
+    """
+
+    fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
+    orders.wholesale.export_wholesale_orders(fmlinkdb, order_id, cli=True)
 
 
 if __name__ == "__main__":
