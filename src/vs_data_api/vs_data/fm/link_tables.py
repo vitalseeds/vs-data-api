@@ -33,3 +33,18 @@ class Orders(FilemakerTable):
     last_api_result = "LastAPIResult"
     date_completed_gmt = "DateCompletedGMT"
     date_completed = "DateCompleted"
+
+
+class XeroBacsInvoices(FilemakerTable):
+    table_name = "xero_bacs_invoices"
+
+    x_contact_name = "X_contact_name"
+    x_invoice_number = "X_invoice_number"
+    x_invoice_date = "X_invoice_date"
+    x_invoice_due_date = "X_invoice_due_date"
+    description = "Description"
+    quantity = "Quantity"
+    unit_cost = "Unit cost"
+    account_code = "Account code"
+    tax_rate = "Tax Rate"
+    exported = "exported"
