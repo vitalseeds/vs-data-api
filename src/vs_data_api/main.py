@@ -1,5 +1,6 @@
 from datetime import datetime
 from functools import lru_cache
+from typing import Optional
 
 from fastapi import Depends, FastAPI
 from starlette.responses import FileResponse
@@ -181,13 +182,16 @@ async def apply_stock_corrections_wc(settings: config.Settings = Depends(get_set
         }
 
 
-@app.get("/orders/wholesale/export/{order_id}")
-async def export_wholesale_orders(order_id: str, settings: config.Settings = Depends(get_settings)):
+@app.get("/orders/wholesale/export")
+async def export_wholesale_orders(settings: config.Settings = Depends(get_settings)):
     """
     Export wholesale orders as CSV for import into Xero
     """
     fmlinkdb = db.connection(settings.fm_link_connection_string)
 
-    exported_orders = orders.wholesale.export_wholesale_orders(fmlinkdb, order_id, cli=True)
+    exported_orders = orders.wholesale.export_wholesale_orders(fmlinkdb, None, cli=True)
 
-    return {"message": "No orders were updated on WooCommerce."}
+    if not exported_orders:
+        return {"message": "No orders were exported."}
+
+    return {"message": f"{len(exported_orders)} orders were exported."}
