@@ -2,23 +2,37 @@ import os
 
 import pytest
 import responses
+from fastapi.testclient import TestClient
 
+from vs_data_api.config import TestSettings
+from vs_data_api.main import app, get_settings
 from vs_data_api.vs_data.fm import db
 from vs_data_api.vs_data.fm.db import pyodbc
 from vs_data_api.vs_data.wc import api
+
+fastapi_client = TestClient(app)
+
+
+def get_settings_override():
+    return TestSettings()
+
+
+# Allow fastapi to use the test settings
+app.dependency_overrides[get_settings] = get_settings_override
+# Get the same test settings for use with pytest fixtures
+test_settings = get_settings_override()
+
+VSDATA_FM_CONNECTION_STRING = test_settings.fm_connection_string
+VSDATA_FM_LINK_CONNECTION_STRING = test_settings.fm_link_connection_string
+
+VSDATA_WC_URL = test_settings.vsdata_wc_url
+VSDATA_WC_KEY = test_settings.vsdata_wc_key
+VSDATA_WC_SECRET = test_settings.vsdata_wc_secret
 
 # import betamax
 
 # with betamax.Betamax.configure() as config:
 #     config.cassette_library_dir = "tests/fixtures/cassettes"
-
-
-VSDATA_FM_CONNECTION_STRING = os.environ["VSDATA_TEST_FM_CONNECTION_STRING"]
-VSDATA_FM_LINK_CONNECTION_STRING = os.environ["VSDATA_TEST_FM_LINK_CONNECTION_STRING"]
-
-VSDATA_WC_URL = os.environ["VSDATA_TEST_WC_URL"]
-VSDATA_WC_KEY = os.environ["VSDATA_TEST_WC_KEY"]
-VSDATA_WC_SECRET = os.environ["VSDATA_TEST_WC_SECRET"]
 
 
 def pytest_addoption(parser):
@@ -65,3 +79,8 @@ def wcapi() -> pyodbc.Connection:
 def mocked_responses():
     with responses.RequestsMock() as rsps:
         yield rsps
+
+
+@pytest.fixture
+def client():
+    return fastapi_client

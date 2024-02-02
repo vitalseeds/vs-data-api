@@ -67,7 +67,7 @@ allow-direct-references = true
 
 [tool.hatch.envs.default]
 [tool.hatch.envs.default.scripts]
-test = "echo \"Not currently in TEST environment\nUse -e or HATCH_ENV to specify 'test' environment\""
+test = "echo \"Not currently in `test` environment\nUse -e or HATCH_ENV to specify 'test' environment\""
 
 [tool.hatch.envs.test]
 dependencies = [
@@ -87,6 +87,10 @@ env-include = [
 env-exclude = [
   "LIVE_*",
 ]
+
+[tool.hatch.envs.test.env-vars]
+TESTING = "1"
+
 [tool.hatch.envs.test.scripts]
 test = "pytest {args:tests}"
 

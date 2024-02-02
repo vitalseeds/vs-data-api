@@ -1,13 +1,15 @@
 import os
 
 import pydantic
-from pydantic import BaseSettings, Field, PrivateAttr
+from pydantic import BaseSettings, ConfigDict, Field, PrivateAttr
 from woocommerce import API as wc_api
 
 from vs_data_api.vs_data import log, wc
 
 
 class Settings(BaseSettings):
+    # model_config = ConfigDict(env_file=".envrc", env_file_encoding="utf-8")
+
     app_name: str = "VS Data API"
     # fm_connection_string = os.environ.get("VSDATA_FM_CONNECTION_STRING", "")
     fm_connection_string: str = Field()
@@ -31,4 +33,11 @@ class Settings(BaseSettings):
         case_sensitive = False
 
 
-settings = Settings()
+class TestSettings(Settings):
+    app_name: str = "VS Data TEST"
+
+    fm_connection_string: str = Field(..., env="vsdata_test_fm_connection_string")
+    fm_link_connection_string: str = Field(..., env="vsdata_test_fm_link_connection_string")
+    vsdata_wc_url: str = Field(..., env="vsdata_test_wc_url")
+    vsdata_wc_key: str = Field(..., env="vsdata_test_wc_key")
+    vsdata_wc_secret: str = Field(..., env="vsdata_test_wc_secret")
