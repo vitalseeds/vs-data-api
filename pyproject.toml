@@ -49,6 +49,7 @@ test = [
     "responses",
     "httpx",
     "toml",
+    "pytest-timeout",
 ]
 
 [project.urls]
@@ -68,12 +69,14 @@ allow-direct-references = true
 [tool.hatch.envs.default]
 [tool.hatch.envs.default.scripts]
 test = "echo \"Not currently in `test` environment\nUse -e or HATCH_ENV to specify 'test' environment\""
+envtest = "echo $VSDATA_TEST_WC_URL"
 
 [tool.hatch.envs.test]
 dependencies = [
   "coverage[toml]>=6.5",
   "pytest",
   "pytest-cov",
+  "pytest-timeout",
   "responses",
   "httpx",
   "toml",
@@ -93,6 +96,7 @@ TESTING = "1"
 
 [tool.hatch.envs.test.scripts]
 test = "pytest {args:tests}"
+endpoints = "python -c \"from vs_data_api.main import app; print([print(route.path) for route in app.routes])\""
 
 test_int = "pytest {args:tests} --fmdb"
 test-cov = "coverage run -m pytest {args:tests}"

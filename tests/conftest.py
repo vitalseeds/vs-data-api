@@ -41,6 +41,7 @@ def pytest_addoption(parser):
     parser.addoption(
         "--dbmock", action="store_true", dest="dbmock", default=False, help="enable dbmock decorated tests"
     )
+    parser.addoption("--skipslow", action="store_true", dest="skipslow", default=False, help="skip slow running tests")
 
 
 def pytest_configure(config):
@@ -51,6 +52,8 @@ def pytest_configure(config):
         mark_expression.append("not wcapi")
     if not config.option.dbmock:
         mark_expression.append("not dbmock")
+    if config.option.skipslow:
+        mark_expression.append("not slow")
     combined_markexp = " and ".join(mark_expression)
     if combined_markexp:
         print(f"-m '{combined_markexp}'")
