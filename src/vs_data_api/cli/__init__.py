@@ -10,19 +10,39 @@ import click
 from rich import print
 
 from vs_data_api.__about__ import __version__
+from vs_data_api.config import Settings, TestSettings
 from vs_data_api.vs_data import orders, products, stock
 from vs_data_api.vs_data.fm import constants, db
 from vs_data_api.vs_data.wc import api
+
+# Switch pydantic settings class based on environment variable
+if os.environ.get("TESTING", None) or os.environ.get("HATCH_ENV_ACTIVE", "") == "test":
+    settings = TestSettings()
+else:
+    settings = Settings()
+
+
+VSDATA_FM_CONNECTION_STRING = settings.fm_connection_string
+VSDATA_FM_LINK_CONNECTION_STRING = settings.fm_link_connection_string
+VSDATA_WC_SECRET = settings.vsdata_wc_secret
+VSDATA_WC_KEY = settings.vsdata_wc_key
+VSDATA_WC_URL = settings.vsdata_wc_url
+
+print(f"{VSDATA_FM_CONNECTION_STRING=}")
+print(f"{VSDATA_FM_LINK_CONNECTION_STRING=}")
+print(f"{VSDATA_WC_SECRET=}")
+print(f"{VSDATA_WC_KEY=}")
+print(f"{VSDATA_WC_URL=}")
 
 
 @click.group()
 @click.version_option(version=__version__, prog_name="vs-data-api")
 @click.option("--isolate", "-i", is_flag=True, envvar="VSDATA_ISOLATE", help="Don't load external services (fm/wc)")
-@click.option("--wc-secret", envvar="VSDATA_WC_SECRET", default="")
-@click.option("--wc-key", envvar="VSDATA_WC_KEY", default="")
-@click.option("--wc-url", envvar="VSDATA_WC_URL", default="")
-@click.option("--fmlinkdb", envvar="VSDATA_FM_LINK_CONNECTION_STRING", default="")
-@click.option("--fmdb", envvar="VSDATA_FM_CONNECTION_STRING", default="")
+@click.option("--wc-secret", default=VSDATA_WC_SECRET)
+@click.option("--wc-key", default=VSDATA_WC_KEY)
+@click.option("--wc-url", default=VSDATA_WC_URL)
+@click.option("--fmlinkdb", default=VSDATA_FM_LINK_CONNECTION_STRING)
+@click.option("--fmdb", default=VSDATA_FM_CONNECTION_STRING)
 @click.pass_context
 def cli(ctx, fmdb, fmlinkdb, wc_url, wc_key, wc_secret, isolate):
     """
