@@ -195,5 +195,15 @@ def test_fastapi_client(client: TestClient):
     assert response.json() == {
         "message": "VS Data API running",
     }
-# "/batch/upload-wc-stock"
-# "/batch/upload-wc-stock/variation/large"
+
+
+def test_upload_wc_stock__none(client: TestClient):
+    response = client.get("/batch/upload-wc-stock")
+    assert response.status_code == 200
+    assert response.json() == {"message": "No batches were updated on WooCommerce"}
+
+
+def test_upload_wc_large_stock__none(client: TestClient):
+    response = client.get("/batch/upload-wc-stock/variation/large")
+    assert response.status_code == 200
+    assert response.json() == {"message": "No large batches were updated on WooCommerce"}
