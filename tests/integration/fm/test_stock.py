@@ -7,6 +7,7 @@ import pytest
 import requests
 import responses
 import toml
+from fastapi.testclient import TestClient
 from pypika import Field, Order, Query, Schema, Table, Tables
 
 # from objexplore import explore
@@ -167,6 +168,7 @@ def test_record__update_wc_stock_for_new_batches(wcapi, vsdb_connection, mocked_
 
 
 @pytest.mark.fmdb
+@pytest.mark.wcapi
 @responses.activate
 def test_update_wc_stock_for_new_batches(wcapi, vsdb_connection, mocked_responses):
     # TODO: remove when vsdb connection is mocked
@@ -184,5 +186,4 @@ def test_update_wc_stock_for_new_batches(wcapi, vsdb_connection, mocked_response
 
     stock.update_wc_stock_for_new_batches(vsdb_connection, wcapi)
 
-
-# TEST that cache is invalidated in compare_wc_fm_stock
+# todo: TEST that cache is invalidated in compare_wc_fm_stock

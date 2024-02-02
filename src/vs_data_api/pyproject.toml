@@ -28,12 +28,11 @@ dev = [
 test = [
     "pytest",
     "pytest-cov",
+    "pytest-timeout",
     "responses",
     "httpx",
     "toml",
 ]
-
-
 
 [tool.black]
 line-length = 120

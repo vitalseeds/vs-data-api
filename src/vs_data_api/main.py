@@ -88,7 +88,7 @@ async def upload_wc_stock(settings: config.Settings = Depends(get_settings)):
     # TODO: check for wordpress hangups
     # TODO: better response messages (to show in Filemaker)
     if not batches:
-        return {"message": "No batches were updated on WooCommerce"}
+        return {"message": "No batches were updated on WooCommerce", "batches": None}
     updated_num = len(batches)
     return {"batches": batches, "message": f"{updated_num} products were updated on WooCommerce"}
 
@@ -104,7 +104,7 @@ async def upload_wc_stock_variation_large(settings: config.Settings = Depends(ge
     connection = db.connection(settings.fm_connection_string)
     batches = stock.update_wc_stock_for_new_batches(connection, settings.wcapi, product_variation="large")
     if not batches:
-        return {"message": "No large batches were updated on WooCommerce"}
+        return {"message": "No large batches were updated on WooCommerce", "batches": None}
     updated_num = len(batches)
     return {"batches": batches, "message": f"{updated_num} product variations were updated on WooCommerce"}
 
@@ -158,7 +158,7 @@ async def update_wc_variation_prices(settings: config.Settings = Depends(get_set
     variations, audit_log_path = products.push_variation_prices_to_wc(settings.wcapi, connection)
 
     if not variations:
-        return {"message": "No variations were updated on WooCommerce"}
+        return {"message": "No variations were updated on WooCommerce", "variations": None}
     updated_num = len(variations)
     return {
         "variations": variations,
@@ -175,7 +175,7 @@ async def apply_stock_corrections_wc(settings: config.Settings = Depends(get_set
     with connection:
         applied_corrections = stock.apply_corrections_to_wc_stock(connection, settings.wcapi)
         if not applied_corrections:
-            return {"message": "No corrections were applied to WooCommerce"}
+            return {"message": "No corrections were applied to WooCommerce", "applied_corrections": None}
         return {
             "applied_corrections": applied_corrections,
             "message": f"{len(applied_corrections)} stock corrections were applied to WooCommerce products/variations.",
