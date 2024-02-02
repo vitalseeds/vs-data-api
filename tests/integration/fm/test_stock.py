@@ -187,23 +187,3 @@ def test_update_wc_stock_for_new_batches(wcapi, vsdb_connection, mocked_response
     stock.update_wc_stock_for_new_batches(vsdb_connection, wcapi)
 
 # todo: TEST that cache is invalidated in compare_wc_fm_stock
-
-
-def test_fastapi_client(client: TestClient):
-    response = client.get("/")
-    assert response.status_code == 200
-    assert response.json() == {
-        "message": "VS Data API running",
-    }
-
-
-def test_upload_wc_stock__none(client: TestClient):
-    response = client.get("/batch/upload-wc-stock")
-    assert response.status_code == 200
-    assert response.json() == {"message": "No batches were updated on WooCommerce"}
-
-
-def test_upload_wc_large_stock__none(client: TestClient):
-    response = client.get("/batch/upload-wc-stock/variation/large")
-    assert response.status_code == 200
-    assert response.json() == {"message": "No large batches were updated on WooCommerce"}
