@@ -28,12 +28,6 @@ VSDATA_WC_SECRET = settings.vsdata_wc_secret
 VSDATA_WC_KEY = settings.vsdata_wc_key
 VSDATA_WC_URL = settings.vsdata_wc_url
 
-print(f"{VSDATA_FM_CONNECTION_STRING=}")
-print(f"{VSDATA_FM_LINK_CONNECTION_STRING=}")
-print(f"{VSDATA_WC_SECRET=}")
-print(f"{VSDATA_WC_KEY=}")
-print(f"{VSDATA_WC_URL=}")
-
 
 @click.group()
 @click.version_option(version=__version__, prog_name="vs-data-api")
