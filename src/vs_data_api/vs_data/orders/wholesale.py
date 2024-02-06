@@ -97,12 +97,11 @@ def export_wholesale_orders(fmlinkdb, order_id=None, cli: bool = False) -> list 
         field_names = list(XERO_COLUMNS.values())
         log.debug(csv_file_path)
         with open(csv_file_path, mode="w") as csv_file:
-            csv_writer = csv.writer(csv_file, quoting=csv.QUOTE_ALL)
+            csv_writer = csv.writer(csv_file, quoting=csv.QUOTE_ALL, lineterminator="\n")
             csv_writer.writerow(field_names)
             for order in orders:
                 order["x_invoice_due_date"] += datetime.timedelta(days=30)  # Add 30 days to x_invoice_due_date
                 csv_writer.writerow(order.values())
-                date_string = current_datetime.strftime("%Y-%m-%d_%H%M")
         log.debug(orders)
         log.info(f"{len(orders)} orders exported to {csv_file_path}")
         exported_order_numbers = [int(order["x_invoice_number"]) for order in orders]
