@@ -194,4 +194,4 @@ async def export_wholesale_orders(settings: config.Settings = Depends(get_settin
     if not exported_orders:
         return {"message": "No orders were exported."}
 
-    return {"message": f"{len(exported_orders)} orders were exported."}
+    return {"message": f"{len(exported_orders)} line items were exported."}
