@@ -20,7 +20,7 @@ XERO_COLUMNS = {
     "unit_cost": "*UnitAmount",
     "account_code": "*AccountCode",
     "tax_rate": "*TaxType",
-    "exported": None,
+    # "exported": None,
 }
 
 
@@ -97,10 +97,11 @@ def export_wholesale_orders(fmlinkdb, order_id=None, cli: bool = False) -> list 
         field_names = list(XERO_COLUMNS.values())
         log.debug(csv_file_path)
         with open(csv_file_path, mode="w") as csv_file:
-            csv_writer = csv.writer(csv_file, quoting=csv.QUOTE_ALL, lineterminator="\n")
+            csv_writer = csv.writer(csv_file, lineterminator="\n")
             csv_writer.writerow(field_names)
             for order in orders:
                 order["x_invoice_due_date"] += datetime.timedelta(days=30)  # Add 30 days to x_invoice_due_date
+                order["account_code"] = int(order["account_code"])  # Make account code a simple integer
                 csv_writer.writerow(order.values())
         log.debug(orders)
         log.info(f"{len(orders)} orders exported to {csv_file_path}")
