@@ -80,7 +80,7 @@ def connection(connection_string: str) -> pyodbc.Connection:
 
     try:
         connection = pyodbc.connect(connection_string)
-    except pyodbc.DatabaseError:
+    except pyodbc.DatabaseError as e:
         log.error(f"Could not connect to FileMaker \n({connection_string})")
 
         if os.name == "posix" or os.name == "darwin":
@@ -88,7 +88,7 @@ def connection(connection_string: str) -> pyodbc.Connection:
                 "If running MacOS, it is possible that unixodbc is installed instead of libiodbc\n"
                 "try `brew uninstall unixodbc && brew install libiodbc`"
             )
-        exit(1)
+            raise e
     return connection
 
 

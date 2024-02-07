@@ -247,17 +247,23 @@ def test_fm(ctx, link: bool):
     Test FileMaker connection
     """
     if link:
-        fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
-        if fmlinkdb:
-            print("Link database connection OK")
-            return
+        try:
+            fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
+            if fmlinkdb:
+                print("Link database connection OK")
+                return
+        except Exception:
+            ...
         print("Link database connection failed")
         return
 
-    fmdb = ctx.parent.obj["fmdb"]
-    if fmdb:
-        print("FileMaker connection OK")
-        return
+    try:
+        fmdb = ctx.parent.obj["fmdb"]
+        if fmdb:
+            print("FileMaker connection OK")
+            return
+    except Exception:
+        ...
     print("No FileMaker connection")
     return
 
