@@ -1,6 +1,6 @@
-fastapi==0.90.1
+fastapi==0.109.2
 uvicorn==0.23.2
-pydantic==1.10.4
+pydantic==2.6.1
 WooCommerce==3.0.0
 pandas==1.5.2
 

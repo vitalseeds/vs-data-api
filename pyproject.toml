@@ -25,15 +25,17 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-    "fastapi==0.90.1",
+    "fastapi==0.109.2",
     "uvicorn==0.23.2",
-    "pydantic==1.10.4",
+    "pydantic==2.6.1",
+    "pydantic-settings",
     "WooCommerce==3.0.0",
     "pandas==1.5.2",
     "rich==13.3.1",
     "datascroller==1.4.1",
     "click",
     "pypyodbc @ https://github.com/tombola/pypyodbc/archive/main.zip",
+    "svcs",
 ]
 
 [project.optional-dependencies]

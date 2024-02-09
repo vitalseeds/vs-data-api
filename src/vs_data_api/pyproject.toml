@@ -7,9 +7,10 @@ build-backend = "setuptools.build_meta"
 name = "vs-data-api"
 version = "1.0"
 dependencies = [
-    "fastapi==0.90.1",
-    "uvicorn==0.23.2",
-    "pydantic==1.10.4",
+    "fastapi",
+    "uvicorn",
+    "pydantic",
+    "pydantic-settings",
     "WooCommerce==3.0.0",
     "pandas==1.5.2",
     "rich==13.3.1",
