@@ -5,9 +5,15 @@ Filemaker SQL limitations/requirements
 - string values must be enclosed in single quotes
 """
 
+
+from __future__ import annotations
+
 import os
+from typing import AsyncGenerator
 
 import pypyodbc as pyodbc
+import svcs
+from fastapi import FastAPI
 
 from vs_data_api.vs_data import log
 from vs_data_api.vs_data.fm import constants
@@ -69,7 +75,11 @@ def is_link_db(connection):
     return False
 
 
-def connection(connection_string: str) -> pyodbc.Connection:
+class FilemakerConnection(pyodbc.Connection):
+    ...
+
+
+def connection(connection_string: str) -> FilemakerConnection:
     """
     Return a database connection.
 

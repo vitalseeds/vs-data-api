@@ -1,26 +1,27 @@
+from __future__ import annotations
+
 import os
+from functools import lru_cache
 
 import pytest
 import responses
 from fastapi.testclient import TestClient
 
-from vs_data_api.config import TestSettings
+from vs_data_api.config import TestSettings, get_env_settings
 from vs_data_api.main import app, get_settings
 from vs_data_api.vs_data.fm import db
 from vs_data_api.vs_data.fm.db import pyodbc
 from vs_data_api.vs_data.wc import api
 
-fastapi_client = TestClient(app)
+# Allow fastapi *dependencies* to use the test settings
+# currently replaced with test for pytest env var
+# @lru_cache()
+# def get_settings_override():
+#     return TestSettings()
+# app.dependency_overrides[get_settings] = get_settings_override
 
-
-def get_settings_override():
-    return TestSettings()
-
-
-# Allow fastapi to use the test settings
-app.dependency_overrides[get_settings] = get_settings_override
 # Get the same test settings for use with pytest fixtures
-test_settings = get_settings_override()
+test_settings = get_env_settings()
 
 VSDATA_FM_CONNECTION_STRING = test_settings.fm_connection_string
 VSDATA_FM_LINK_CONNECTION_STRING = test_settings.fm_link_connection_string
@@ -84,6 +85,7 @@ def mocked_responses():
         yield rsps
 
 
-@pytest.fixture
-def client():
-    return fastapi_client
+@pytest.fixture(name="client")
+def _client():
+    with TestClient(app) as client:
+        yield client

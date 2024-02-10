@@ -7,7 +7,7 @@ from urllib.parse import urljoin, urlparse
 from responses import RequestsMock
 
 try:
-    import tomli as _toml
+    import tomli as _toml  # type: ignore
 except ImportError:
     # python 3.11
     import tomllib as _toml

@@ -9,17 +9,14 @@ import os
 import click
 from rich import print
 
+from vs_data_api import config
 from vs_data_api.__about__ import __version__
-from vs_data_api.config import Settings, TestSettings
 from vs_data_api.vs_data import orders, products, stock
 from vs_data_api.vs_data.fm import constants, db
 from vs_data_api.vs_data.wc import api
 
 # Switch pydantic settings class based on environment variable
-if os.environ.get("TESTING", None) or os.environ.get("HATCH_ENV_ACTIVE", "") == "test":
-    settings = TestSettings()
-else:
-    settings = Settings()
+settings = config.get_env_settings()
 
 
 VSDATA_FM_CONNECTION_STRING = settings.fm_connection_string

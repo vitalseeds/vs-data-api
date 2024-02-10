@@ -2,7 +2,7 @@ import os
 
 import pydantic
 from pydantic import Field, PrivateAttr
-from pydantic_settings import SettingsConfigDict, BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from woocommerce import API as wc_api
 
 from vs_data_api.vs_data import log, wc
@@ -39,3 +39,12 @@ class TestSettings(Settings):
     vsdata_wc_url: str = Field(..., validation_alias="vsdata_test_wc_url")
     vsdata_wc_key: str = Field(..., validation_alias="vsdata_test_wc_key")
     vsdata_wc_secret: str = Field(..., validation_alias="vsdata_test_wc_secret")
+
+
+# TODO: This is brittle and should be refactored
+def get_env_settings():
+    """Switch pydantic settings class based on environment variable"""
+    if os.environ.get("TESTING", None) or os.environ.get("HATCH_ENV_ACTIVE", "") == "test":
+        return TestSettings()
+    else:
+        return Settings()

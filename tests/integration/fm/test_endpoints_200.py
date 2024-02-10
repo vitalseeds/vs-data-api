@@ -30,11 +30,12 @@ def test_fastapi_client(client: TestClient):
 
 @pytest.mark.fmdb
 @pytest.mark.wcapi
-@pytest.mark.timeout()
+@pytest.mark.timeout(30)
 @pytest.mark.parametrize("endpoint_path", ENDPOINTS)
 def test_all_endpoints(client, endpoint_path):
     response = client.get(endpoint_path)
     assert response.status_code == 200
+
 
 @pytest.mark.fmdb
 @pytest.mark.wcapi

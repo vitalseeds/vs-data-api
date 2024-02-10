@@ -1,31 +1,51 @@
+from __future__ import annotations
+
+import sys
+from contextlib import asynccontextmanager
 from datetime import datetime
 from functools import lru_cache
-from typing import Optional
+from typing import AsyncGenerator, Optional
 
-from fastapi import Depends, FastAPI
+import pydantic
+import svcs
+from fastapi import Depends, FastAPI, Request
+from fastapi.responses import JSONResponse
 from starlette.responses import FileResponse
 
 from vs_data_api import config
-from vs_data_api.vs_data import orders, products, stock, wc
+from vs_data_api.vs_data import log, orders, products, stock, wc
 from vs_data_api.vs_data.fm import db
 from vs_data_api.vs_data.products import import_wc_product_ids_from_linkdb
-
-app = FastAPI(title="VS Data API")
 
 
 @lru_cache()
 def get_settings():
-    return config.Settings()
+    return config.get_env_settings()
 
 
-# def has_settings(func):
-#     def wrap_and_call(*args, **kwargs):
-#         return func(settings:config.Settings=Depends(get_settings), *args, **kwargs)
-#     return wrap_and_call
+@svcs.fastapi.lifespan
+async def lifespan(app: FastAPI, registry: svcs.Registry):
+    async def connect_to_vsdb() -> db.FilemakerConnection:
+        settings = get_settings()
+        log.info(f"{settings=}")
+        connection = db.connection(settings.fm_connection_string)
+        return connection
+
+    registry.register_factory(db.FilemakerConnection, connect_to_vsdb)
+
+    # Get settings as a service
+    async def get_lifespan_settings() -> pydantic.Settings:
+        return get_settings()
+
+    registry.register_factory(config.Settings, get_lifespan_settings)
+
+    yield
+    # yield {"your": "other", "initial": "state"}
+
+    # Registry is closed automatically when the app is done.
 
 
-from fastapi import Request
-from fastapi.responses import JSONResponse
+app = FastAPI(lifespan=lifespan, title="VS Data API")
 
 
 @app.exception_handler(Exception)
@@ -69,15 +89,13 @@ async def get_product_by_id(product_id: int, settings: config.Settings = Depends
     return {"product": product_id}
 
 
+# @app.get("/batch/awaiting_upload", response_model=None)
 @app.get("/batch/awaiting_upload")
-async def get_awaiting_upload(settings: config.Settings = Depends(get_settings)):
-    """
-    Gets batches that are awaiting upload to store
-    """
-    connection = db.connection(settings.fm_connection_string)
-    with connection:
-        batches = stock.get_batches_awaiting_upload_join_acq(connection)
+async def get_awaiting_upload(services: svcs.fastapi.DepContainer = None) -> dict:
+    """Gets batches that are awaiting upload to store"""
+    connection = await services.aget(db.FilemakerConnection)
 
+    batches = stock.get_batches_awaiting_upload_join_acq(connection)
     return {"batches": batches}
 
 
