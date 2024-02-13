@@ -8,6 +8,7 @@ from rich import print
 
 from vs_data_api.vs_data import orders, products, stock
 from vs_data_api.vs_data.fm import constants, db
+from vs_data_api.vs_data.products import import_wc_product_ids_from_linkdb
 from vs_data_api.vs_data.wc import api
 
 # TODO: consider using an orm
@@ -120,22 +121,10 @@ def import_wc_product_ids(ctx):
     """
     Query the link db for wc product ids and add to the vs_db acquisitions table (based on sku)
     """
-    fmdb = ctx.parent.obj["fmdb"]
-    fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
+    vsdb = ctx.parent.obj["fmdb"]
+    linkdb = db.connection(ctx.parent.params["fmlinkdb"])
 
-    # Get the WC:product_id for each SKU from the link database
-    regular_product_skus = stock.get_product_sku_map_from_linkdb(fmlinkdb)
-    print(regular_product_skus[:10])
-
-    # Update acquisitions with wc_product_id
-    stock.update_acquisitions_wc_id(fmdb, regular_product_skus)
-
-    # Get the WC:variation_id for each SKU from the link database
-    variations = stock.get_product_variation_map_from_linkdb(fmlinkdb)
-    print(variations[:10])
-
-    # Update acquisitions with WC variation ids for large and regular packets
-    stock.update_acquisitions_wc_variations(fmdb, variations)
+    import_wc_product_ids_from_linkdb(vsdb, linkdb, cli=True)
 
 
 @cli.command()
