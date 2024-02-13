@@ -8,6 +8,7 @@ from starlette.responses import FileResponse
 from vs_data_api import config
 from vs_data_api.vs_data import orders, products, stock, wc
 from vs_data_api.vs_data.fm import db
+from vs_data_api.vs_data.products import import_wc_product_ids_from_linkdb
 
 app = FastAPI(title="VS Data API")
 
@@ -206,3 +207,20 @@ async def export_wholesale_orders(settings: config.Settings = Depends(get_settin
         return {"message": "No orders were exported."}
 
     return {"message": f"{len(exported_orders)} line items were exported."}
+
+
+@app.get("/products/import-wc-product-ids")
+async def import_wc_product_ids(settings: config.Settings = Depends(get_settings)):
+    """
+    Query the link db for wc product ids and add to the vs_db acquisitions table (based on sku)
+    """
+    vsdb = db.connection(settings.fm_connection_string)
+    linkdb = db.connection(settings.fm_link_connection_string)
+
+    regular_product_skus, variations = import_wc_product_ids_from_linkdb(vsdb, linkdb)
+
+    return {"message": (
+            f"{len(regular_product_skus)} regular product skus imported.\n"
+            "{len(variations)} variation skus imported."
+            )
+        }
