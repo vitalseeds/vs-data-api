@@ -74,7 +74,9 @@ async def get_awaiting_upload(settings: config.Settings = Depends(get_settings))
     Gets batches that are awaiting upload to store
     """
     connection = db.connection(settings.fm_connection_string)
-    batches = stock.get_batches_awaiting_upload_join_acq(connection)
+    with connection:
+        batches = stock.get_batches_awaiting_upload_join_acq(connection)
+
     return {"batches": batches}
 
 
@@ -84,7 +86,9 @@ async def upload_wc_stock(settings: config.Settings = Depends(get_settings)):
     Increment stock for batches awaiting upload
     """
     connection = db.connection(settings.fm_connection_string)
-    batches = stock.update_wc_stock_for_new_batches(connection, settings.wcapi)
+    with connection:
+        batches = stock.update_wc_stock_for_new_batches(connection, settings.wcapi)
+
     # TODO: check for wordpress hangups
     # TODO: better response messages (to show in Filemaker)
     if not batches:
@@ -102,7 +106,9 @@ async def upload_wc_stock_variation_large(settings: config.Settings = Depends(ge
     main product.
     """
     connection = db.connection(settings.fm_connection_string)
-    batches = stock.update_wc_stock_for_new_batches(connection, settings.wcapi, product_variation="large")
+    with connection:
+        batches = stock.update_wc_stock_for_new_batches(connection, settings.wcapi, product_variation="large")
+
     if not batches:
         return {"message": "No large batches were updated on WooCommerce", "batches": None}
     updated_num = len(batches)
@@ -124,7 +130,9 @@ async def download(clear_cache: bool = True, settings: config.Settings = Depends
     report instead (fast).
     """
     connection = db.connection(settings.fm_connection_string)
-    export_file_path = stock.compare_wc_fm_stock(connection, settings.wcapi, csv=True, uncache=clear_cache)
+    with connection:
+        export_file_path = stock.compare_wc_fm_stock(connection, settings.wcapi, csv=True, uncache=clear_cache)
+
     date_suffix = datetime.now().strftime("%m-%d-%Y_%H-%M-%S")
     file_name = f"vsdata_stock-report-all_{date_suffix}.csv"
     return FileResponse(path=export_file_path, filename=file_name, media_type="text/csv")
@@ -140,7 +148,8 @@ async def update_status_selected_orders(target_status: str, settings: config.Set
     - updates status and deselects orders in link database
     """
     fmlinkdb = db.connection(settings.fm_link_connection_string)
-    updated_orders = orders.update_packed_orders_status(fmlinkdb, settings.wcapi, target_status=target_status)
+    with fmlinkdb:
+        updated_orders = orders.update_packed_orders_status(fmlinkdb, settings.wcapi, target_status=target_status)
 
     if updated_orders and isinstance(updated_orders, list):
         num_orders = len(updated_orders)
@@ -155,7 +164,8 @@ async def update_wc_variation_prices(settings: config.Settings = Depends(get_set
     Update WooCommerce price for product variations from our database
     """
     connection = db.connection(settings.fm_connection_string)
-    variations, audit_log_path = products.push_variation_prices_to_wc(settings.wcapi, connection)
+    with connection:
+        variations, audit_log_path = products.push_variation_prices_to_wc(settings.wcapi, connection)
 
     if not variations:
         return {"message": "No variations were updated on WooCommerce", "variations": None}
@@ -174,12 +184,13 @@ async def apply_stock_corrections_wc(settings: config.Settings = Depends(get_set
     connection = db.connection(settings.fm_connection_string)
     with connection:
         applied_corrections = stock.apply_corrections_to_wc_stock(connection, settings.wcapi)
-        if not applied_corrections:
-            return {"message": "No corrections were applied to WooCommerce", "applied_corrections": None}
-        return {
-            "applied_corrections": applied_corrections,
-            "message": f"{len(applied_corrections)} stock corrections were applied to WooCommerce products/variations.",
-        }
+
+    if not applied_corrections:
+        return {"message": "No corrections were applied to WooCommerce", "applied_corrections": None}
+    return {
+        "applied_corrections": applied_corrections,
+        "message": f"{len(applied_corrections)} stock corrections were applied to WooCommerce products/variations.",
+    }
 
 
 @app.get("/orders/wholesale/export")
@@ -188,8 +199,8 @@ async def export_wholesale_orders(settings: config.Settings = Depends(get_settin
     Export wholesale orders as CSV for import into Xero
     """
     fmlinkdb = db.connection(settings.fm_link_connection_string)
-
-    exported_orders = orders.wholesale.export_wholesale_orders(fmlinkdb, None, cli=True)
+    with fmlinkdb:
+        exported_orders = orders.wholesale.export_wholesale_orders(fmlinkdb, None, cli=True)
 
     if not exported_orders:
         return {"message": "No orders were exported."}
