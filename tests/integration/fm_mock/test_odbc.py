@@ -67,7 +67,6 @@ def create_acquisitions_table(fmdb_mock):
     log.debug("Created acquisitions table")
 
 
-@pytest.mark.fmdb
 def create_acquisitions_sample_from_filemaker(fmdb, fmdb_mock):
     create_acquisitions_table(fmdb_mock)
     _, rows = db._select_columns(fmdb, "acquisitions", columns=ACQUISITIONS_COLUMNS)
@@ -116,7 +115,6 @@ def test_select_columns():
 
 
 @pytest.mark.fmdb
-@pytest.mark.record
 def test_record__generate_batch_table(vsdb_connection):
     # TODO: mark this test 'record'
     # Get a subset of batch records from fmdb and save them into equivalent
