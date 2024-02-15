@@ -21,6 +21,7 @@ WC_MAX_API_RESULT_COUNT = 100
 
 def get_batches_awaiting_upload_join_acq(connection):
     # TODO: should get sku from join on seed_lot, not packeting_batches
+    table = _t("acquisitions")
     columns = ["awaiting_upload", "batch_number", "packets", "sku", "wc_product_id"]
     awaiting = _f("packeting_batches", "awaiting_upload")
     where = f"lower({awaiting})='yes' AND b.pack_date IS NOT NULL"
@@ -28,7 +29,7 @@ def get_batches_awaiting_upload_join_acq(connection):
     sql = (
         "SELECT B.awaiting_upload,B.batch_number, B.packets, A.sku, A.wc_product_id  "
         'FROM "packeting_batches" B '
-        'LEFT JOIN "acquisitions" A ON B.sku = A.SKU '
+        f'LEFT JOIN "{table}" A ON B.sku = A.SKU '
         "WHERE " + where
     )
     log.debug(sql)

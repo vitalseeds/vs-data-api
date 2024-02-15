@@ -8,7 +8,6 @@ from os.path import exists
 
 import numpy as np
 import pandas as pd
-from datascroller import scroll
 from rich import print
 
 from vs_data_api.vs_data import log
