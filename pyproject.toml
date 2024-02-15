@@ -50,6 +50,7 @@ test = [
     "httpx",
     "toml",
     "pytest-timeout",
+    "pytest-factoryboy"
 ]
 
 [project.urls]
@@ -83,6 +84,7 @@ dependencies = [
   "pudb",
   "svcs",
   "pypika",
+  "pytest-factoryboy",
 ]
 env-include = [
   "VSDATA_TEST_*",
