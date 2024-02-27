@@ -87,6 +87,7 @@ dependencies = [
   "svcs",
   "pypika",
   "pytest-factoryboy",
+  "pytest-watcher",
 ]
 env-include = [
   "VSDATA_TEST_*",
@@ -100,6 +101,7 @@ TESTING = "1"
 
 [tool.hatch.envs.test.scripts]
 test = "pytest {args:tests}"
+watchtest = "ptw --now . {args:tests}"
 endpoints = "python -c \"from vs_data_api.main import app; print([print(route.path) for route in app.routes])\""
 
 test_int = "pytest {args:tests} --fmdb"
