@@ -19,7 +19,7 @@ from vs_data_api.vs_data.fm.constants import fname as _f
 TEST_BATCH_ID = 99999
 
 
-def get_test_batch(vsdb_connection, batch_number):
+def get_test_batch(vsdb_connection, batch_number=TEST_BATCH_ID):
     # awaiting = _f("packeting_batches", "awaiting_upload")
     # # where = f"lower({awaiting})='yes' AND b.pack_date IS NOT NULL"
     # where = f"lower({awaiting})='yes' AND B.batch_number = {batch_number}"
@@ -40,7 +40,7 @@ def get_test_batch(vsdb_connection, batch_number):
         Query.from_("packeting_batches")
         .select("awaiting_upload", "batch_number", "packets")
         .where(packeting_batches.awaiting_upload == "yes")
-        .where(packeting_batches.batch_number == TEST_BATCH_ID)
+        .where(packeting_batches.batch_number == batch_number)
         .orderby("batch_number", order=Order.desc)
     )
 
