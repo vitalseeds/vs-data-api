@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     def wcapi(self):
         """Property makes woocommerce available without the underscrore (aesthetic)"""
         return self._wcapi
+
     model_config = SettingsConfigDict(env_prefix="vsdata_", case_sensitive=False)
 
 

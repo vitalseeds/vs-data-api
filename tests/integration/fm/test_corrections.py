@@ -22,17 +22,19 @@ def line_item_created(vsdb_connection, correction_id):
 @pytest.mark.wcapi
 @pytest.mark.fmdb
 def test_apply_stock_corrections(wcapi, vsdb_connection):
-
     delete_test_stock_corrections(vsdb_connection, TEST_COMMENT)
     delete_test_line_items(vsdb_connection, TEST_COMMENT)
 
     correction1 = create_stock_correction(vsdb_connection)
-    correction2 = create_stock_correction(vsdb_connection, {
-        "id": 1234,
-        "sku": "BRSE",
-        "create_line_item": None,
-        "comment": TEST_COMMENT,
-    })
+    correction2 = create_stock_correction(
+        vsdb_connection,
+        {
+            "id": 1234,
+            "sku": "BRSE",
+            "create_line_item": None,
+            "comment": TEST_COMMENT,
+        },
+    )
     assert correction1
 
     applied_corrections = stock.apply_corrections_to_wc_stock(vsdb_connection, wcapi)

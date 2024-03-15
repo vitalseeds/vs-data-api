@@ -14,7 +14,9 @@ def create_batch_for_upload(vsdb_connection, batch_number):
     wc_product_id = 12345
     pack_date = datetime.date.today()
 
-    sql = "INSERT INTO packeting_batches (sku, batch_number, packets, awaiting_upload, pack_date) VALUES (?, ?, ?, ?, ?)"
+    sql = (
+        "INSERT INTO packeting_batches (sku, batch_number, packets, awaiting_upload, pack_date) VALUES (?, ?, ?, ?, ?)"
+    )
     values = (sku, batch_number, packets, awaiting_upload, pack_date)
 
     # sql = (

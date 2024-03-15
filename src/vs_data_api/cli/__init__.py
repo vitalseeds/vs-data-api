@@ -220,7 +220,7 @@ def push_variation_prices(ctx):
 @click.option("--commit", is_flag=True, help="Commit SQL query results ")
 @click.argument("sql")
 @click.pass_context
-def run_sql(ctx, sql: str, commit: bool, fetchall=False, link: bool=False):
+def run_sql(ctx, sql: str, commit: bool, fetchall=False, link: bool = False):
     """
     Run arbitrary SQL
     """
@@ -266,7 +266,6 @@ def test_fm(ctx, link: bool):
         ...
     print("No FileMaker connection")
     return
-
 
 
 @cli.command()

@@ -167,6 +167,7 @@ async def update_wc_variation_prices(settings: config.Settings = Depends(get_set
     connection = db.connection(settings.fm_connection_string)
     with connection:
         from vs_data_api.vs_data.products.price import push_variation_prices_to_wc
+
         variations, audit_log_path = push_variation_prices_to_wc(settings.wcapi, connection)
 
     if not variations:
@@ -220,8 +221,8 @@ async def import_wc_product_ids(settings: config.Settings = Depends(get_settings
 
     regular_product_skus, variations = import_wc_product_ids_from_linkdb(vsdb, linkdb)
 
-    return {"message": (
-            f"{len(regular_product_skus)} regular product skus imported.\n"
-            "{len(variations)} variation skus imported."
-            )
-        }
+    return {
+        "message": (
+            f"{len(regular_product_skus)} regular product skus imported.\n" "{len(variations)} variation skus imported."
+        )
+    }

@@ -36,6 +36,7 @@ def test_all_endpoints(client, endpoint_path):
     response = client.get(endpoint_path)
     assert response.status_code == 200
 
+
 @pytest.mark.fmdb
 @pytest.mark.wcapi
 @pytest.mark.slow

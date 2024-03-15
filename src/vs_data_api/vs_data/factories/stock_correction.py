@@ -25,9 +25,12 @@ def create_stock_correction(vsdb_connection, values={}, test_comment="TEST CORRE
     q = Query.into(stock_corrections).columns(*data.keys()).insert(*data.values())
     vsdb_connection.cursor().execute(q.get_sql()).commit()
 
-    q = Query.from_(stock_corrections).select(*data.keys()).where(
-        stock_corrections.comment == test_comment
-    ).orderby("id", order=Order.desc)
+    q = (
+        Query.from_(stock_corrections)
+        .select(*data.keys())
+        .where(stock_corrections.comment == test_comment)
+        .orderby("id", order=Order.desc)
+    )
     correction = vsdb_connection.cursor().execute(q.get_sql()).fetchone()
     return StockCorrections(**dict(zip(data.keys(), correction)))
 

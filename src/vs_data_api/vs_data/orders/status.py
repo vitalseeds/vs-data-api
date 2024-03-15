@@ -31,8 +31,7 @@ def get_selected_orders(fmlinkdb):
     )
     where = (
         # Using lower() appears to be slow
-        f"{selected}='yes' "
-        f"OR {selected}='Yes' "
+        f"{selected}='yes' OR {selected}='Yes' "
     )
     # where = (
     #     f"{selected}='Yes' "

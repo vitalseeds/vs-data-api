@@ -36,11 +36,13 @@ def get_test_batch(vsdb_connection, batch_number):
     # log.debug(sql)
 
     packeting_batches, acquisitions = Tables("packeting_batches", "acquisitions")
-    sql = Query.from_("packeting_batches").select("awaiting_upload", "batch_number", "packets").where(
-        packeting_batches.awaiting_upload == "yes"
-    ).where(
-        packeting_batches.batch_number == TEST_BATCH_ID
-    ).orderby("batch_number", order=Order.desc)
+    sql = (
+        Query.from_("packeting_batches")
+        .select("awaiting_upload", "batch_number", "packets")
+        .where(packeting_batches.awaiting_upload == "yes")
+        .where(packeting_batches.batch_number == TEST_BATCH_ID)
+        .orderby("batch_number", order=Order.desc)
+    )
 
     rows = vsdb_connection.cursor().execute(sql.get_sql()).fetchall()
     log.info(rows)
@@ -61,7 +63,6 @@ def delete_test_acquisition(vsdb_connection, sku):
 
 @pytest.mark.fmdb
 def test_get_batches_awaiting_upload_join_acq(vsdb_connection):
-
     delete_test_batch(vsdb_connection, TEST_BATCH_ID)
     delete_test_acquisition(vsdb_connection, "TEST_SKU")
 
@@ -70,14 +71,14 @@ def test_get_batches_awaiting_upload_join_acq(vsdb_connection):
 
     test_batch = get_test_batch(vsdb_connection, TEST_BATCH_ID)
     assert test_batch
-    assert len(test_batch)==1
+    assert len(test_batch) == 1
     log.info(test_batch)
 
     flag_only_test_batches_for_upload(vsdb_connection, [TEST_BATCH_ID])
 
     batches = stock.batch_upload.get_batches_awaiting_upload_join_acq(vsdb_connection)
     assert batches
-    assert len(batches)==1
+    assert len(batches) == 1
 
 
 @pytest.mark.wcapi
