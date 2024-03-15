@@ -6,6 +6,7 @@ from vs_data_api.vs_data.fm.constants import tname as _t
 from vs_data_api.vs_data.fm.vs_tables import StockCorrections
 
 stock_corrections = Table(_t("stock_corrections"))
+line_items = Table(_t("line_items"))
 
 
 def create_stock_correction(vsdb_connection, values={}, test_comment="TEST CORRECTION"):
@@ -16,7 +17,7 @@ def create_stock_correction(vsdb_connection, values={}, test_comment="TEST CORRE
         "stock_change": 12,
         "wc_stock_updated": None,
         "vs_stock_updated": None,
-        # "create_line_item": 1,
+        "create_line_item": 1,
         "comment": test_comment,
     }
     data.update(values)
@@ -33,5 +34,11 @@ def create_stock_correction(vsdb_connection, values={}, test_comment="TEST CORRE
 
 def delete_test_stock_corrections(vsdb_connection, test_comment="TEST CORRECTION"):
     q = Query.from_(stock_corrections).delete().where(stock_corrections.comment == test_comment)
+    result = vsdb_connection.cursor().execute(q.get_sql()).commit()
+    log.info(result)
+
+
+def delete_test_line_items(vsdb_connection, test_comment="TEST CORRECTION"):
+    q = Query.from_(line_items).delete().where(line_items.note == test_comment)
     result = vsdb_connection.cursor().execute(q.get_sql()).commit()
     log.info(result)
