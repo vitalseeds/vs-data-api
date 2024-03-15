@@ -29,18 +29,10 @@ VSDATA_WC_URL = test_settings.vsdata_wc_url
 VSDATA_WC_KEY = test_settings.vsdata_wc_key
 VSDATA_WC_SECRET = test_settings.vsdata_wc_secret
 
-# import betamax
-
-# with betamax.Betamax.configure() as config:
-#     config.cassette_library_dir = "tests/fixtures/cassettes"
-
 
 def pytest_addoption(parser):
     parser.addoption("--fmdb", action="store_true", dest="fmdb", default=False, help="enable fmdb decorated tests")
     parser.addoption("--wcapi", action="store_true", dest="wcapi", default=False, help="enable wcapi decorated tests")
-    parser.addoption(
-        "--dbmock", action="store_true", dest="dbmock", default=False, help="enable dbmock decorated tests"
-    )
     parser.addoption("--skipslow", action="store_true", dest="skipslow", default=False, help="skip slow running tests")
 
 
@@ -50,8 +42,6 @@ def pytest_configure(config):
         mark_expression.append("not fmdb")
     if not config.option.wcapi:
         mark_expression.append("not wcapi")
-    if not config.option.dbmock:
-        mark_expression.append("not dbmock")
     if config.option.skipslow:
         mark_expression.append("not slow")
     combined_markexp = " and ".join(mark_expression)
