@@ -166,7 +166,8 @@ async def update_wc_variation_prices(settings: config.Settings = Depends(get_set
     """
     connection = db.connection(settings.fm_connection_string)
     with connection:
-        variations, audit_log_path = products.push_variation_prices_to_wc(settings.wcapi, connection)
+        from vs_data_api.vs_data.products.price import push_variation_prices_to_wc
+        variations, audit_log_path = push_variation_prices_to_wc(settings.wcapi, connection)
 
     if not variations:
         return {"message": "No variations were updated on WooCommerce", "variations": None}

@@ -19,8 +19,8 @@ def line_item_created(vsdb_connection, correction_id):
     return line_items
 
 
-# @pytest.mark.wcapi
-# @pytest.mark.fmdb
+@pytest.mark.wcapi
+@pytest.mark.fmdb
 def test_apply_stock_corrections(wcapi, vsdb_connection):
 
     delete_test_stock_corrections(vsdb_connection, TEST_COMMENT)
@@ -43,18 +43,8 @@ def test_apply_stock_corrections(wcapi, vsdb_connection):
     # Will fail if test database is not clean - ie has other corrections ready to upload
     assert applied_corrections == [123, 1234]
 
-    from vs_data_api.vs_data.stock.corrections import get_line_items_for_stock_correction
-
     line_items = get_line_items_for_stock_correction(vsdb_connection, correction1.id)
 
-    # Only the first correction1 should have created a line item
+    # Only the first correction should have created a line item
     assert len(line_items) == 1
     assert line_items[0]["correction_id"] == correction1.id
-
-
-
-# @pytest.mark.wcapi
-# def test_get_products_by_id(wcapi):
-#     product_ids = [5316, 1690, 1744, 1696, 10350]
-#     products = stock.batch_upload.get_wc_products_by_id(wcapi, product_ids)
-#     assert products

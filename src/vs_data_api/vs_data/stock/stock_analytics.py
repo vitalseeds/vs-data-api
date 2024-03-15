@@ -201,6 +201,7 @@ def compare_wc_fm_stock(fmdb, wcapi, cli: bool = False, csv: bool = False, uncac
 
     report["wc_edit_url"] = report.apply(lambda row: get_wc_edit_url(row), axis=1)
     if csv:
+        os.makedirs(REPORT_CSV_DIR, exist_ok=True)
         report.to_csv(REPORT_CSV_FILE_PATH, index=False)
 
     return REPORT_CSV_FILE_PATH
