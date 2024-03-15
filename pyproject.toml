@@ -101,10 +101,11 @@ TESTING = "1"
 
 [tool.hatch.envs.test.scripts]
 test = "pytest {args:tests}"
+test_int = "scripts/start_test_env.zsh; pytest {args:tests} --fmdb --wcapi --skipslow"
+# test_int = "pytest {args:tests} --fmdb"
+
 watchtest = "ptw --now . {args:tests}"
 endpoints = "python -c \"from vs_data_api.main import app; print([print(route.path) for route in app.routes])\""
-
-test_int = "pytest {args:tests} --fmdb"
 test-cov = "coverage run -m pytest {args:tests}"
 cov-report = [
   "- coverage combine",
