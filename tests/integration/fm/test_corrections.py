@@ -1,25 +1,13 @@
 """Test cases for the __main__ module."""
-import pypyodbc as pyodbc
 import pytest
-import requests
-import responses
-import toml
-from fastapi.testclient import TestClient
-from pypika import Field, Order, Query, Schema, Table, Tables
 
-# from objexplore import explore
-from responses import _recorder, matchers
-from rich import print
-
-from tests import _add_from_file_match_params, flag_only_test_batches_for_upload
-from vs_data_api.vs_data import log, stock
+from vs_data_api.vs_data import stock
 from vs_data_api.vs_data.factories import (
     create_stock_correction,
     delete_test_line_items,
     delete_test_stock_corrections,
 )
-from vs_data_api.vs_data.fm.constants import fname as _f
-from vs_data_api.vs_data.stock.corrections import apply_corrections_to_wc_stock
+from vs_data_api.vs_data.stock.corrections import get_line_items_for_stock_correction
 
 TEST_CORRECTION_ID = 99999
 TEST_COMMENT = "TEST CORRECTION"

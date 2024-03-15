@@ -12,7 +12,7 @@ from rich import print
 from vs_data_api.__about__ import __version__
 from vs_data_api.config import Settings, TestSettings
 from vs_data_api.vs_data import orders, products, stock
-from vs_data_api.vs_data.fm import constants, db
+from vs_data_api.vs_data.fm import db
 from vs_data_api.vs_data.wc import api
 
 # Switch pydantic settings class based on environment variable
