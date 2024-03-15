@@ -44,6 +44,13 @@ def get_table_class(table_ref: str):
     return table_class
 
 
+def get_fm_table_column_aliases(table_ref: str) -> dict:
+    table_class = get_table_class(table_ref)
+    fields = table_class.model_fields
+    columns = {f: fields[f].default for f in table_class.model_fields.keys()}
+    return columns
+
+
 # TODO: accept "table:field" form
 # TODO: lookup for table shortnames eg 'acq'
 def get_fm_field_name(table_ref: str, field_ref: str) -> str:

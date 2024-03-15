@@ -10,14 +10,15 @@ from collections import defaultdict
 from datetime import datetime
 from textwrap import dedent
 
+from pypika import Order, Query, Table
 from rich import print
 
 from vs_data_api.vs_data import log
 from vs_data_api.vs_data.cli.table import display_table
-from vs_data_api.vs_data.fm import constants
-from vs_data_api.vs_data.fm import db
+from vs_data_api.vs_data.fm import constants, db
 from vs_data_api.vs_data.fm import db as fmdb
 from vs_data_api.vs_data.fm.constants import fname as _f
+from vs_data_api.vs_data.fm.constants import get_fm_table_column_aliases
 from vs_data_api.vs_data.fm.constants import tname as _t
 from vs_data_api.vs_data.stock.batch_upload import wc_large_product_update_stock, wc_regular_product_update_stock
 
@@ -37,6 +38,7 @@ def get_unprocessed_stock_corrections_join_acq_stock(connection):
         "large_packet_correction",
         "stock_change",
         "comment",
+        "create_line_item",
         "wc_stock_updated",
         "vs_stock_updated",
         "wc_product_id",
@@ -51,7 +53,7 @@ def get_unprocessed_stock_corrections_join_acq_stock(connection):
     # TODO: case sensitive validation of sku in FileMaker would negate LOWER()
     # This would be much more performant as could use indexes
     sql = (
-        "SELECT SC.id, SC.sku, sc.large_packet_correction, sc.stock_change, sc.comment, "
+        "SELECT SC.id, SC.sku, sc.large_packet_correction, sc.stock_change, sc.comment, sc.create_line_item, "
         "SC.wc_stock_updated, SC.vs_stock_updated, "
         "A.wc_product_id, A.wc_variation_lg_id, "
         "S.stock_regular, S.stock_large "
@@ -417,20 +419,21 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
         # rather than resultant change to stock, so inverse it for use in audit line item
         correction_quantity = correction["stock_change"] * -1
 
-        line_item_inserts.append(
-            (
-                correction["sku"],  # sku
-                pack_size,  # pack_size
-                f"DATE '{todays_date}'",  # date
-                correction_quantity,  # quantity
-                ADMIN_EMAIL,  # email
-                # correction["item_cost"],  # item_cost
-                correction["id"],  # correction_id
-                f"{correction['comment']} (stock_correction:{correction['id']})",  # note
-                "Correction",  # transaction_type
-                stock_level,  # stock_level
+        if correction["create_line_item"]:
+            line_item_inserts.append(
+                (
+                    correction["sku"],  # sku
+                    pack_size,  # pack_size
+                    f"DATE '{todays_date}'",  # date
+                    correction_quantity,  # quantity
+                    ADMIN_EMAIL,  # email
+                    # correction["item_cost"],  # item_cost
+                    correction["id"],  # correction_id
+                    f"{correction['comment']}",  # note
+                    "Correction",  # transaction_type
+                    stock_level,  # stock_level
+                )
             )
-        )
 
     amend_local_stock(connection, local_stock_amend, local_large_stock_amend)
 
@@ -476,3 +479,39 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
     # This will negate requirement for a preceding 'update stock' FM script
 
     return uploaded_corrections
+
+
+def get_line_items_for_stock_correction(connection, correction_id: int) -> list[dict] | None:
+    """
+    Get the line item created to represent a stock correction (if exists)
+
+    Returns a list (hopefully one element) of dicts
+    """
+    # sql = dedent(
+    #     f"""
+    # SELECT * FROM {_t("line_items")}
+    # WHERE {_f("line_items", "correction_id")} = {correction_id}
+    # """
+    # )
+    # log.debug(sql)
+    # cursor = connection.cursor()
+    # cursor.execute(sql)
+    # rows = cursor.fetchall()
+    # return list(rows) if rows else None
+
+    # TODO: This form of query should be astracted for re-use
+    # TODO: Use this pattern for fm.db.select function
+    line_items = Table(_t("line_items"))
+    columns = get_fm_table_column_aliases("line_items")
+    column_aliases = get_fm_table_column_aliases("line_items").values()
+    cid = _f("line_items", "correction_id")
+
+    q = Query.from_(line_items).select(*column_aliases).where(
+        # line_items.correction_id == correction_id
+        getattr(line_items, cid) == correction_id
+    )
+    line_items = connection.cursor().execute(q.get_sql()).fetchall()
+
+    # TODO: validate using pydantic model once using model aliases correctly
+    line_item_dicts = [dict(zip(columns.keys(), li)) for li in line_items]
+    return line_item_dicts if line_item_dicts else None

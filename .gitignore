@@ -12,6 +12,7 @@ __pycache__
 *.log
 *.img
 tmp
+/scripts
 !**/tmp/**/.gitkeep
 
 .mypy_cache/

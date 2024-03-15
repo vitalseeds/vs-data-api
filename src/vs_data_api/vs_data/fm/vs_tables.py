@@ -74,14 +74,15 @@ class StockCorrections(FilemakerTable):
 
     id: int = "id"
     sku: str = "sku"
-    large_packet_correction: int = "large_packet_correction"
+    large_packet_correction: int | None = "large_packet_correction"
     stock_change: int = "stock_change"
-    wc_stock_updated: int = "wc_stock_updated"
-    vs_stock_updated: int = "vs_stock_updated"
+    wc_stock_updated: int | None = "wc_stock_updated"
+    vs_stock_updated: int | None = "vs_stock_updated"
+    create_line_item: int | None = "create_line_item"
     comment: str = "comment"
 
 
-class LineItems:
+class LineItems(FilemakerTable):
     table_name: ClassVar = "LineItems_Orders"
 
     wc_order_id: int = "order_number"  # previously "Order number"
