@@ -114,9 +114,9 @@ def test_select_columns():
     assert results
 
 
-@pytest.mark.fmdb
-def test_record__generate_batch_table(vsdb_connection):
-    # TODO: mark this test 'record'
-    # Get a subset of batch records from fmdb and save them into equivalent
-    # sqlite database.
-    ...
+# @pytest.mark.fmdb
+# def test_record__generate_batch_table(vsdb_connection):
+#     # TODO: mark this test 'record'
+#     # Get a subset of batch records from fmdb and save them into equivalent
+#     # sqlite database.
+#     ...
