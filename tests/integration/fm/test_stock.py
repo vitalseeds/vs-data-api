@@ -1,20 +1,12 @@
 """Test cases for the __main__ module."""
-import pypyodbc as pyodbc
 import pytest
-import requests
-import responses
-import toml
-from fastapi.testclient import TestClient
-from pypika import Field, Order, Query, Schema, Table, Tables
+from pypika import Order, Query, Tables
 
 # from objexplore import explore
-from responses import _recorder, matchers
-from rich import print
 
-from tests import _add_from_file_match_params, flag_only_test_batches_for_upload
+from tests import flag_only_test_batches_for_upload
 from vs_data_api.vs_data import log, stock
 from vs_data_api.vs_data.factories import create_batch_for_upload, create_test_acquisition
-from vs_data_api.vs_data.fm.constants import fname as _f
 
 TEST_BATCH_ID = 99999
 

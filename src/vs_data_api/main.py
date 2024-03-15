@@ -1,12 +1,11 @@
 from datetime import datetime
 from functools import lru_cache
-from typing import Optional
 
 from fastapi import Depends, FastAPI
 from starlette.responses import FileResponse
 
 from vs_data_api import config
-from vs_data_api.vs_data import orders, products, stock, wc
+from vs_data_api.vs_data import orders, stock
 from vs_data_api.vs_data.fm import db
 from vs_data_api.vs_data.products import import_wc_product_ids_from_linkdb
 

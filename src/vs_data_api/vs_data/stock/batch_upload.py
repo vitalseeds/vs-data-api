@@ -4,14 +4,11 @@ Vital Seeds FM schema specific stock management
 These will be run (via shell commands) from FM scripts
 """
 
-import logging
 from collections import defaultdict
 
 from rich import print
 
 from vs_data_api.vs_data import log
-from vs_data_api.vs_data.cli.table import display_table
-from vs_data_api.vs_data.fm import constants
 from vs_data_api.vs_data.fm import db as fmdb
 from vs_data_api.vs_data.fm.constants import fname as _f
 from vs_data_api.vs_data.fm.constants import tname as _t

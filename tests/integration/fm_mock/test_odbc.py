@@ -1,18 +1,12 @@
 """Test cases for the __main__ module."""
-import json
 import sqlite3
 from inspect import cleandoc as dedent
-from sqlite3 import Error
 
 import pypyodbc as pyodbc
 import pytest
-import requests
-import responses
-import toml
-from responses import _recorder, matchers
 from rich import print
 
-from vs_data_api.vs_data import log, stock
+from vs_data_api.vs_data import log
 from vs_data_api.vs_data.fm import db
 
 # @pytest.mark.fmdb

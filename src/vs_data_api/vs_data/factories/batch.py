@@ -1,6 +1,5 @@
 import datetime
 
-from pypika import Field, Order, Query, Schema, Table, Tables
 
 from vs_data_api.vs_data import log
 from vs_data_api.vs_data.factories.utils import param_types_from_var

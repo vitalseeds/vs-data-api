@@ -1,11 +1,9 @@
-import os
 
-import pydantic
 from pydantic import Field, PrivateAttr
 from pydantic_settings import SettingsConfigDict, BaseSettings
 from woocommerce import API as wc_api
 
-from vs_data_api.vs_data import log, wc
+from vs_data_api.vs_data import wc
 
 
 class Settings(BaseSettings):

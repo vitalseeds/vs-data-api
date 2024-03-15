@@ -6,7 +6,6 @@ Created during development but not yet needed.
 
 import itertools
 
-from rich import print
 
 from vs_data_api.vs_data import log
 from vs_data_api.vs_data.fm import constants

@@ -2,7 +2,6 @@
 
 import pytest
 from fastapi.testclient import TestClient
-from starlette.responses import FileResponse
 
 
 def test_get_product_by_id(client: TestClient):

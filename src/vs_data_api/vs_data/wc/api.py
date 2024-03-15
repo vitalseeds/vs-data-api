@@ -1,4 +1,3 @@
-import urllib
 
 from requests.exceptions import HTTPError
 from woocommerce import API

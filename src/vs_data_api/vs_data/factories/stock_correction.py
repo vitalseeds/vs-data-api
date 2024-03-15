@@ -1,4 +1,3 @@
-import pypyodbc as pyodbc
 from pypika import Order, Query, Table
 
 from vs_data_api.vs_data import log
