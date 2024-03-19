@@ -45,7 +45,7 @@ def pytest_configure(config):
         mark_expression.append("not slow")
     combined_markexp = " and ".join(mark_expression)
     if combined_markexp:
-        print(f"-m '{combined_markexp}'")
+        print(f"-m '{combined_markexp}'") # noqa
     config.option.markexpr = combined_markexp
 
 

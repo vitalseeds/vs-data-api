@@ -305,10 +305,10 @@ def update_acquisitions_wc_id(connection, sku_id_map):
     sku_field = _f("acquisitions", "sku")
     for row in sku_id_map:
         sql = f"UPDATE {fm_table} SET {wc_id}={row[link_wc_id]} WHERE {sku_field} = '{row['sku']}'"
-        print(sql)
+        log.debug(sql)
         cursor = connection.cursor()
         cursor.execute(sql)
-        print(cursor.rowcount)
+        log.debug(cursor.rowcount)
         connection.commit()
 
 
@@ -330,18 +330,18 @@ def update_acquisitions_wc_variations(connection, variation_id_map):
         # TODO: abstract large pack sku construction
         base_sku = row["sku"].replace("-Gr", "")
         sql = f"UPDATE {fm_table} SET {large_variation_field}={row[wc_variation_id]} WHERE {parent_product_sku} = '{base_sku}'"
-        print(sql)
+        log.debug(sql)
         cursor = connection.cursor()
         cursor.execute(sql)
-        print(cursor.rowcount)
+        log.debug(cursor.rowcount)
         connection.commit()
 
     for row in regular_variations:
         # Regular pack sku should be the same as parent product
         base_sku = row["sku"]
         sql = f"UPDATE {fm_table} SET {regular_variation_field}={row[wc_variation_id]} WHERE {parent_product_sku} = '{base_sku}'"
-        print(sql)
+        log.debug(sql)
         cursor = connection.cursor()
         cursor.execute(sql)
-        print(cursor.rowcount)
+        log.debug(cursor.rowcount)
         connection.commit()

@@ -5,7 +5,7 @@ Command-line interface to interact with Vital Seeds database.
 import click
 from rich import print
 
-from vs_data_api.vs_data import orders, products, stock
+from vs_data_api.vs_data import log, orders, products, stock
 from vs_data_api.vs_data.fm import db
 from vs_data_api.vs_data.products import import_wc_product_ids_from_linkdb
 from vs_data_api.vs_data.wc import api
@@ -60,7 +60,7 @@ def get_wc_stock(ctx, sku: str, large: bool = False):
     Get WooCommerce stock value
     """
     if large:
-        print("large stock count not implemented yet")
+        log.debug("large stock count not implemented yet")
     fmdb = ctx.parent.obj["fmdb"]
     wcapi = ctx.parent.obj["wcapi"]
     acquisitions = (
@@ -72,15 +72,15 @@ def get_wc_stock(ctx, sku: str, large: bool = False):
         .fetchall()
     )
     if not acquisitions:
-        print("No acquisitions found")
+        log.debug("No acquisitions found")
         return
     product_ids = [p["wc_product_id"] for p in acquisitions]
     wc_products = stock.get_wc_products_by_id(wcapi, product_ids)
     if wc_products:
         wc_product_stock = {p["id"]: p["stock_quantity"] for p in wc_products}
-        print(wc_product_stock)
+        log.debug(wc_product_stock)
         return
-    print("No WC product found")
+    log.debug("No WC product found")
 
 
 @cli.command()
@@ -106,9 +106,9 @@ def update_stock_large_packets(ctx, force):
 
     batches = stock.get_large_batches_awaiting_upload_join_acq(fmdb)
     if not batches:
-        print("nothing to upload")
+        log.debug("nothing to upload")
         return
-    print(batches)
+    log.debug(batches)
     confirm = input("Would you like to upload the stock from these batches? (Y/n)")
     if confirm.lower() == "y" or force:
         stock.update_wc_stock_for_new_batches(fmdb, wcapi, product_variation="large")
@@ -201,13 +201,13 @@ def run_sql(ctx, sql: str, commit: bool, fetchall=False):
     """
     fmdb = ctx.parent.obj.get("fmdb")
     with fmdb:
-        print(sql)
+        log.debug(sql)
         results = fmdb.cursor().execute(sql)
         # Only relevant for a select query
         if fetchall:
-            print(results.fetchall())
+            log.debug(results.fetchall())
             return
-        print(results)
+        log.debug(results)
         if commit:
             fmdb.commit()
 
@@ -218,7 +218,7 @@ def test_fm(ctx):
     """
     Test FileMaker connection
     """
-    print("Testing FileMaker connection")
+    log.debug("Testing FileMaker connection")
     # fmdb = ctx.parent.obj["fmdb"]
 
 

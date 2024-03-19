@@ -93,7 +93,7 @@ def test_create_sqlite_mock(vsdb_connection):
     fmdb_mock.cursor().execute(select_acquisitions)
 
     for acquisition in fmdb_mock.cursor().execute(select_acquisitions).fetchall():
-        print(acquisition)
+        log.debug(acquisition)
 
 
 def test_select_columns():

@@ -101,7 +101,7 @@ TESTING = "1"
 
 [tool.hatch.envs.test.scripts]
 test = "pytest {args:tests}"
-test_int = "scripts/start_test_env.zsh; pytest {args:tests} --fmdb --wcapi --skipslow"
+test_int = "echo 'run scripts/start_test_env.zsh to start dependencies'; pytest {args:tests} --fmdb --wcapi --skipslow"
 # test_int = "pytest {args:tests} --fmdb"
 
 watchtest = "ptw --now . {args:tests}"

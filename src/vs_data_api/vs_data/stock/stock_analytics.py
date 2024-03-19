@@ -19,13 +19,13 @@ def _debug_data(vs_stock_pd, vs_all_stock, wc_product_stock_pd, wc_variations_st
     """
     Throwaway debug function to display some pandas data in the cli.
     """
-    print(wc_product_stock_pd.columns)
-    print(vs_stock_pd.loc[vs_stock_pd["wc_product_id__vs"] == 1694])
-    print(wc_product_stock_pd.loc[wc_product_stock_pd["id__wc_prd"] == 1694][["stock_quantity__wc_prd"]])
-    print(wc_variations_stock_pd.columns)
-    print(wc_variations_stock_pd.loc[[1694]])
-    print(report.loc[report["wc_product_id__vs"] == 1694])
-    print(
+    log.debug(wc_product_stock_pd.columns)
+    log.debug(vs_stock_pd.loc[vs_stock_pd["wc_product_id__vs"] == 1694])
+    log.debug(wc_product_stock_pd.loc[wc_product_stock_pd["id__wc_prd"] == 1694][["stock_quantity__wc_prd"]])
+    log.debug(wc_variations_stock_pd.columns)
+    log.debug(wc_variations_stock_pd.loc[[1694]])
+    log.debug(report.loc[report["wc_product_id__vs"] == 1694])
+    log.debug(
         vs_all_stock[vs_all_stock["id__wc_prd"] == 1694][
             [
                 "wc_product_id__vs",

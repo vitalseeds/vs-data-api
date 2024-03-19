@@ -11,7 +11,7 @@ from rich import print
 
 from vs_data_api.__about__ import __version__
 from vs_data_api.config import Settings, TestSettings
-from vs_data_api.vs_data import orders, products, stock
+from vs_data_api.vs_data import log, orders, products, stock
 from vs_data_api.vs_data.fm import db
 from vs_data_api.vs_data.wc import api
 
@@ -72,7 +72,7 @@ def get_wc_stock(ctx, sku: str, large: bool = False):
     Get WooCommerce stock value
     """
     if large:
-        print("large stock count not implemented yet")
+        log.debug("large stock count not implemented yet")
     fmdb = ctx.parent.obj["fmdb"]
     wcapi = ctx.parent.obj["wcapi"]
     acquisitions = (
@@ -84,15 +84,15 @@ def get_wc_stock(ctx, sku: str, large: bool = False):
         .fetchall()
     )
     if not acquisitions:
-        print("No acquisitions found")
+        log.debug("No acquisitions found")
         return
     product_ids = [p["wc_product_id"] for p in acquisitions]
     wc_products = stock.get_wc_products_by_id(wcapi, product_ids)
     if wc_products:
         wc_product_stock = {p["id"]: p["stock_quantity"] for p in wc_products}
-        print(wc_product_stock)
+        log.debug(wc_product_stock)
         return
-    print("No WC product found")
+    log.debug("No WC product found")
 
 
 @cli.command()
@@ -118,9 +118,9 @@ def update_stock_large_packets(ctx, force):
 
     batches = stock.get_large_batches_awaiting_upload_join_acq(fmdb)
     if not batches:
-        print("nothing to upload")
+        log.debug("nothing to upload")
         return
-    print(batches)
+    log.debug(batches)
     confirm = input("Would you like to upload the stock from these batches? (Y/n)")
     if confirm.lower() == "y" or force:
         stock.update_wc_stock_for_new_batches(fmdb, wcapi, product_variation="large")
@@ -137,14 +137,14 @@ def import_wc_product_ids(ctx):
 
     # Get the WC:product_id for each SKU from the link database
     regular_product_skus = stock.get_product_sku_map_from_linkdb(fmlinkdb)
-    print(regular_product_skus[:10])
+    log.debug(regular_product_skus[:10])
 
     # Update acquisitions with wc_product_id
     stock.update_acquisitions_wc_id(fmdb, regular_product_skus)
 
     # Get the WC:variation_id for each SKU from the link database
     variations = stock.get_product_variation_map_from_linkdb(fmlinkdb)
-    print(variations[:10])
+    log.debug(variations[:10])
 
     # Update acquisitions with WC variation ids for large and regular packets
     stock.update_acquisitions_wc_variations(fmdb, variations)
@@ -227,13 +227,13 @@ def run_sql(ctx, sql: str, commit: bool, fetchall=False, link: bool = False):
 
     fmdb = db.connection(ctx.parent.params["fmlinkdb"]) if link else ctx.parent.obj.get("fmdb")
     with fmdb:
-        print(sql)
+        log.debug(sql)
         results = fmdb.cursor().execute(sql)
         # Only relevant for a select query
         if fetchall:
-            print(results.fetchall())
+            log.debug(results.fetchall())
             return
-        print(results)
+        log.debug(results)
         if commit:
             fmdb.commit()
     return
@@ -250,21 +250,21 @@ def test_fm(ctx, link: bool):
         try:
             fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
             if fmlinkdb:
-                print("Link database connection OK")
+                log.debug("Link database connection OK")
                 return
         except Exception:
             ...
-        print("Link database connection failed")
+        log.debug("Link database connection failed")
         return
 
     try:
         fmdb = ctx.parent.obj["fmdb"]
         if fmdb:
-            print("FileMaker connection OK")
+            log.debug("FileMaker connection OK")
             return
     except Exception:
         ...
-    print("No FileMaker connection")
+    log.debug("No FileMaker connection")
     return
 
 
