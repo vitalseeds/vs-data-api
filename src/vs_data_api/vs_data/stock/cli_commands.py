@@ -1,5 +1,3 @@
-import click
-from rich import print
 
 # See __main__.py for now
 

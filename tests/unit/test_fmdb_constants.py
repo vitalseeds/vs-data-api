@@ -1,5 +1,4 @@
 """Test cases for the __main__ module."""
-import pytest
 
 from vs_data_api.vs_data.fm import constants as fm_constants
 

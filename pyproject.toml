@@ -101,7 +101,7 @@ TESTING = "1"
 
 [tool.hatch.envs.test.scripts]
 test = "pytest {args:tests}"
-test_int = "scripts/start_test_env.zsh; pytest {args:tests} --fmdb --wcapi --skipslow"
+test_int = "echo 'run scripts/start_test_env.zsh to start dependencies'; pytest {args:tests} --fmdb --wcapi --skipslow"
 # test_int = "pytest {args:tests} --fmdb"
 
 watchtest = "ptw --now . {args:tests}"
@@ -210,6 +210,7 @@ ban-relative-imports = "all"
 [tool.ruff.per-file-ignores]
 # Tests can use magic values, assertions, and relative imports
 "tests/**/*" = ["PLR2004", "S101", "TID252"]
+"**/__init__.py" = ["F401"]
 
 [tool.coverage.run]
 source_pkgs = ["vs_data_api", "tests"]

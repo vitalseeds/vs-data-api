@@ -6,6 +6,8 @@ from urllib.parse import urljoin, urlparse
 
 from responses import RequestsMock
 
+from vs_data_api.vs_data import log
+
 try:
     import tomli as _toml
 except ImportError:
@@ -29,14 +31,14 @@ def _add_from_file_match_params(
     with open(file_path, "rb") as file:
         data = _toml.load(file)
 
-    for rsp in data["responses"]:
-        rsp = rsp["response"]
+    for response in data["responses"]:
+        rsp = response["response"]
 
         request_url = urlparse(rsp["url"])
         # Remove querystring so that responses does not add query_string_matcher:
         # https://github.com/getsentry/responses/blob/3b3ded7661fc3369431155baefb54975ceca5162/responses/__init__.py#L387
         request_url = urljoin(rsp["url"], request_url.path)
-        print(f"{rsp['method']}: {request_url}")
+        log.info(f"{rsp['method']}: {request_url}")
 
         responses.add(
             method=rsp["method"],
@@ -54,13 +56,13 @@ def flag_only_test_batches_for_upload(connection, batch_ids: list, table_name: s
     awaiting_upload = constants.fname("packeting_batches", "awaiting_upload")
     batch_number = constants.fname("packeting_batches", "batch_number")
     cursor = connection.cursor()
-    cursor.execute(f"UPDATE {fm_table} SET {awaiting_upload}=NULL")
+    cursor.execute(f"UPDATE {fm_table} SET {awaiting_upload}=NULL")  # noqa: S608
     connection.commit()
     sql = ""
     for batch in batch_ids:
-        sql = f"UPDATE {fm_table} SET {awaiting_upload}='Yes' WHERE {batch_number} = {batch}"
+        sql = f"UPDATE {fm_table} SET {awaiting_upload}='Yes' WHERE {batch_number} = {batch}"  # noqa: S608
         cursor = connection.cursor()
-        print(sql)
+        log.info(sql)
         cursor.execute(sql)
-        print(cursor.rowcount)
+        log.debug(cursor.rowcount)
     connection.commit()

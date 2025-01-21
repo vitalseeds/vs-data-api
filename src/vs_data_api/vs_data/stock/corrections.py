@@ -4,18 +4,15 @@ Vital Seeds FM schema specific stock management
 These will be run (via shell commands) from FM scripts
 """
 
-import logging
 import os
 from collections import defaultdict
 from datetime import datetime
 from textwrap import dedent
 
-from pypika import Order, Query, Table
-from rich import print
+from pypika import Query, Table
 
 from vs_data_api.vs_data import log
-from vs_data_api.vs_data.cli.table import display_table
-from vs_data_api.vs_data.fm import constants, db
+from vs_data_api.vs_data.fm import constants
 from vs_data_api.vs_data.fm import db as fmdb
 from vs_data_api.vs_data.fm.constants import fname as _f
 from vs_data_api.vs_data.fm.constants import get_fm_table_column_aliases
@@ -506,9 +503,13 @@ def get_line_items_for_stock_correction(connection, correction_id: int) -> list[
     column_aliases = get_fm_table_column_aliases("line_items").values()
     cid = _f("line_items", "correction_id")
 
-    q = Query.from_(line_items).select(*column_aliases).where(
-        # line_items.correction_id == correction_id
-        getattr(line_items, cid) == correction_id
+    q = (
+        Query.from_(line_items)
+        .select(*column_aliases)
+        .where(
+            # line_items.correction_id == correction_id
+            getattr(line_items, cid) == correction_id
+        )
     )
     line_items = connection.cursor().execute(q.get_sql()).fetchall()
 

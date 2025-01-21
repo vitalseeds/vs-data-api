@@ -1,12 +1,11 @@
 from datetime import datetime
 from functools import lru_cache
-from typing import Optional
 
 from fastapi import Depends, FastAPI
 from starlette.responses import FileResponse
 
 from vs_data_api import config
-from vs_data_api.vs_data import orders, products, stock, wc
+from vs_data_api.vs_data import orders, stock
 from vs_data_api.vs_data.fm import db
 from vs_data_api.vs_data.products import import_wc_product_ids_from_linkdb
 
@@ -166,7 +165,9 @@ async def update_wc_variation_prices(settings: config.Settings = Depends(get_set
     """
     connection = db.connection(settings.fm_connection_string)
     with connection:
-        variations, audit_log_path = products.push_variation_prices_to_wc(settings.wcapi, connection)
+        from vs_data_api.vs_data.products.price import push_variation_prices_to_wc
+
+        variations, audit_log_path = push_variation_prices_to_wc(settings.wcapi, connection)
 
     if not variations:
         return {"message": "No variations were updated on WooCommerce", "variations": None}
@@ -219,8 +220,8 @@ async def import_wc_product_ids(settings: config.Settings = Depends(get_settings
 
     regular_product_skus, variations = import_wc_product_ids_from_linkdb(vsdb, linkdb)
 
-    return {"message": (
-            f"{len(regular_product_skus)} regular product skus imported.\n"
-            "{len(variations)} variation skus imported."
-            )
-        }
+    return {
+        "message": (
+            f"{len(regular_product_skus)} regular product skus imported.\n" "{len(variations)} variation skus imported."
+        )
+    }

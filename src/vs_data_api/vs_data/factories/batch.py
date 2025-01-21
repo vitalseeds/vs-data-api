@@ -1,6 +1,5 @@
 import datetime
 
-from pypika import Field, Order, Query, Schema, Table, Tables
 
 from vs_data_api.vs_data import log
 from vs_data_api.vs_data.factories.utils import param_types_from_var
@@ -14,7 +13,9 @@ def create_batch_for_upload(vsdb_connection, batch_number):
     wc_product_id = 12345
     pack_date = datetime.date.today()
 
-    sql = "INSERT INTO packeting_batches (sku, batch_number, packets, awaiting_upload, pack_date) VALUES (?, ?, ?, ?, ?)"
+    sql = (
+        "INSERT INTO packeting_batches (sku, batch_number, packets, awaiting_upload, pack_date) VALUES (?, ?, ?, ?, ?)"
+    )
     values = (sku, batch_number, packets, awaiting_upload, pack_date)
 
     # sql = (

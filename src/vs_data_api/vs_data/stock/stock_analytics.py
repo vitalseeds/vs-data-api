@@ -1,34 +1,31 @@
-import json
 import os
 import pickle
 from os.path import exists
 
-import numpy as np
 import pandas as pd
 from rich import print
 
 from vs_data_api.vs_data import log
-from vs_data_api.vs_data.cli.table import display_product_table, display_table
 from vs_data_api.vs_data.fm.constants import fname as _f
-from vs_data_api.vs_data.fm.constants import tname as _t
 from vs_data_api.vs_data.fm.db import convert_pyodbc_cursor_results_to_lists
 from vs_data_api.vs_data.stock.batch_upload import get_wc_large_variations_by_product
-from vs_data_api.vs_data.stock.misc import get_all_products, get_all_wc_products
+from vs_data_api.vs_data.stock.misc import get_all_wc_products
 
-REPORT_CSV_FILE_PATH = "tmp/exports/report.csv"
+REPORT_CSV_DIR = "tmp/exports"
+REPORT_CSV_FILE_PATH = f"{REPORT_CSV_DIR}/report.csv"
 
 
 def _debug_data(vs_stock_pd, vs_all_stock, wc_product_stock_pd, wc_variations_stock_pd, wc_all_stock, report):
     """
     Throwaway debug function to display some pandas data in the cli.
     """
-    print(wc_product_stock_pd.columns)
-    scroll(vs_stock_pd.loc[vs_stock_pd["wc_product_id__vs"] == 1694])
-    scroll(wc_product_stock_pd.loc[wc_product_stock_pd["id__wc_prd"] == 1694][["stock_quantity__wc_prd"]])
-    print(wc_variations_stock_pd.columns)
-    scroll(wc_variations_stock_pd.loc[[1694]])
-    scroll(report.loc[report["wc_product_id__vs"] == 1694])
-    scroll(
+    log.debug(wc_product_stock_pd.columns)
+    log.debug(vs_stock_pd.loc[vs_stock_pd["wc_product_id__vs"] == 1694])
+    log.debug(wc_product_stock_pd.loc[wc_product_stock_pd["id__wc_prd"] == 1694][["stock_quantity__wc_prd"]])
+    log.debug(wc_variations_stock_pd.columns)
+    log.debug(wc_variations_stock_pd.loc[[1694]])
+    log.debug(report.loc[report["wc_product_id__vs"] == 1694])
+    log.debug(
         vs_all_stock[vs_all_stock["id__wc_prd"] == 1694][
             [
                 "wc_product_id__vs",
@@ -204,9 +201,7 @@ def compare_wc_fm_stock(fmdb, wcapi, cli: bool = False, csv: bool = False, uncac
 
     report["wc_edit_url"] = report.apply(lambda row: get_wc_edit_url(row), axis=1)
     if csv:
+        os.makedirs(REPORT_CSV_DIR, exist_ok=True)
         report.to_csv(REPORT_CSV_FILE_PATH, index=False)
-
-    if cli:
-        scroll(report)
 
     return REPORT_CSV_FILE_PATH

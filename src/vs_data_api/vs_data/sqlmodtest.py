@@ -3,8 +3,7 @@ from typing import Optional
 
 import pypyodbc
 import sqlalchemy
-from sqlalchemy.connectors.pyodbc import PyODBCConnector
-from sqlmodel import Field, Session, SQLModel, create_engine
+from sqlmodel import Field, SQLModel
 
 # class PyPyODBCConnector(PyODBCConnector):
 #     driver = "pypyodbc"

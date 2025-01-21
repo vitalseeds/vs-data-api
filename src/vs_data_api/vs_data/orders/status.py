@@ -1,21 +1,11 @@
-import json
-import os
-import pickle
 from datetime import datetime
-from os.path import exists
 
-import numpy as np
-import pandas as pd
-from rich import print
 
 from vs_data_api.vs_data import log
-from vs_data_api.vs_data.cli.table import display_product_table, display_table
 from vs_data_api.vs_data.fm import db
 from vs_data_api.vs_data.fm.constants import fname as _f
 from vs_data_api.vs_data.fm.constants import tname as _t
-from vs_data_api.vs_data.fm.db import convert_pyodbc_cursor_results_to_lists
-from vs_data_api.vs_data.stock.batch_upload import get_wc_large_variations_by_product
-from vs_data_api.vs_data.stock.misc import get_all_products, get_all_wc_products, wcapi_batch_post
+from vs_data_api.vs_data.stock.misc import wcapi_batch_post
 
 LAST_BATCH_UPDATE_LOG = "tmp/orders_batch_update_response.json"
 
@@ -31,8 +21,7 @@ def get_selected_orders(fmlinkdb):
     )
     where = (
         # Using lower() appears to be slow
-        f"{selected}='yes' "
-        f"OR {selected}='Yes' "
+        f"{selected}='yes' OR {selected}='Yes' "
     )
     # where = (
     #     f"{selected}='Yes' "
