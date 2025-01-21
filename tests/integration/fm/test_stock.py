@@ -3,7 +3,6 @@ import pytest
 from pypika import Order, Query, Tables
 
 # from objexplore import explore
-
 from tests import flag_only_test_batches_for_upload
 from vs_data_api.vs_data import log, stock
 from vs_data_api.vs_data.factories import create_batch_for_upload, create_test_acquisition
@@ -48,7 +47,7 @@ def delete_test_batch(vsdb_connection, batch_number):
 
 
 def delete_test_acquisition(vsdb_connection, sku):
-    sql = f"DELETE FROM \"acquisitions\" WHERE sku = '{sku}'"
+    sql = f"DELETE FROM \"acquisitions\" WHERE sku = '{sku}'"  # noqa: S608
     log.debug(sql)
     vsdb_connection.cursor().execute(sql).commit()
 

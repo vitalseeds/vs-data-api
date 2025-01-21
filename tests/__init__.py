@@ -31,8 +31,8 @@ def _add_from_file_match_params(
     with open(file_path, "rb") as file:
         data = _toml.load(file)
 
-    for rsp in data["responses"]:
-        rsp = rsp["response"]
+    for response in data["responses"]:
+        rsp = response["response"]
 
         request_url = urlparse(rsp["url"])
         # Remove querystring so that responses does not add query_string_matcher:
@@ -56,11 +56,11 @@ def flag_only_test_batches_for_upload(connection, batch_ids: list, table_name: s
     awaiting_upload = constants.fname("packeting_batches", "awaiting_upload")
     batch_number = constants.fname("packeting_batches", "batch_number")
     cursor = connection.cursor()
-    cursor.execute(f"UPDATE {fm_table} SET {awaiting_upload}=NULL")
+    cursor.execute(f"UPDATE {fm_table} SET {awaiting_upload}=NULL")  # noqa: S608
     connection.commit()
     sql = ""
     for batch in batch_ids:
-        sql = f"UPDATE {fm_table} SET {awaiting_upload}='Yes' WHERE {batch_number} = {batch}"
+        sql = f"UPDATE {fm_table} SET {awaiting_upload}='Yes' WHERE {batch_number} = {batch}"  # noqa: S608
         cursor = connection.cursor()
         log.info(sql)
         cursor.execute(sql)

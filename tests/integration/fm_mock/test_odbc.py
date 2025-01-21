@@ -4,7 +4,6 @@ from inspect import cleandoc as dedent
 
 import pypyodbc as pyodbc
 import pytest
-from rich import print
 
 from vs_data_api.vs_data import log
 from vs_data_api.vs_data.fm import db

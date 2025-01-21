@@ -217,10 +217,11 @@ def push_variation_prices(ctx):
 @cli.command()
 @click.option("--link", is_flag=True, help="Run against WC link database")
 @click.option("--fetchall", is_flag=True, help="Commit SQL query results ")
+@click.option("--csv", "csv_file", help="Filename to save SQL query results as CSV")
 @click.option("--commit", is_flag=True, help="Commit SQL query results ")
 @click.argument("sql")
 @click.pass_context
-def run_sql(ctx, sql: str, commit: bool, fetchall=False, link: bool = False):
+def run_sql(ctx, sql: str, commit: bool, csv_file: str, fetchall=False, link: bool = False):
     """
     Run arbitrary SQL
     """
@@ -231,7 +232,13 @@ def run_sql(ctx, sql: str, commit: bool, fetchall=False, link: bool = False):
         results = fmdb.cursor().execute(sql)
         # Only relevant for a select query
         if fetchall:
-            log.debug(results.fetchall())
+            rows = results.fetchall()
+            log.debug(rows)
+            if csv_file:
+                import csv
+                with open(csv_file, "w") as f:
+                    writer = csv.writer(f, quoting=csv.QUOTE_MINIMAL, escapechar="\\")
+                    writer.writerows(rows)
             return
         log.debug(results)
         if commit:
