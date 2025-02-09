@@ -27,10 +27,10 @@ classifiers = [
 dependencies = [
     "fastapi==0.109.2",
     "uvicorn==0.23.2",
-    "pydantic==2.6.1",
+    "pydantic==2.10.6",
     "pydantic-settings",
     "WooCommerce==3.0.0",
-    "pandas==1.5.2",
+    "pandas==2.2.3",
     "rich==13.3.1",
     "datascroller==1.4.1",
     "click",
