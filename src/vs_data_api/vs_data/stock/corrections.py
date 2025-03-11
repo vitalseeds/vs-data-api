@@ -466,6 +466,9 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
     )
 
     log.debug(insert_query)
+    with open("tmp/insert_query.sql", "w") as file:
+        file.write(insert_query)
+
     cursor = connection.cursor()
     cursor.execute(insert_query)
     # print(cursor.rowcount)
