@@ -14,7 +14,6 @@ dependencies = [
     "WooCommerce==3.0.0",
     "pandas==1.5.2",
     "rich==13.3.1",
-    "datascroller==1.4.1",
     "click",
     "pypyodbc @ https://github.com/tombola/pypyodbc/archive/main.zip",
 ]

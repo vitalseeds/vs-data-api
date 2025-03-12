@@ -9,7 +9,6 @@ rich==13.3.1
 pudb
 pre-commit
 
-datascroller==1.4.1
 
 click
 
