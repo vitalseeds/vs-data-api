@@ -379,6 +379,7 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
     todays_date = datetime.now().strftime("%Y/%m/%d")
 
     line_item_inserts = []
+    no_line_item_inserted_corrections = []
     local_stock_amend = defaultdict(lambda: 0)
     local_large_stock_amend = defaultdict(lambda: 0)
     for correction_id in uploaded_corrections:
@@ -431,46 +432,51 @@ def apply_corrections_to_wc_stock(connection, wcapi=None, cli=False):
                     stock_level,  # stock_level
                 )
             )
+        else:
+            no_line_item_inserted_corrections.append(correction["id"])
 
     amend_local_stock(connection, local_stock_amend, local_large_stock_amend)
 
-    log.info(line_item_inserts)
-    # TODO: this is unreadable - should probably use dict for line items
-    # Create string for 'VALUES' component of insert query
-    # Quote string values
-    insert_rows = [
-        f"('{l[0]}', '{l[1]}', {l[2]}, {int(l[3])}, '{l[4]}', {l[5]}, '{l[6]}', '{l[7]}', {int(l[8])})"
-        for l in line_item_inserts  # noqa
-    ]
-    insert_string = ", ".join(insert_rows)
-    log.debug(insert_rows)
-    log.debug(insert_string)
+    if line_item_inserts:
+        log.info(line_item_inserts)
+        # TODO: this is unreadable - should probably use dict for line items
+        # Create string for 'VALUES' component of insert query
+        # Quote string values
+        insert_rows = [
+            f"('{l[0]}', '{l[1]}', {l[2]}, {int(l[3])}, '{l[4]}', {l[5]}, '{l[6]}', '{l[7]}', {int(l[8])})"
+            for l in line_item_inserts  # noqa
+        ]
+        insert_string = ", ".join(insert_rows)
+        log.debug(insert_rows)
+        log.debug(insert_string)
 
-    insert_query = dedent(
-        f"""
-    INSERT INTO {_t("line_items")}
-    (
-        {_f("line_items", "sku")},
-        {_f("line_items", "pack_size")},
-        "{_f("line_items", "date")}",
-        {_f("line_items", "quantity")},
-        {_f("line_items", "email")},
-        {_f("line_items", "correction_id")},
-        {_f("line_items", "note")},
-        {_f("line_items", "transaction_type")},
-        {_f("line_items", "stock_level")}
-    )
-    VALUES
-    {insert_string}
-    """
-    )
+        insert_query = dedent(
+            f"""
+        INSERT INTO {_t("line_items")}
+        (
+            {_f("line_items", "sku")},
+            {_f("line_items", "pack_size")},
+            "{_f("line_items", "date")}",
+            {_f("line_items", "quantity")},
+            {_f("line_items", "email")},
+            {_f("line_items", "correction_id")},
+            {_f("line_items", "note")},
+            {_f("line_items", "transaction_type")},
+            {_f("line_items", "stock_level")}
+        )
+        VALUES
+        {insert_string}
+        """
+        )
 
-    log.debug(insert_query)
-    cursor = connection.cursor()
-    cursor.execute(insert_query)
-    # print(cursor.rowcount)
-    connection.commit()
-    _set_vs_stock_updated_flag(connection, [l[5] for l in line_item_inserts])  # noqa
+        log.debug(insert_query)
+        cursor = connection.cursor()
+        cursor.execute(insert_query)
+        # print(cursor.rowcount)
+        connection.commit()
+        _set_vs_stock_updated_flag(connection, [l[5] for l in line_item_inserts])  # noqa
+    else:
+        _set_vs_stock_updated_flag(connection, no_line_item_inserted_corrections)
 
     # TODO: Also update stock value in FM directly from woocommerce value (lg/reg)
     # This will negate requirement for a preceding 'update stock' FM script
