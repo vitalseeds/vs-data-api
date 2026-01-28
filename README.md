@@ -45,10 +45,10 @@ For production use, VS Data API can be packaged as a standalone executable and r
 - Run without a Python environment
 - Be accessible across your local network
 
-See **[README.standalone.build.md](README.standalone.build.md)** for complete instructions on:
+See **[README_standalone_build.md](README_standalone_build.md)** for complete instructions on:
 - Building executables for macOS and Windows
 
-See **[README.standalone.install.md](README.standalone.install.md)** for complete instructions on:
+See **[README_standalone_install.md](README_standalone_install.md)** for complete instructions on:
 - Installing and configuring as a system service
 - Network configuration and firewall setup
 - Testing and troubleshooting
