@@ -43,6 +43,7 @@ dev = [
     "ipython",
     "pre-commit",
     "objexplore",
+    "pyinstaller>=6.0",
 ]
 test = [
     "pytest",
@@ -61,6 +62,7 @@ Source = "https://github.com/tombola/vs-data-api"
 
 [project.scripts]
 vs = "vs_data_api.cli:cli"
+vsdata-server = "vs_data_api.standalone:main"
 
 [tool.hatch.version]
 path = "src/vs_data_api/__about__.py"
