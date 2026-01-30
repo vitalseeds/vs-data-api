@@ -59,27 +59,23 @@ def build():
     result = subprocess.run(cmd, cwd=PROJECT_ROOT)
 
     if result.returncode == 0:
-        output_dir = PROJECT_ROOT / "dist" / "vsdata-server"
+        exe_name = "vsdata-server.exe" if sys.platform == "win32" else "vsdata-server"
+        exe_path = PROJECT_ROOT / "dist" / exe_name
         print()
         print("=" * 60)
         print("Build successful!")
         print("=" * 60)
-        print(f"Output directory: {output_dir}")
 
-        # List output files
-        if output_dir.exists():
-            exe_name = "vsdata-server.exe" if sys.platform == "win32" else "vsdata-server"
-            exe_path = output_dir / exe_name
-            if exe_path.exists():
-                size_mb = exe_path.stat().st_size / (1024 * 1024)
-                print(f"Executable: {exe_path} ({size_mb:.1f} MB)")
+        if exe_path.exists():
+            size_mb = exe_path.stat().st_size / (1024 * 1024)
+            print(f"Executable: {exe_path} ({size_mb:.1f} MB)")
 
         print()
         print("To test the build:")
         if sys.platform == "win32":
-            print(f"  .\\dist\\vsdata-server\\vsdata-server.exe")
+            print(f"  .\\dist\\vsdata-server.exe")
         else:
-            print(f"  ./dist/vsdata-server/vsdata-server")
+            print(f"  ./dist/vsdata-server")
     else:
         print()
         print("Build failed!")
@@ -88,9 +84,8 @@ def build():
 
 def test_executable():
     """Run the built executable to test it."""
-    output_dir = PROJECT_ROOT / "dist" / "vsdata-server"
     exe_name = "vsdata-server.exe" if sys.platform == "win32" else "vsdata-server"
-    exe_path = output_dir / exe_name
+    exe_path = PROJECT_ROOT / "dist" / exe_name
 
     if not exe_path.exists():
         print(f"Error: Executable not found at {exe_path}")
