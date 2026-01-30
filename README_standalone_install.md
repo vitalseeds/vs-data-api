@@ -1,5 +1,3 @@
----
-
 ## Installation and Configuration
 
 ### Install on macOS
