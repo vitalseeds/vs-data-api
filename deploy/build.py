@@ -2,9 +2,9 @@
 Cross-platform build script for VS Data API executable.
 
 Usage:
-    python build/build.py          # Build executable
-    python build/build.py --clean  # Clean build artifacts first
-    python build/build.py --test   # Run executable after build to test
+    python deploy/build.py          # Build executable
+    python deploy/build.py --clean  # Clean build artifacts first
+    python deploy/build.py --test   # Run executable after build to test
 
 Requirements:
     pip install pyinstaller>=6.0
@@ -94,7 +94,7 @@ def test_executable():
 
     if not exe_path.exists():
         print(f"Error: Executable not found at {exe_path}")
-        print("Run build first: python build/build.py")
+        print("Run build first: python deploy/build.py")
         sys.exit(1)
 
     print(f"Running: {exe_path}")
@@ -113,9 +113,9 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python build/build.py          # Build executable
-  python build/build.py --clean  # Clean and build
-  python build/build.py --test   # Run built executable
+  python deploy/build.py          # Build executable
+  python deploy/build.py --clean  # Clean and build
+  python deploy/build.py --test   # Run built executable
         """,
     )
     parser.add_argument(

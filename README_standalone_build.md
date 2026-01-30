@@ -64,7 +64,7 @@ cd vs-data-api
 uv sync --extra dev
 
 # 3. Build the executable
-uv run python build/build.py --clean
+uv run python deploy/build.py --clean
 
 # 4. Verify the build
 ls -la dist/vsdata-server/
@@ -83,7 +83,7 @@ cd vs-data-api
 uv sync --extra dev
 
 # 3. Build the executable
-uv run python build/build.py --clean
+uv run python deploy/build.py --clean
 
 # 4. Verify the build
 dir dist\vsdata-server\

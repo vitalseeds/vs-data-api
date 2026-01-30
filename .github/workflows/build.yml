@@ -20,7 +20,7 @@ jobs:
         run: uv sync --extra dev
 
       - name: Build executable
-        run: uv run python build/build.py --clean
+        run: uv run python deploy/build.py --clean
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
@@ -45,7 +45,7 @@ jobs:
         run: uv sync --extra dev
 
       - name: Build executable
-        run: uv run python build/build.py --clean
+        run: uv run python deploy/build.py --clean
 
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4

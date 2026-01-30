@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(python deploy/build.py:*)",
+      "Bash(./dist/vsdata-server/vsdata-server:*)"
+    ]
+  }
+}
