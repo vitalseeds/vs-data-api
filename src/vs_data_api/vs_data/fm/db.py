@@ -88,7 +88,7 @@ def connection(connection_string: str) -> pyodbc.Connection:
                 "If running MacOS, it is possible that unixodbc is installed instead of libiodbc\n"
                 "try `brew uninstall unixodbc && brew install libiodbc`"
             )
-            raise e
+        raise e
     return connection
 
 
