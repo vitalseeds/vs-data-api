@@ -35,6 +35,7 @@ dependencies = [
     "click",
     "pypyodbc @ https://github.com/tombola/pypyodbc/archive/main.zip",
     "svcs",
+    "pypika>=0.50.0",
 ]
 
 [project.optional-dependencies]

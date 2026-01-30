@@ -84,6 +84,7 @@ a = Analysis(
 
         # Database
         "pypyodbc",
+        "pypika",
 
         # Data processing
         "pandas",
