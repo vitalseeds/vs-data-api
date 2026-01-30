@@ -29,34 +29,34 @@ jobs:
           path: dist/vsdata-server/
           retention-days: 30
 
-  build-macos:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  # build-macos:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Set up uv
-        uses: astral-sh/setup-uv@v4
+  #     - name: Set up uv
+  #       uses: astral-sh/setup-uv@v4
 
-      - name: Install libiodbc
-        run: brew install libiodbc
+  #     - name: Install libiodbc
+  #       run: brew install libiodbc
 
-      - name: Install dependencies
-        run: uv sync --extra dev
+  #     - name: Install dependencies
+  #       run: uv sync --extra dev
 
-      - name: Build executable
-        run: uv run python deploy/build.py --clean
+  #     - name: Build executable
+  #       run: uv run python deploy/build.py --clean
 
-      - name: Upload macOS artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: vsdata-server-macos
-          path: dist/vsdata-server/
-          retention-days: 30
+  #     - name: Upload macOS artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: vsdata-server-macos
+  #         path: dist/vsdata-server/
+  #         retention-days: 30
 
-  # Optional: Create a release with both executables when a tag is pushed
+  # Optional: Create a release with executables when a tag is pushed
   release:
-    needs: [build-windows, build-macos]
+    needs: [build-windows]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     steps:
@@ -66,21 +66,21 @@ jobs:
           name: vsdata-server-windows
           path: vsdata-server-windows
 
-      - name: Download macOS artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: vsdata-server-macos
-          path: vsdata-server-macos
+      # - name: Download macOS artifact
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: vsdata-server-macos
+      #     path: vsdata-server-macos
 
       - name: Create ZIP archives
         run: |
           cd vsdata-server-windows && zip -r ../vsdata-server-windows.zip . && cd ..
-          cd vsdata-server-macos && zip -r ../vsdata-server-macos.zip . && cd ..
+          # cd vsdata-server-macos && zip -r ../vsdata-server-macos.zip . && cd ..
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          # vsdata-server-macos.zip
           files: |
             vsdata-server-windows.zip
-            vsdata-server-macos.zip
           generate_release_notes: true
