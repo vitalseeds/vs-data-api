@@ -11,6 +11,7 @@ Exit codes:
 - 1: Configuration error (missing required settings) - do not restart
 - 2: Runtime error (crash/exception) - service should restart
 """
+
 import configparser
 import os
 import sys
@@ -19,11 +20,20 @@ from typing import Optional
 
 import uvicorn
 
+from vs_data_api.interactive_setup import (
+    is_interactive,
+    prompt_for_credentials,
+    save_config_file,
+)
+
 
 # Exit codes for service management
 EXIT_SUCCESS = 0
 EXIT_CONFIG_ERROR = 1
 EXIT_RUNTIME_ERROR = 2
+
+# Enable interactive credential setup (Windows only)
+INTERACTIVE_SETUP_ENABLED = sys.platform == "win32"
 
 # Required configuration keys (without VSDATA_ prefix)
 REQUIRED_CONFIG = [
@@ -163,16 +173,49 @@ def main():
         # Validate required configuration
         missing = validate_config()
         if missing:
-            print("\n" + "=" * 50)
-            print("CONFIGURATION ERROR")
-            print("=" * 50)
-            print("Missing required configuration:")
-            for key in missing:
-                print(f"  - {key}")
-            print("\nSet these as environment variables or in config file:")
-            print(f"  {get_config_dir() / 'config.ini'}")
-            print("=" * 50)
-            sys.exit(EXIT_CONFIG_ERROR)
+            # Check if we can prompt interactively (Windows only)
+            if INTERACTIVE_SETUP_ENABLED and is_interactive():
+                print("\n" + "=" * 50)
+                print("CONFIGURATION REQUIRED")
+                print("=" * 50)
+                print("Missing required configuration:")
+                for key in missing:
+                    print(f"  - {key}")
+
+                try:
+                    credentials = prompt_for_credentials(missing)
+                    config_path = get_config_dir() / "config.ini"
+                    save_config_file(credentials, config_path)
+
+                    # Reload and revalidate
+                    file_config = load_config_file()
+                    apply_config_to_env(file_config)
+                    missing = validate_config()
+
+                    if missing:
+                        print("\nError: Configuration still incomplete.")
+                        print("Missing: " + ", ".join(missing))
+                        sys.exit(EXIT_CONFIG_ERROR)
+
+                    print("\nConfiguration complete! Starting server...\n")
+
+                except KeyboardInterrupt:
+                    print("\n\nSetup cancelled by user.")
+                    sys.exit(EXIT_CONFIG_ERROR)
+            else:
+                # Non-interactive mode - print error and exit
+                print("\n" + "=" * 50)
+                print("CONFIGURATION ERROR")
+                print("=" * 50)
+                print("Missing required configuration:")
+                for key in missing:
+                    print(f"  - {key}")
+                print("\nSet these as environment variables or in config file:")
+                print(f"  {get_config_dir() / 'config.ini'}")
+                if INTERACTIVE_SETUP_ENABLED:
+                    print("\nTo run interactive setup, start the server from a terminal.")
+                print("=" * 50)
+                sys.exit(EXIT_CONFIG_ERROR)
 
         # Server configuration
         host = os.environ.get("VSDATA_HOST", "0.0.0.0")
@@ -206,6 +249,7 @@ def main():
     except Exception as e:
         print(f"\nRuntime error: {e}")
         import traceback
+
         traceback.print_exc()
         sys.exit(EXIT_RUNTIME_ERROR)
 
