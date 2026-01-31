@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+VS Data API LaunchAgent for macOS
+
+Installation:
+  1. Copy this file to ~/Library/LaunchAgents/
+  2. Create config file at ~/Library/Application Support/VSData/config.ini
+  3. Load the agent: launchctl load ~/Library/LaunchAgents/com.vitalseeds.vsdata-api.plist
+
+Management:
+  Start:   launchctl start com.vitalseeds.vsdata-api
+  Stop:    launchctl stop com.vitalseeds.vsdata-api
+  Unload:  launchctl unload ~/Library/LaunchAgents/com.vitalseeds.vsdata-api.plist
+  Status:  launchctl list | grep vsdata
+
+Logs:
+  stdout: /usr/local/var/log/vsdata-api.log
+  stderr: /usr/local/var/log/vsdata-api.error.log
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.vitalseeds.vsdata-api</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/local/bin/vsdata-server</string>
+    </array>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <dict>
+        <!-- Restart if exits with non-zero status (but not for config errors) -->
+        <key>SuccessfulExit</key>
+        <false/>
+    </dict>
+
+    <key>WorkingDirectory</key>
+    <string>/usr/local/share/vsdata</string>
+
+    <key>StandardOutPath</key>
+    <string>/usr/local/var/log/vsdata-api.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/usr/local/var/log/vsdata-api.error.log</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin</string>
+    </dict>
+
+    <!-- Throttle restarts - wait 10 seconds between restart attempts -->
+    <key>ThrottleInterval</key>
+    <integer>10</integer>
+</dict>
+</plist>

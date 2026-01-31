@@ -37,6 +37,22 @@ Show Custom Dialog [ $URL ; $MESSAGE ]
 🎉 Should show a dialog with the message `VS Data API running` (returned from root
 endpoint)
 
+## Standalone Deployment
+
+For production use, VS Data API can be packaged as a standalone executable and run as a system service. This allows the API to:
+
+- Start automatically on boot
+- Run without a Python environment
+- Be accessible across your local network
+
+See **[README_standalone_build.md](README_standalone_build.md)** for complete instructions on:
+- Building executables for macOS and Windows
+
+See **[README_standalone_install.md](README_standalone_install.md)** for complete instructions on:
+- Installing and configuring as a system service
+- Network configuration and firewall setup
+- Testing and troubleshooting
+
 ## Tests
 
 Tests are provided using pytest. By default only fully mocked tests are run (see

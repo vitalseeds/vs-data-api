@@ -22,7 +22,10 @@ tmp
 /.pytype/
 /.nox/
 
-# /dist/
+# PyInstaller build artifacts
+dist/
+build/vsdata-server/
+
 /docs/_build/
 /src/*.egg-info/
 __pycache__/

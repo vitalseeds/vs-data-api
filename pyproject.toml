@@ -30,11 +30,13 @@ dependencies = [
     "pydantic==2.6.1",
     "pydantic-settings",
     "WooCommerce==3.0.0",
-    "pandas==1.5.2",
+    "pandas",
+    "numpy",
     "rich==13.3.1",
     "click",
     "pypyodbc @ https://github.com/tombola/pypyodbc/archive/main.zip",
     "svcs",
+    "pypika>=0.50.0",
 ]
 
 [project.optional-dependencies]
@@ -43,6 +45,7 @@ dev = [
     "ipython",
     "pre-commit",
     "objexplore",
+    "pyinstaller>=6.0",
 ]
 test = [
     "pytest",
@@ -61,6 +64,7 @@ Source = "https://github.com/tombola/vs-data-api"
 
 [project.scripts]
 vs = "vs_data_api.cli:cli"
+vsdata-server = "vs_data_api.standalone:main"
 
 [tool.hatch.version]
 path = "src/vs_data_api/__about__.py"
