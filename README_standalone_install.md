@@ -192,6 +192,30 @@ nssm remove VSDataAPI confirm
 New-NetFirewallRule -DisplayName "VS Data API" -Direction Inbound -Protocol TCP -LocalPort 8432 -Action Allow
 ```
 
+#### 7. Updating (Windows)
+
+Copy `deploy\windows\update.cmd` and `deploy\windows\update.ps1` to the machine (keep them together) and double-click `update.cmd`. Accept the UAC prompt.
+
+The script:
+
+1. Downloads `vsdata-server.exe` from the latest GitHub release
+2. Stops the server (the `VSDataAPI` service, or the plain `vsdata-server` process if not run as a service)
+3. Backs up `C:\Program Files\VSData` to `C:\Program Files\VSData.bak-<timestamp>` (last 3 kept)
+4. Replaces `vsdata-server.exe` and restarts the server
+5. Checks `http://localhost:8432/`; if it fails, the previous version is restored
+
+Config in `%APPDATA%\VSData` is not touched. If the server was not running, it is updated but not started.
+
+Options (run from PowerShell):
+
+```powershell
+.\update.ps1 -Tag v3.1.0              # specific release (also for rollback)
+.\update.ps1 -InstallPath "D:\Apps\VSData"
+.\update.ps1 -Port 9000               # port used for the health check
+```
+
+When the server is run as a plain process it is relaunched by the script (as the admin user, without the original session's environment variables).
+
 ---
 
 ## Testing the Installation
