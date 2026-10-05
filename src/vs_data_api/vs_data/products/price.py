@@ -3,7 +3,7 @@ import os
 import pathlib
 from datetime import datetime
 
-from vs_data_api.vs_data import log
+from vs_data_api.vs_data import TMP_DIR, log
 from vs_data_api.vs_data.fm import constants
 from vs_data_api.vs_data.fm import db as fmdb
 
@@ -52,12 +52,13 @@ def get_acquisitions_with_large_variation(connection):
 
 
 def get_audit_log_path(audit_key):
-    audit_log_dir = os.environ.get("AUDIT_LOG_DIR", "tmp")
+    audit_log_dir = os.environ.get("AUDIT_LOG_DIR", TMP_DIR)
     return f"{audit_log_dir}/{audit_key}.csv"
 
 
 def write_audit_csv(audit_key, list_of_dicts):
     filename = get_audit_log_path(audit_key)
+    pathlib.Path(filename).parent.mkdir(parents=True, exist_ok=True)
     append = pathlib.Path(filename).is_file()
 
     with open(filename, mode="a") as csv_file:

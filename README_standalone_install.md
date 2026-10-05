@@ -320,6 +320,9 @@ Get-Content "C:\Program Files\VSData\logs\stderr.log" -Tail 50
 | SSL cert | `SSL_CERTFILE` | (none) | Path to SSL certificate |
 | SSL key | `SSL_KEYFILE` | (none) | Path to SSL private key |
 | Log level | `VS_DATA_LOGGING_LEVEL` | `INFO` | DEBUG, INFO, WARNING, ERROR |
+| Temp dir | `VSDATA_TMP_DIR` | `tmp` | Base directory for generated files: stock reports (`exports/`), stock caches, wholesale CSVs, audit logs. Use an absolute, writable path (e.g. `%LOCALAPPDATA%\VSData\tmp`) when installed in Program Files |
+| Wholesale CSV dir | `VSDATA_CSV_EXPORT_DIR` | `VSDATA_TMP_DIR` | Optional override for wholesale order CSVs |
+| Audit log dir | `AUDIT_LOG_DIR` | `VSDATA_TMP_DIR` | Optional override for price audit CSVs |
 
 ### Exit Codes
 
