@@ -193,9 +193,19 @@ def update_wc_stock_for_new_batches(connection, wcapi=None, product_variation=No
     # Get new batches from FM
     if large_variation:
         batches = get_large_batches_awaiting_upload_join_acq(connection)
-        lg_variation_ids = {b["wc_product_id"]: b["wc_variation_lg_id"] for b in batches}
     else:
         batches = get_batches_awaiting_upload_join_acq(connection)
+
+    # Batches whose sku has no WC ids (eg not yet in acquisitions) can't be uploaded.
+    # Skip them so they stay flagged as awaiting upload.
+    id_fields = ("wc_product_id", "wc_variation_lg_id") if large_variation else ("wc_product_id",)
+    skipped = [b for b in batches if not all(b[field] for field in id_fields)]
+    if skipped:
+        log.warning(f"Skipping batches with no WC product/variation id: {[b['batch_number'] for b in skipped]}")
+        batches = [b for b in batches if b not in skipped]
+
+    if large_variation:
+        lg_variation_ids = {b["wc_product_id"]: b["wc_variation_lg_id"] for b in batches}
     batch_product_ids = [b["wc_product_id"] for b in batches]
 
     if not batches:
