@@ -52,7 +52,8 @@ test = [
     "pytest",
     "pytest-cov",
     "responses",
-    "httpx",
+    # starlette TestClient (fastapi 0.109) breaks with httpx >= 0.28
+    "httpx<0.28",
     "toml",
     "pytest-timeout",
     "pytest-factoryboy"
