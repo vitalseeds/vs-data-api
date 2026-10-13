@@ -128,9 +128,14 @@ If you do have a supported combination of FileMaker and macOS, see
    # in the VM
    nssm restart vs_data_api
    # on the Mac
-   curl http://127.0.0.1:8080/                       # {"message": "VS Data API running"}
-   curl http://127.0.0.1:8080/batch/awaiting_upload  # exercises the FileMaker connection
+   curl http://127.0.0.1:8080/         # {"message": "VS Data API running"}
+   curl http://127.0.0.1:8080/health   # FileMaker (main + link db) and WooCommerce
    ```
+
+   `/health` returns `200` with `"status": "ok"` when everything is reachable,
+   or `503` and `"status": "degraded"` with the failing check and its error
+   (no credentials are included). It is the quickest way to see *which* part of
+   the setup is wrong.
 
 ### Day to day
 
@@ -145,13 +150,16 @@ If you do have a supported combination of FileMaker and macOS, see
    `nssm restart vs_data_api` (`.env` is only read at start, `--reload` only
    watches code files).
 
-Useful commands from the Mac (run in the VM folder):
+Useful tasks from the Mac, in this repo (the `Makefile` expects the VM folder
+at `../windows10-vm`; override with `VM_DIR=...`):
 
 ```sh
-vagrant winrm -c 'nssm restart vs_data_api'
-vagrant winrm -c 'Get-Content C:\logs\vs_data_api_err.log -Tail 40'   # uvicorn log
-vagrant winrm -c 'Get-Content C:\logs\vs_data_api_out.log -Tail 40'
-vagrant winrm -c 'nssm status vs_data_api'
+make help         # list all tasks
+make vm-up        # vagrant up
+make vm-status    # VM and service state
+make vm-restart   # nssm restart vs_data_api (after changing .env or dependencies)
+make vm-logs      # tail the uvicorn log in the VM (LOG_LINES=100 for more)
+make vm-health    # call /health, exits non-zero if degraded
 ```
 
 Logs are in `C:\logs\` in the VM.
@@ -278,6 +286,7 @@ VSDATA_ENV_FILE=.env-test uv run vs import-wc-product-ids
 
 | Symptom | Likely cause and fix |
 |---|---|
+| Not sure what is wrong | `make vm-health` (or `curl http://127.0.0.1:8080/health`): shows which of FileMaker, the link db and WooCommerce fails, and why |
 | `curl http://127.0.0.1:8080/` hangs or no response | VM not running, or the service is stopped: `vagrant up`, then `nssm start vs_data_api`, check `C:\logs\vs_data_api_err.log` |
 | `IM002 Data source name not found and no default driver specified` | the DSN does not exist as a **system, 64 bit** DSN, or (commonly) a value is **quoted** in the NSSM environment, because NSSM keeps quotes as part of the value. Put the settings in `.env` instead and run `nssm reset vs_data_api AppEnvironmentExtra` |
 | `Failed to connect to listener (2)` | nothing listening: FileMaker not running in the VM, ODBC sharing off, or wrong host/port |
@@ -287,7 +296,7 @@ VSDATA_ENV_FILE=.env-test uv run vs import-wc-product-ids
 | Code changes do not show up | the service must be running the clone you are editing (`windows10-vm/vs-data-api`). `--reload` on a shared folder can miss file changes; `nssm restart vs_data_api` |
 | New dependency missing in the VM | the service uses the VM's global Python: `pip install ...` (or `pip install -e .`) in the VM, then restart |
 | `Can't open lib 'FileMaker ODBC' : file not found` or a `unixodbc` warning (Mac) | `brew uninstall unixodbc && brew install libiodbc`, reinstall the FileMaker ODBC driver |
-| `TypeError: Client.__init__() got an unexpected keyword argument 'app'` in tests | `httpx` is too new for the pinned starlette: `pip install "httpx<0.28"` |
+| `TypeError: Client.__init__() got an unexpected keyword argument 'app'` in tests | `httpx` >= 0.28 with the pinned starlette. The `test` extra now pins `httpx<0.28`; re-run `uv sync --extra test` |
 
 ## Standalone Deployment
 
