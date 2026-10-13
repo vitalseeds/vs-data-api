@@ -4,7 +4,7 @@ from functools import lru_cache
 from fastapi import Depends, FastAPI
 from starlette.responses import FileResponse
 
-from vs_data_api import config
+from vs_data_api import config, health
 from vs_data_api.vs_data import orders, stock
 from vs_data_api.vs_data.fm import db
 from vs_data_api.vs_data.products import import_wc_product_ids_from_linkdb
@@ -56,6 +56,18 @@ async def root():
     Tests that API is running and accepting requests
     """
     return {"message": "VS Data API running"}
+
+
+@app.get("/health")
+def get_health(settings: config.Settings = Depends(get_settings)):
+    """
+    Checks that FileMaker (main and link databases) and WooCommerce are reachable
+
+    Returns 200 when everything is ok, or 503 with the same body when any check fails.
+    Never includes credentials.
+    """
+    report = health.run_checks(settings)
+    return JSONResponse(status_code=200 if report["status"] == "ok" else 503, content=report)
 
 
 @app.get("/product/{product_id}")
