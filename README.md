@@ -99,22 +99,27 @@ If you do have a supported combination of FileMaker and macOS, see
 4. **Open the database in FileMaker and enable ODBC** (see
    [Enabling ODBC in FileMaker](#enabling-odbc-in-filemaker)). The dev database
    is `test_vs_db.fmp12`, in the shared folder as `C:\vagrant\test_vs_db.fmp12`.
-5. **Give the service its configuration**, in a PowerShell in the VM:
+5. **Give the service its configuration.** Copy `.env.example` to `.env` in
+   the repo folder (so `windows10-vm/vs-data-api/.env` on the Mac, which is
+   `C:\vagrant\vs-data-api\.env` in the VM) and fill in the five variables from
+   [Configuration](#configuration). Example (note: `Server=localhost`, as the
+   API runs *inside* the VM; quotes are optional and are stripped):
+
+   ```
+   VSDATA_FM_CONNECTION_STRING="Driver={FileMaker ODBC};Server=localhost;Database=test_vs_db;UID=vsdata;PWD=<password>"
+   VSDATA_FM_LINK_CONNECTION_STRING="Driver={FileMaker ODBC};Server=localhost;Database=test_link_db;UID=vsdata;PWD=<password>;"
+   VSDATA_WC_URL="http://vitalseeds.local"
+   VSDATA_WC_KEY="<key>"
+   VSDATA_WC_SECRET="<secret>"
+   ```
+
+   The app loads this file itself at start-up, so the service needs **no**
+   environment of its own. If the service was previously configured with
+   `nssm edit`, clear that, because real environment variables take precedence
+   over `.env`:
 
    ```powershell
-   nssm edit vs_data_api        # Environment tab, one KEY=value per line
-   ```
-
-   Set the five variables from [Configuration](#configuration).
-   **Do not quote the values** (see [Troubleshooting](#troubleshooting)).
-   Example (note: `Server=localhost`, as the API runs *inside* the VM):
-
-   ```
-   VSDATA_FM_CONNECTION_STRING=Driver={FileMaker ODBC};Server=localhost;Database=test_vs_db;UID=vsdata;PWD=<password>
-   VSDATA_FM_LINK_CONNECTION_STRING=Driver={FileMaker ODBC};Server=localhost;Database=test_link_db;UID=vsdata;PWD=<password>;
-   VSDATA_WC_URL=http://vitalseeds.local
-   VSDATA_WC_KEY=<key>
-   VSDATA_WC_SECRET=<secret>
+   nssm reset vs_data_api AppEnvironmentExtra
    ```
 
 6. **Start the service and check it**
@@ -136,9 +141,9 @@ If you do have a supported combination of FileMaker and macOS, see
 3. Edit code on the Mac in `windows10-vm/vs-data-api`. The service runs
    uvicorn with `--reload`, so code changes are picked up automatically.
 4. Browse <http://127.0.0.1:8080/docs>, or call the endpoints from FileMaker.
-5. After changing **environment variables** or **dependencies**, restart the
-   service: `nssm restart vs_data_api` (the environment is only read at
-   start, `--reload` only watches code files).
+5. After changing `.env` or **dependencies**, restart the service:
+   `nssm restart vs_data_api` (`.env` is only read at start, `--reload` only
+   watches code files).
 
 Useful commands from the Mac (run in the VM folder):
 
@@ -153,10 +158,19 @@ Logs are in `C:\logs\` in the VM.
 
 ## Configuration
 
-The app only reads real environment variables (never `.env`/`.envrc`).
-For the VM service they are set in NSSM (above). **All five of these are
-required**; the server and the `vs` command will not start without them (with a
-validation error listing the missing ones).
+Settings come from environment variables, which are loaded at start-up (by
+`src/vs_data_api/env.py`) from a **`.env` file** in the repo root, or from the
+file named by `VSDATA_ENV_FILE`. Real environment variables (direnv, your shell,
+a service manager) always take precedence over the file. `.env` is gitignored;
+`.env.example` is the template.
+
+Quotes around values are optional and are stripped, and an `export ` prefix is
+allowed, so `.env` and a direnv `.envrc` can share content. (This is not true of
+`nssm edit`, which keeps quotes as part of the value; that is why the service
+should read `.env` rather than have its own environment.)
+
+**All five of these are required**; the server and the `vs` command will not
+start without them (with a validation error listing the missing ones).
 
 | Variable | Example |
 |---|---|
@@ -228,11 +242,10 @@ macOS does not. If it does work for you, you can run the API directly, with
 1. Prerequisites: the FileMaker ODBC driver, and on macOS `brew install
    libiodbc` (make sure `unixodbc` is **not** installed).
 2. `uv sync`
-3. Put the five [variables](#configuration) in `.envrc` (loaded by
-   [direnv](https://direnv.net/) after `direnv allow`) or `.env` (loaded with
-   `dotenv run --` or `uv run --env-file .env`), with `Server=localhost` and
-   your local database name. Variables already exported in the shell win over
-   `.env`; restart `uvicorn` after changing one.
+3. Put the five [variables](#configuration) in `.env` (loaded automatically)
+   with `Server=localhost` and your local database name. Variables already
+   exported in the shell (for example by [direnv](https://direnv.net/) from an
+   `.envrc`) win over `.env`; restart `uvicorn` after changing either.
 4. Check the connection: `uv run vs test-fm`
 5. Run the API:
 
@@ -255,11 +268,10 @@ or activate the virtual environment (`source .venv/bin/activate`) so `vs` is on
 your PATH, or call `.venv/bin/vs`. With pip, run `pip install -e .` in your own
 virtual environment. The CLI needs the same environment variables as the server.
 
-Run a command with the production/test settings loaded from a file:
+To run a command against a different settings file:
 
 ```sh
-dotenv run -- uv run vs import-wc-product-ids
-dotenv -f .env-test run -- uv run vs import-wc-product-ids
+VSDATA_ENV_FILE=.env-test uv run vs import-wc-product-ids
 ```
 
 ## Troubleshooting
@@ -267,11 +279,11 @@ dotenv -f .env-test run -- uv run vs import-wc-product-ids
 | Symptom | Likely cause and fix |
 |---|---|
 | `curl http://127.0.0.1:8080/` hangs or no response | VM not running, or the service is stopped: `vagrant up`, then `nssm start vs_data_api`, check `C:\logs\vs_data_api_err.log` |
-| `IM002 Data source name not found and no default driver specified` | the DSN does not exist as a **system, 64 bit** DSN, or (commonly) the value is **quoted** in the NSSM environment, because NSSM keeps quotes as part of the value. Use `KEY=value`, no quotes |
+| `IM002 Data source name not found and no default driver specified` | the DSN does not exist as a **system, 64 bit** DSN, or (commonly) a value is **quoted** in the NSSM environment, because NSSM keeps quotes as part of the value. Put the settings in `.env` instead and run `nssm reset vs_data_api AppEnvironmentExtra` |
 | `Failed to connect to listener (2)` | nothing listening: FileMaker not running in the VM, ODBC sharing off, or wrong host/port |
 | `Failed to connect to listener (3)` | something answered but rejected the session: the database is not open, ODBC sharing is not enabled for it, or the connection is coming from outside the VM (host to VM ODBC is not supported, use the API on 8080) |
 | `ValidationError ... Field required` on start or any `vs` command | one of the five required variables is not set for that process |
-| Changed an environment variable, behaviour unchanged | the process keeps the environment it started with: `nssm restart vs_data_api` (or restart `uvicorn` locally) |
+| Changed `.env`, behaviour unchanged | the process keeps what it read at start: `nssm restart vs_data_api` (or restart `uvicorn` locally). Also check a stale NSSM environment or shell variable is not overriding the file: real environment variables win |
 | Code changes do not show up | the service must be running the clone you are editing (`windows10-vm/vs-data-api`). `--reload` on a shared folder can miss file changes; `nssm restart vs_data_api` |
 | New dependency missing in the VM | the service uses the VM's global Python: `pip install ...` (or `pip install -e .`) in the VM, then restart |
 | `Can't open lib 'FileMaker ODBC' : file not found` or a `unixodbc` warning (Mac) | `brew uninstall unixodbc && brew install libiodbc`, reinstall the FileMaker ODBC driver |
