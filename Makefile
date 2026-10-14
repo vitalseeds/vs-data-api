@@ -14,7 +14,7 @@ LOG_LINES ?= 40
 WINRM = cd "$(VM_DIR)" && vagrant winrm -c
 
 .DEFAULT_GOAL := help
-.PHONY: help vm-up vm-halt vm-status vm-restart vm-logs vm-out vm-health vm-ports vm-env run test smoke
+.PHONY: help vm-up vm-halt vm-status vm-restart vm-logs vm-out vm-health vm-ports vm-env run test smoke test-wc
 
 help: ## List the available tasks
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "} {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
@@ -56,3 +56,6 @@ test: ## Run the tests that need no FileMaker or WooCommerce
 
 smoke: ## Run the smoke tests (every endpoint and CLI command starts)
 	uv run --extra test pytest tests/smoke
+
+test-wc: ## Run the WooCommerce order tests against the local/test site (VSDATA_TEST_WC_*)
+	uv run --extra test pytest tests/integration/wc --wcapi -v -s
