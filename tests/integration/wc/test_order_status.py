@@ -54,17 +54,20 @@ def test_other_status_round_trips(wcapi, staging_order):
     assert get_order(wcapi, staging_order)["status"] == "processing"
 
 
-def test_list_orders_filtered_by_status(wcapi, staging_order):
-    response = wcapi.get("orders", params={"status": "pending", "per_page": 1})
+def test_list_orders_filtered_by_status(safe_wcapi, staging_order):
+    response = safe_wcapi.get("orders", params={"status": "pending", "include": str(staging_order)})
 
     assert response.status_code == 200
-    assert isinstance(response.json(), list)
+    orders = response.json()
+    assert [o["id"] for o in orders] == [staging_order]
+    assert {o["status"] for o in orders} == {"pending"}
 
 
-def test_report_hpos_state(wcapi, capsys):
+def test_report_hpos_state(safe_wcapi, capsys):
     """Informational: records whether HPOS is on, so before/after runs are labelled."""
-    response = wcapi.get("system_status")
-    assert response.status_code == 200
-    settings = response.json().get("settings", {})
+    response = safe_wcapi.get("system_status")
+    hpos = "unknown"
+    if response.status_code == 200:
+        hpos = response.json().get("settings", {}).get("HPOS_enabled", "unknown")
     with capsys.disabled():
-        print(f"\nHPOS enabled: {settings.get('HPOS_enabled', 'unknown')}")
+        print(f"\nHPOS enabled: {hpos}")

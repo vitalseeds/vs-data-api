@@ -7,12 +7,19 @@ from vs_data_api.config import TestSettings
 
 
 @pytest.fixture
-def staging_order(wcapi):
-    """A pending order created for one test and force-deleted afterwards."""
+def safe_wcapi(wcapi):
+    """The wcapi client, but the test is skipped unless the target is a non-production host."""
     url = TestSettings().vsdata_wc_url
     reason = unsafe_reason(url, allow_remote=os.environ.get(ALLOW_REMOTE_VAR) == "1")
     if reason:
         pytest.skip(reason)
+    return wcapi
+
+
+@pytest.fixture
+def staging_order(safe_wcapi):
+    """A pending order created for one test and force-deleted afterwards."""
+    wcapi = safe_wcapi
 
     response = wcapi.post(
         "orders",

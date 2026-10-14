@@ -350,7 +350,7 @@ FileMaker ODBC only works inside the Windows VM, so run them there.
 site in `VSDATA_TEST_WC_*` (a LocalWP site such as `http://vitalseeds.local`
 with a read/write REST key and permalinks other than "Plain"). It runs on the
 Mac with no VM. Each test creates its own throw-away order and deletes it, and
-the tests refuse to run unless the host is `localhost` or `*.local` (set
+every test is skipped unless the host is `localhost`, `127.0.0.1`, `::1` or `*.local`/`*.localhost` (set
 `VSDATA_TEST_WC_ALLOW_REMOTE=1` to use another site such as staging).
 
 To check HPOS (#116), run it once with HPOS off, switch HPOS on in
