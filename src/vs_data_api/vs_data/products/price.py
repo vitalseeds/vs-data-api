@@ -116,50 +116,38 @@ def push_variation_prices_to_wc(wcapi, fmdb, cli: bool = False) -> list | None:
     # Audit: Export CSV of variation prices on WC pre update
     # record_current_wc_variation_prices(wcapi)
 
-    # Loop products with variations
-    try:
-        for p in variation_products:
-            wc_pid = p["wc_product_id"]
-
-            wc_var_reg_id = p["wc_variation_regular_id"]
-            wc_var_reg_price = p["price"]
-            wc_var_lg_id = p["wc_variation_lg_id"]
-            wc_var_lg_price = p["lg_variation_price"]
-
-            def log_wc_variations_new_price(v):
-                variation_updates_concise = [
-                    {
-                        "sku": v["sku"],
-                        "id": v["id"],
-                        "regular_price": v["regular_price"],
-                        "permalink": v["permalink"],
-                    }
-                ]
-                write_audit_csv(audit_key, variation_updates_concise)
-
-            # PUT prices for regular and large variations to WC (via rest API update)
-            # Push regular product variation price
-            endpoint = f"products/{wc_pid}/variations/{wc_var_reg_id}"
-            data = {
-                "regular_price": str(wc_var_reg_price),
+    def log_wc_variations_new_price(v):
+        variation_updates_concise = [
+            {
+                "sku": v["sku"],
+                "id": v["id"],
+                "regular_price": v["regular_price"],
+                "permalink": v["permalink"],
             }
-            log.debug(data)
-            response = wcapi.put(endpoint, data)
-            log.debug(response)
-            log.debug(response.json())
-            log_wc_variations_new_price(response.json())
+        ]
+        write_audit_csv(audit_key, variation_updates_concise)
 
-            # Push large product variation price
-            endpoint = f"products/{wc_pid}/variations/{wc_var_lg_id}"
-            data = {
-                "regular_price": str(wc_var_lg_price),
-            }
-            response = wcapi.put(endpoint, data)
-            log.debug(response)
-            log.debug(response.json())
-            log_wc_variations_new_price(response.json())
-    except Exception:
-        pass
+    def put_variation_price(wc_pid, variation_id, regular_price):
+        # PUT price for a product variation to WC (via rest API update)
+        endpoint = f"products/{wc_pid}/variations/{variation_id}"
+        data = {"regular_price": str(regular_price)}
+        log.debug(data)
+        response = wcapi.put(endpoint, data)
+        log.debug(response)
+        response.raise_for_status()
+        log.debug(response.json())
+        log_wc_variations_new_price(response.json())
 
-    return variation_products, audit_log_path
+    # Loop products with variations; a failure skips that product only
+    updated_products = []
+    for p in variation_products:
+        try:
+            put_variation_price(p["wc_product_id"], p["wc_variation_regular_id"], p["price"])
+            put_variation_price(p["wc_product_id"], p["wc_variation_lg_id"], p["lg_variation_price"])
+        except Exception:
+            log.exception(f"Could not update variation prices for {p['sku']}")
+            continue
+        updated_products.append(p)
+
+    return updated_products, audit_log_path
     # Audit: Export CSV of variation prices post update
