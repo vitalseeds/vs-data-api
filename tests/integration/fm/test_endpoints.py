@@ -3,6 +3,9 @@
 import pytest
 from fastapi.testclient import TestClient
 
+# These call the real FileMaker database and WooCommerce site
+pytestmark = [pytest.mark.fmdb, pytest.mark.wcapi]
+
 
 def test_get_product_by_id(client: TestClient):
     # This is not currently implemented

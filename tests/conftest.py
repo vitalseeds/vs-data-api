@@ -1,13 +1,34 @@
 
-import pytest
-import responses
-from fastapi.testclient import TestClient
+import os
 
-from vs_data_api.config import TestSettings
-from vs_data_api.main import app, get_settings
-from vs_data_api.vs_data.fm import db
-from vs_data_api.vs_data.fm.db import pyodbc
-from vs_data_api.vs_data.wc import api
+import vs_data_api  # noqa: F401  loads .env first, so real values win over the dummies below
+
+# Dummy settings so the mocked suite runs with no credentials. Tests marked
+# fmdb/wcapi need real VSDATA_TEST_* values (from the environment or .env).
+DUMMY_SETTINGS = {
+    "VSDATA_FM_CONNECTION_STRING": "DSN=dummy",
+    "VSDATA_FM_LINK_CONNECTION_STRING": "DSN=dummy_link",
+    "VSDATA_WC_URL": "https://wc.invalid",
+    "VSDATA_WC_KEY": "dummy",
+    "VSDATA_WC_SECRET": "dummy",
+    "VSDATA_TEST_FM_CONNECTION_STRING": "DSN=dummy",
+    "VSDATA_TEST_FM_LINK_CONNECTION_STRING": "DSN=dummy_link",
+    "VSDATA_TEST_WC_URL": "https://wc.invalid",
+    "VSDATA_TEST_WC_KEY": "dummy",
+    "VSDATA_TEST_WC_SECRET": "dummy",
+}
+for name, value in DUMMY_SETTINGS.items():
+    os.environ.setdefault(name, value)
+
+import pytest  # noqa: E402
+import responses  # noqa: E402
+from fastapi.testclient import TestClient  # noqa: E402
+
+from vs_data_api.config import TestSettings  # noqa: E402
+from vs_data_api.main import app, get_settings  # noqa: E402
+from vs_data_api.vs_data.fm import db  # noqa: E402
+from vs_data_api.vs_data.fm.db import pyodbc  # noqa: E402
+from vs_data_api.vs_data.wc import api  # noqa: E402
 
 fastapi_client = TestClient(app)
 
