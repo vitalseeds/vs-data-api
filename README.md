@@ -316,35 +316,35 @@ See **[README_standalone_install.md](README_standalone_install.md)** for complet
 
 ## Tests
 
-Tests are provided using pytest. By default only the mocked tests are run (see
-`pytest.ini`: integration tests marked `fmdb`, `wcapi` and `record` are skipped).
+Tests use pytest. The default run needs no FileMaker, WooCommerce or
+credentials (dummy settings are filled in by `tests/conftest.py`), so it can be
+run at any time:
 
 ```sh
-uv sync --extra test                  # or: pip install -e ".[dev,test]"
-uv run pytest                         # mocked tests
-uv run pytest -m "fmdb or wcapi"      # integration tests (see below)
+uv sync --extra test
+make test                             # everything that runs without external systems
+make smoke                            # just the smoke tests
+uv run pytest --fmdb --wcapi         # also end to end, against FileMaker and WooCommerce
 ```
 
-The tests need these environment variables to be set (the `test` settings in
-`config.py`), even when everything is mocked:
-`VSDATA_TEST_FM_CONNECTION_STRING`, `VSDATA_TEST_FM_LINK_CONNECTION_STRING`,
-`VSDATA_TEST_WC_URL`, `VSDATA_TEST_WC_KEY`, `VSDATA_TEST_WC_SECRET`
-(see `.envrc`). Integration tests (`fmdb`) connect to a real
-FileMaker database file or development WooCommerce site, so point these at
-**test** copies, never production.
+| Folder | What it covers |
+|---|---|
+| `tests/smoke/` | Every API endpoint and `vs` command starts and calls the right thing. New endpoints and commands must be added here (a test fails otherwise) |
+| `tests/unit/` | Complex logic: stock corrections, batch upload, order status, variation prices |
+| `tests/integration/fm/` | End to end against a real FileMaker database and WooCommerce site (marked `fmdb` / `wcapi`, skipped by default) |
 
-### Test dependencies
+FileMaker is replaced by `tests/fakes.py:FakeConnection`, which records SQL and
+returns canned rows. WooCommerce is the real client with HTTP intercepted by
+[`responses`](https://github.com/getsentry/responses), so no request leaves the
+machine.
 
-To run tests that mock the filemaker database, you will need to install
-[sqliteodbc driver](http://www.ch-werner.de/sqliteodbc/) so that pyodbc can connect to the mock database in the same
-way as it would connect to filemaker (ODBC). Installation instructions for the
-driver should be available in the downloaded package, but briefly:
+End-to-end tests (`fmdb`, `wcapi`) use the `VSDATA_TEST_*` settings from the
+environment or `.env`. They connect to a real FileMaker database and
+WooCommerce site, so point these at **test** copies, never production.
+FileMaker ODBC only works inside the Windows VM, so run them there.
 
-- install [ODBC
-  Manager](https://odbcmanager.net/about.php)
-- run installer
-- add a _user_ driver from `/usr/local/lib/libsqlite3odbc-0.9993.dylib`
-- create a DSN using that driver (optional)
+`tests/integration/fm_mock/` (SQLite over ODBC in place of FileMaker) is
+switched off and needs the [sqliteodbc driver](http://www.ch-werner.de/sqliteodbc/).
 
 # VS-data
 

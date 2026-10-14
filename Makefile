@@ -14,7 +14,7 @@ LOG_LINES ?= 40
 WINRM = cd "$(VM_DIR)" && vagrant winrm -c
 
 .DEFAULT_GOAL := help
-.PHONY: help vm-up vm-halt vm-status vm-restart vm-logs vm-out vm-health vm-ports vm-env run test
+.PHONY: help vm-up vm-halt vm-status vm-restart vm-logs vm-out vm-health vm-ports vm-env run test smoke
 
 help: ## List the available tasks
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "} {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
@@ -51,5 +51,8 @@ vm-ports: ## Show the VM's forwarded ports
 run: ## Run the API locally on :8000 (needs a working local FileMaker, see README)
 	uv run uvicorn src.vs_data_api.main:app --reload
 
-test: ## Run the mocked tests
+test: ## Run the tests that need no FileMaker or WooCommerce
 	uv run --extra test pytest
+
+smoke: ## Run the smoke tests (every endpoint and CLI command starts)
+	uv run --extra test pytest tests/smoke

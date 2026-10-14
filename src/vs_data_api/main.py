@@ -234,6 +234,7 @@ async def import_wc_product_ids(settings: config.Settings = Depends(get_settings
 
     return {
         "message": (
-            f"{len(regular_product_skus)} regular product skus imported.\n" "{len(variations)} variation skus imported."
+            f"{len(regular_product_skus)} regular product skus imported.\n"
+            f"{len(variations)} variation skus imported."
         )
     }

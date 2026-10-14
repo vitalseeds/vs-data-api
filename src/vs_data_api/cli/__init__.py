@@ -11,8 +11,9 @@ from rich import print
 
 from vs_data_api.__about__ import __version__
 from vs_data_api.config import Settings, TestSettings
-from vs_data_api.vs_data import log, orders, products, stock
+from vs_data_api.vs_data import log, orders, stock
 from vs_data_api.vs_data.fm import db
+from vs_data_api.vs_data.products import price
 from vs_data_api.vs_data.wc import api
 
 # Switch pydantic settings class based on environment variable
@@ -179,7 +180,7 @@ def update_order_status(ctx, status):
     fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
     wcapi = ctx.parent.obj.get("wcapi") or exit(1)
 
-    orders.update_packed_orders_status(fmlinkdb, wcapi, cli=True, status=status)
+    orders.update_packed_orders_status(fmlinkdb, wcapi, cli=True, target_status=status)
 
 
 @cli.command()
@@ -211,7 +212,7 @@ def push_variation_prices(ctx):
     # fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
     wcapi = ctx.parent.obj.get("wcapi")
 
-    products.push_variation_prices_to_wc(wcapi, fmdb, cli=True)
+    price.push_variation_prices_to_wc(wcapi, fmdb, cli=True)
 
 
 @cli.command()
