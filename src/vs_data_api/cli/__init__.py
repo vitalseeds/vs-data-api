@@ -5,6 +5,7 @@
 Command-line interface to interact with Vital Seeds database.
 """
 import os
+from functools import lru_cache
 
 import click
 from rich import print
@@ -13,40 +14,73 @@ from vs_data_api.__about__ import __version__
 from vs_data_api.config import Settings, TestSettings
 from vs_data_api.vs_data import log, orders, stock
 from vs_data_api.vs_data.fm import db
-from vs_data_api.vs_data.products import price
+from vs_data_api.vs_data.products import import_wc_product_ids_from_linkdb, price
 from vs_data_api.vs_data.wc import api
 
-# Switch pydantic settings class based on environment variable
-if os.environ.get("TESTING", None) or os.environ.get("HATCH_ENV_ACTIVE", "") == "test":
-    settings = TestSettings()
-else:
-    settings = Settings()
+@lru_cache()
+def get_settings():
+    """
+    Loaded only when a command needs a connection, so --help works without settings.
+    """
+    # Switch pydantic settings class based on environment variable
+    if os.environ.get("TESTING", None) or os.environ.get("HATCH_ENV_ACTIVE", "") == "test":
+        return TestSettings()
+    return Settings()
 
 
-VSDATA_FM_CONNECTION_STRING = settings.fm_connection_string
-VSDATA_FM_LINK_CONNECTION_STRING = settings.fm_link_connection_string
-VSDATA_WC_SECRET = settings.vsdata_wc_secret
-VSDATA_WC_KEY = settings.vsdata_wc_key
-VSDATA_WC_URL = settings.vsdata_wc_url
+class Connections(dict):
+    """
+    FileMaker connections ("fmdb", "fmlinkdb") and WooCommerce API ("wcapi"), opened on first use.
+
+    Command line options win over settings.
+    """
+
+    def __init__(self, options: dict):
+        super().__init__()
+        self.options = options
+
+    def _option_or_setting(self, option, setting):
+        return self.options[option] or getattr(get_settings(), setting)
+
+    def __missing__(self, key):
+        if key == "fmdb":
+            self[key] = db.connection(self._option_or_setting("fmdb", "fm_connection_string"))
+        elif key == "fmlinkdb":
+            self[key] = db.connection(self._option_or_setting("fmlinkdb", "fm_link_connection_string"))
+        elif key == "wcapi":
+            self[key] = api.get_api(
+                self._option_or_setting("wc_url", "vsdata_wc_url"),
+                self._option_or_setting("wc_key", "vsdata_wc_key"),
+                self._option_or_setting("wc_secret", "vsdata_wc_secret"),
+                check_status=False,
+            )
+        else:
+            raise KeyError(key)
+        return self[key]
+
+    def get(self, key, default=None):
+        try:
+            return self[key]
+        except KeyError:
+            return default
 
 
 @click.group()
 @click.version_option(version=__version__, prog_name="vs-data-api")
 @click.option("--isolate", "-i", is_flag=True, envvar="VSDATA_ISOLATE", help="Don't load external services (fm/wc)")
-@click.option("--wc-secret", default=VSDATA_WC_SECRET)
-@click.option("--wc-key", default=VSDATA_WC_KEY)
-@click.option("--wc-url", default=VSDATA_WC_URL)
-@click.option("--fmlinkdb", default=VSDATA_FM_LINK_CONNECTION_STRING)
-@click.option("--fmdb", default=VSDATA_FM_CONNECTION_STRING)
+@click.option("--wc-secret", help="Default: VSDATA_WC_SECRET")
+@click.option("--wc-key", help="Default: VSDATA_WC_KEY")
+@click.option("--wc-url", help="Default: VSDATA_WC_URL")
+@click.option("--fmlinkdb", help="Link database connection string. Default: VSDATA_FM_LINK_CONNECTION_STRING")
+@click.option("--fmdb", help="Connection string. Default: VSDATA_FM_CONNECTION_STRING")
 @click.pass_context
 def cli(ctx, fmdb, fmlinkdb, wc_url, wc_key, wc_secret, isolate):
     """
-    Parent to all the commands, sets up FM connection and WC api instance
+    Parent to all the commands, provides FM connections and WC api instance (opened on first use)
     """
     ctx.ensure_object(dict)
     if not isolate:
-        ctx.obj["fmdb"] = db.connection(fmdb)
-        ctx.obj["wcapi"] = api.get_api(wc_url, wc_key, wc_secret, check_status=False)
+        ctx.obj = Connections(ctx.params)
 
 
 @cli.command()
@@ -133,22 +167,7 @@ def import_wc_product_ids(ctx):
     """
     Query the link db for wc product ids and add to the vs_db acquisitions table (based on sku)
     """
-    fmdb = ctx.parent.obj["fmdb"]
-    fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
-
-    # Get the WC:product_id for each SKU from the link database
-    regular_product_skus = stock.get_product_sku_map_from_linkdb(fmlinkdb)
-    log.debug(regular_product_skus[:10])
-
-    # Update acquisitions with wc_product_id
-    stock.update_acquisitions_wc_id(fmdb, regular_product_skus)
-
-    # Get the WC:variation_id for each SKU from the link database
-    variations = stock.get_product_variation_map_from_linkdb(fmlinkdb)
-    log.debug(variations[:10])
-
-    # Update acquisitions with WC variation ids for large and regular packets
-    stock.update_acquisitions_wc_variations(fmdb, variations)
+    import_wc_product_ids_from_linkdb(ctx.parent.obj["fmdb"], ctx.parent.obj["fmlinkdb"], cli=True)
 
 
 @cli.command()
@@ -177,7 +196,7 @@ def update_order_status(ctx, status):
     Mark packed order as completed in woocommerce
     """
     # fmdb = ctx.parent.obj.get("fmdb")
-    fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
+    fmlinkdb = ctx.parent.obj["fmlinkdb"]
     wcapi = ctx.parent.obj.get("wcapi") or exit(1)
 
     orders.update_packed_orders_status(fmlinkdb, wcapi, cli=True, target_status=status)
@@ -209,7 +228,7 @@ def push_variation_prices(ctx):
     Push prices for product variations from local database to WC (overwrite)
     """
     fmdb = ctx.parent.obj.get("fmdb")
-    # fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
+    # fmlinkdb = ctx.parent.obj["fmlinkdb"]
     wcapi = ctx.parent.obj.get("wcapi")
 
     price.push_variation_prices_to_wc(wcapi, fmdb, cli=True)
@@ -227,7 +246,7 @@ def run_sql(ctx, sql: str, commit: bool, csv_file: str, fetchall=False, link: bo
     Run arbitrary SQL
     """
 
-    fmdb = db.connection(ctx.parent.params["fmlinkdb"]) if link else ctx.parent.obj.get("fmdb")
+    fmdb = ctx.parent.obj["fmlinkdb"] if link else ctx.parent.obj.get("fmdb")
     with fmdb:
         log.debug(sql)
         results = fmdb.cursor().execute(sql)
@@ -256,7 +275,7 @@ def test_fm(ctx, link: bool):
     """
     if link:
         try:
-            fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
+            fmlinkdb = ctx.parent.obj["fmlinkdb"]
             if fmlinkdb:
                 log.debug("Link database connection OK")
                 return
@@ -284,7 +303,7 @@ def export_wholesale_orders(ctx, order_id: int):
     Export wholesale orders as CSV for import into Xero
     """
 
-    fmlinkdb = db.connection(ctx.parent.params["fmlinkdb"])
+    fmlinkdb = ctx.parent.obj["fmlinkdb"]
     orders.wholesale.export_wholesale_orders(fmlinkdb, order_id, cli=True)
 
 

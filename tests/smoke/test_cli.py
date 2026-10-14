@@ -7,6 +7,10 @@ arguments fails). They check that the command starts, exits cleanly and passes
 the right connection and options. The domain logic is covered elsewhere.
 """
 
+import os
+import subprocess
+import sys
+from types import SimpleNamespace
 from unittest.mock import patch, sentinel
 
 import pytest
@@ -187,3 +191,48 @@ def test_run_sql_link_uses_the_link_database(runner, connections):
 def test_test_fm(runner, connections):
     run(runner, "test-fm")
     run(runner, "test-fm", "--link")
+
+
+@pytest.mark.parametrize("args", [["--help"], ["update-stock", "--help"]])
+def test_help_works_without_settings(args):
+    """No .env and no VSDATA_* variables, as on a fresh checkout."""
+    env = {k: v for k, v in os.environ.items() if not k.startswith("VSDATA_")}
+    env["VSDATA_ENV_FILE"] = os.devnull + ".missing"
+    result = subprocess.run(
+        [sys.executable, "-c", "from vs_data_api.cli import cli; cli()", *args],
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stderr
+
+
+def test_command_help_does_not_connect(runner, connections):
+    run(runner, "update-stock", "--help")
+    assert connections == {}
+
+
+def test_command_only_opens_the_connections_it_uses(runner, connections):
+    with patch("vs_data_api.vs_data.orders.wholesale.export_wholesale_orders", autospec=True):
+        run(runner, "export-wholesale-orders")
+
+    assert list(connections) == [LINKDB]
+
+
+def test_connections_default_to_settings(runner, connections):
+    settings = SimpleNamespace(
+        fm_connection_string="DSN=fm_settings",
+        fm_link_connection_string="DSN=link_settings",
+        vsdata_wc_url="https://wc.settings",
+        vsdata_wc_key="ck",
+        vsdata_wc_secret="cs",
+    )
+    with (
+        patch.object(vs, "get_settings", return_value=settings),
+        patch("vs_data_api.vs_data.stock.update_wc_stock_for_new_batches", autospec=True) as upload,
+    ):
+        result = runner.invoke(vs.cli, ["update-stock"], catch_exceptions=False)
+
+    assert result.exit_code == 0, result.output
+    assert upload.call_args.args == (connections["DSN=fm_settings"], sentinel.wcapi)
+    vs.api.get_api.assert_called_once_with("https://wc.settings", "ck", "cs", check_status=False)
