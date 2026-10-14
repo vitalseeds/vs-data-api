@@ -86,19 +86,12 @@ local site) and basic auth over `https`; both work with a normal REST key. Note 
 - Stock, product and variation endpoints (not affected by HPOS).
 - Running against production.
 
-## Open questions
+## Decisions (was: open questions)
 
-1. Does the local site have a read/write REST API key, and permalinks other
-   than "Plain"? Both are needed for `/wp-json/wc/v3`. If not, create the key
-   in WooCommerce > Settings > Advanced > REST API.
-2. TLS: LocalWP's `https` uses a self-signed cert, so `requests` rejects it
-   unless trusted. Either use `http://vitalseeds.local`, or `get_api` needs an
-   optional `verify_ssl` argument (the `woocommerce` client supports it).
-   Prefer `http` to avoid touching production code.
-3. Outbound mail: LocalWP does not send real mail by default, but confirm no
-   SMTP plugin from the live copy is active, since the data is a copy of live.
-   (No customer is attached to the throw-away order anyway.)
-4. `conftest.wcapi` reads `TestSettings` (`VSDATA_TEST_*`). In `.env` these
-   are set as `${VSDATA_WC_URL}` etc. (braces are required: python-dotenv does
-   not expand bare `$VAR`). Confirm in the first commit.
-5. Keep the throw-away-order approach, or prefer updating a known fixed order? Creating one is more robust but needs the key to have create/delete.
+1. Target is LocalWP at `vitalseeds.local`, with a read/write REST key and
+   non-plain permalinks (confirmed).
+2. Use `http://vitalseeds.local`, so `get_api` is unchanged (no `verify_ssl`).
+3. Mail plugins are disabled on the local copy.
+4. `conftest.wcapi` reads `TestSettings` (`VSDATA_TEST_*`, aliased in `.env`
+   to `${VSDATA_WC_*}`). Confirmed in `config.py`.
+5. Use a throw-away order, created and force-deleted per test.
