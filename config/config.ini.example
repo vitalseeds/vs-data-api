@@ -1,0 +1,40 @@
+; VS Data API Configuration File
+;
+; Location (create if not exists):
+;   Windows: %APPDATA%\VSData\config.ini
+;   macOS:   ~/Library/Application Support/VSData/config.ini
+;   Linux:   ~/.config/vsdata/config.ini
+;
+; Environment variables take precedence over values in this file.
+; All values in [vsdata] section become VSDATA_* environment variables.
+
+[vsdata]
+; FileMaker ODBC connection strings (REQUIRED)
+; Format: Driver={FileMaker ODBC};Server=<host>;Database=<db>;UID=<user>;PWD=<pass>;
+fm_connection_string = Driver={FileMaker ODBC};Server=localhost;Database=vs_db;UID=vs_data;PWD=;
+fm_link_connection_string = Driver={FileMaker ODBC};Server=localhost;Database=wc_link;UID=vs_data;PWD=;
+
+; WooCommerce API credentials (REQUIRED)
+wc_url = https://example.com
+wc_key = ck_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+wc_secret = cs_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+[server]
+; Server binding configuration
+; host: Use 0.0.0.0 to accept connections from any interface (LAN accessible)
+; port: Default HTTPS port for VS Data API
+host = 0.0.0.0
+port = 8432
+
+[ssl]
+; SSL certificate paths (leave empty or comment out to disable SSL)
+; For production, use certificates from your internal CA or Let's Encrypt
+; For development, you can generate self-signed certs:
+;   openssl req -x509 -newkey rsa:4096 -keyout server_key.pem -out server_cert.pem -days 365 -nodes
+;
+; certfile = C:\Program Files\VSData\ssl\server_cert.pem
+; keyfile = C:\Program Files\VSData\ssl\server_key.pem
+
+[logging]
+; Logging level: DEBUG, INFO, WARNING, ERROR
+vs_data_logging_level = INFO

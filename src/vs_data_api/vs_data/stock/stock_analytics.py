@@ -5,13 +5,13 @@ from os.path import exists
 import pandas as pd
 from rich import print
 
-from vs_data_api.vs_data import log
+from vs_data_api.vs_data import TMP_DIR, log
 from vs_data_api.vs_data.fm.constants import fname as _f
 from vs_data_api.vs_data.fm.db import convert_pyodbc_cursor_results_to_lists
 from vs_data_api.vs_data.stock.batch_upload import get_wc_large_variations_by_product
 from vs_data_api.vs_data.stock.misc import get_all_wc_products
 
-REPORT_CSV_DIR = "tmp/exports"
+REPORT_CSV_DIR = f"{TMP_DIR}/exports"
 REPORT_CSV_FILE_PATH = f"{REPORT_CSV_DIR}/report.csv"
 
 
@@ -37,10 +37,10 @@ def _debug_data(vs_stock_pd, vs_all_stock, wc_product_stock_pd, wc_variations_st
             ]
         ]
     )
-    wc_product_stock_pd.to_csv("tmp/exports/wc_product_stock_pd.csv", index=False)
-    wc_variations_stock_pd.to_csv("tmp/exports/wc_variations_stock_pd.csv", index=False)
-    wc_all_stock.to_csv("tmp/exports/wc_all_stock.csv", index=False)
-    vs_stock_pd.to_csv("tmp/exports/vs_stock_pd.csv", index=False)
+    wc_product_stock_pd.to_csv(f"{REPORT_CSV_DIR}/wc_product_stock_pd.csv", index=False)
+    wc_variations_stock_pd.to_csv(f"{REPORT_CSV_DIR}/wc_variations_stock_pd.csv", index=False)
+    wc_all_stock.to_csv(f"{REPORT_CSV_DIR}/wc_all_stock.csv", index=False)
+    vs_stock_pd.to_csv(f"{REPORT_CSV_DIR}/vs_stock_pd.csv", index=False)
 
 
 def get_acq_join_stock(connection):
@@ -86,10 +86,12 @@ def compare_wc_fm_stock(fmdb, wcapi, cli: bool = False, csv: bool = False, uncac
 
     Heavily cached using pickles.
     """
-    column_pickle = "tmp/compare_acq_columns.pickle"
-    results_pickle = "tmp/compare_acq_results.pickle"
-    products_pickle = "tmp/compare_wc_products.pickle"
-    variations_pickle = "tmp/compare_wc_variations.pickle"
+    column_pickle = f"{TMP_DIR}/compare_acq_columns.pickle"
+    results_pickle = f"{TMP_DIR}/compare_acq_results.pickle"
+    products_pickle = f"{TMP_DIR}/compare_wc_products.pickle"
+    variations_pickle = f"{TMP_DIR}/compare_wc_variations.pickle"
+
+    os.makedirs(TMP_DIR, exist_ok=True)
 
     if uncache:
         if os.path.exists(column_pickle):

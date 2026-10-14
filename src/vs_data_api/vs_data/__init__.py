@@ -14,3 +14,6 @@ logging.basicConfig(
 )
 
 log = logging.getLogger("rich")
+
+# Base directory for generated files (exports, caches, audit logs). Must be writable.
+TMP_DIR = os.environ.get("VSDATA_TMP_DIR", "tmp")

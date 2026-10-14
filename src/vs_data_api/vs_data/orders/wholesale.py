@@ -3,12 +3,12 @@ import datetime
 import os
 from pathlib import Path
 
-from vs_data_api.vs_data import log
+from vs_data_api.vs_data import TMP_DIR, log
 from vs_data_api.vs_data.fm import db
 from vs_data_api.vs_data.fm.constants import fname as _f
 from vs_data_api.vs_data.fm.constants import tname as _t
 
-CSV_EXPORT_DIR = os.environ.get("VSDATA_CSV_EXPORT_DIR", "tmp")
+CSV_EXPORT_DIR = os.environ.get("VSDATA_CSV_EXPORT_DIR", TMP_DIR)
 
 XERO_COLUMNS = {
     "x_contact_name": "*ContactName",
@@ -95,6 +95,7 @@ def export_wholesale_orders(fmlinkdb, order_id=None, cli: bool = False) -> list 
         date_string = current_datetime.strftime("%Y-%m-%d_%H%M")
         csv_file_path = Path(CSV_EXPORT_DIR) / f"wholesale_orders_{date_string}.csv"
         field_names = list(XERO_COLUMNS.values())
+        csv_file_path.parent.mkdir(parents=True, exist_ok=True)
         log.debug(csv_file_path)
         with open(csv_file_path, mode="w") as csv_file:
             csv_writer = csv.writer(csv_file, lineterminator="\n")

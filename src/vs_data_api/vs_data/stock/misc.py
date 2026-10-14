@@ -103,7 +103,7 @@ def wcapi_batch_post(func):
             try:
                 items.extend(updates)
             except TypeError:
-                log.warn("No updates described in reponse to wcapi batch post")
+                log.warning("No updates described in reponse to wcapi batch post")
                 log.debug(f"{batch=}")
                 log.debug(f"{updates=}")
 
