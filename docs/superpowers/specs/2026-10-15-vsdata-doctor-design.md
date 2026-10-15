@@ -51,8 +51,9 @@ src/vs_doctor/
 The responsibilities are as follows:
 
 - **`checks.py`** reads as a list of what the doctor tests. Each check is a few
-  lines that return a `Result` (a small dataclass: `ok`, `message`, `advice`,
-  `fix`). Anything more involved is one call into `diagnose.py`, `fixes.py` or
+  lines that return a `Result` (a small dataclass: `status`, which is `ok`,
+  `warn`, `fail` or `skip`, plus `message`, `advice`, `detail` and `fix`).
+  Checks that only make sense on Windows return `skip` elsewhere. Anything more involved is one call into `diagnose.py`, `fixes.py` or
   `windows.py`. `CHECKS` at the bottom lists the check functions in order.
 - **`diagnose.py`** and **`fixes.py`** are where sophistication is allowed to
   grow: matching ODBC error strings, interpreting `/health`, scanning the log,
@@ -75,17 +76,22 @@ For example, in `checks.py`:
 
 ```python
 def check_filemaker_odbc(config):
-    error = diagnose.try_odbc(config["vsdata"]["fm_connection_string"])
-    if error is None:
-        return Result(ok=True, message="FileMaker answers on ODBC.")
-    return Result(ok=False, **diagnose.explain_odbc_error(error))
+    for key in ("fm_connection_string", "fm_link_connection_string"):
+        connection_string = config["vsdata"].get(key, "")
+        error = diagnose.try_odbc(connection_string)
+        if error:
+            database = diagnose.database_name(connection_string)
+            return Result("fail", **diagnose.explain_odbc_error(error, database))
+    return ok("FileMaker answers on ODBC (both databases).")
 
 
 def check_server_running(config):
-    if windows.service_is_running(config["doctor"]["service_name"]):
-        return Result(ok=True, message="The data server is running.")
-    return Result(ok=False, message="The data server is switched off.",
-                  advice="Start it.", fix=fixes.start_service)
+    state = windows.service_state(config["doctor"]["service_name"])
+    if state == "RUNNING":
+        return ok("The data server is running.")
+    ...
+    return fail("The data server is switched off.", advice="Start it.",
+                fix=fixes.start_service)
 ```
 
 Imports are limited to the stdlib, `rich` and `pypyodbc`. HTTP uses
@@ -140,7 +146,7 @@ is ordered so that root causes come first.
 | 2 | `check_filemaker_open` (`tasklist` shows FileMaker Pro) | "FileMaker isn't open." | Open the `fm_files`, which starts FileMaker with them |
 | 3 | `check_filemaker_odbc` (connects to the main and link databases) | "FileMaker is open but sharing (ODBC) is off for vs_db." or "FileMaker rejected the password." | — |
 | 4 | `check_server_running` (`sc query`) | "The data server is switched off." | Start the service |
-| 5 | `check_server_health` (`GET /health`) | "The data server is running but not answering." or "The server can't reach FileMaker, but I can. <contact>" | — |
+| 5 | `check_server_health` (`GET /health` on localhost, over http and then https, because the server switches to https when it finds certificates) | "The data server is running but not answering." or "The server can't reach FileMaker, but I can. <contact>" | — |
 | 6 | `check_website` (`GET {wc_url}/wp-json/wc/v3`) | "The website isn't answering. Is the internet working?" | — |
 | 7 | `check_server_log` (last error lines in `log_file`) | Warning that shows the last error lines | — |
 
@@ -169,8 +175,9 @@ depending on whether the fix worked.
 
 ## Output (`report.py`)
 
-- A seedling in ASCII art, then one coloured line per check: `OK`, `!!` or
-  `--`, followed by the message.
+- A seedling in ASCII art, then one coloured line per check: `OK`, `!!`
+  (warning), `XX` (failed) or `--` (skipped), followed by the message. Any
+  `detail` lines, such as log errors, are printed dimmed underneath.
 - A "What to do" list with the advice for the failures only, then the contact
   line and, if set, the docs link.
 - A cheerful closing line when everything is ok, a wilted seedling otherwise.
@@ -193,6 +200,22 @@ depending on whether the fix worked.
   desktop shortcut, by hand. Updating it automatically through `update.ps1` is
   left for later.
 
+## Keeping the doctor in step with the app
+
+The doctor quietly depends on parts of the app: config keys, the `/health`
+response, the service name, the log path, the port and the release asset name.
+If one of those changes and the doctor isn't updated, it gives wrong advice.
+
+- **`src/vs_doctor/CLAUDE.md`** is a short list of that surface area. Each entry
+  names what the doctor relies on, where it's defined in the app, and which
+  doctor module uses it. Claude Code reads it whenever it works in that folder.
+- **The root `CLAUDE.md`** gets a short `vsdata-doctor` section, so the rule is
+  seen even when working elsewhere: a change to anything on that list updates
+  the doctor and the list in the same commit.
+- Where it is cheap, a test backs the list up: the `/health` contract test and
+  the `get_config_dir` parity test fail if the app changes underneath the
+  doctor.
+
 ## Testing
 
 All of these are in the default suite: no FileMaker, no WooCommerce, and they
@@ -209,8 +232,10 @@ file per module.
 - Isolation: importing `vs_doctor` in a subprocess leaves `vs_data_api` out of
   `sys.modules`.
 - `get_config_dir()` returns the same path as `vs_data_api.config`'s.
-- Smoke: `python -m vs_doctor --no-pause` with a temp config dir exits 0 and
-  writes a report.
+- Smoke: `python -m vs_doctor --no-pause` with a temp config dir runs every
+  check without a traceback and writes a report. The exit code is 1 when any
+  check failed and 0 otherwise, which helps when a developer runs it over
+  WinRM.
 
 Manual check on the Windows VM: run the built exe with FileMaker closed, the
 service stopped, and the network off, one at a time.
