@@ -6,6 +6,7 @@ Filemaker SQL limitations/requirements
 """
 
 import os
+import re
 
 import pypyodbc as pyodbc
 
@@ -69,6 +70,15 @@ def is_link_db(connection):
     return False
 
 
+# PWD= or Password=, with a plain value (up to the next ';') or one in {braces} (which may contain ';')
+_PASSWORD = re.compile(r"(?i)\b(PWD|PASSWORD)(\s*=\s*)(\{(?:[^}]|\}\})*\}|[^;]*)")
+
+
+def mask_password(connection_string: str) -> str:
+    """Return the connection string with the password replaced by ****, safe to log."""
+    return _PASSWORD.sub(r"\1\2****", connection_string or "")
+
+
 def connection(connection_string: str) -> pyodbc.Connection:
     """
     Return a database connection.
@@ -81,7 +91,7 @@ def connection(connection_string: str) -> pyodbc.Connection:
     try:
         conn = pyodbc.connect(connection_string)
     except (pyodbc.DatabaseError, pyodbc.Error) as e:
-        log.error(f"Could not connect to FileMaker \n({connection_string})")
+        log.error(f"Could not connect to FileMaker \n({mask_password(connection_string)})")
 
         if os.name == "posix" or os.name == "darwin":
             log.warning(
