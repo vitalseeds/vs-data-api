@@ -67,12 +67,16 @@ Source = "https://github.com/tombola/vs-data-api"
 [project.scripts]
 vs = "vs_data_api.cli:cli"
 vsdata-server = "vs_data_api.standalone:main"
+vsdata-doctor = "vs_doctor.__main__:main"
 
 [tool.hatch.version]
 path = "src/vs_data_api/__about__.py"
 
 [tool.hatch.metadata]
 allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/vs_data_api", "src/vs_doctor"]
 
 [tool.hatch.envs.default]
 [tool.hatch.envs.default.scripts]
