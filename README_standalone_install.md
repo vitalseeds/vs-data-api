@@ -321,7 +321,7 @@ It reads the same `config.ini`. Add a `[doctor]` section (see
 `config/config.ini.example`): `fm_files` (the FileMaker files, one per line) is
 required, while `service_name`, `log_file`, `contact` and `docs_url` are
 optional. If the server is stopped it writes `Start data server.cmd` to
-`%LOCALAPPDATA%\\VSData\\`, which starts the service after Windows asks for
+`%LOCALAPPDATA%\VSData\`, which starts the service after Windows asks for
 permission.
 
 ---
