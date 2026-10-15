@@ -246,6 +246,10 @@ service stopped, and the network off, one at a time.
 - Auto-updating the doctor (`update.ps1`).
 - macOS or Linux support beyond the tests running there.
 - Sending the report anywhere.
+- Running the app's test suite. It can't be bundled without the main app, the
+  mocked tests say nothing about a live machine, and the tests that touch real
+  systems write data. Deeper end-to-end checks belong in `/health` instead
+  (#119), where the doctor gets them for free.
 - Linking individual checks to specific pages on the docs site. This could be
   added later, once the site exists, as an optional `docs` path on `Result`.
 
