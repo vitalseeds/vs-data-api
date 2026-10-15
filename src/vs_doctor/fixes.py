@@ -27,3 +27,31 @@ def start_service(config) -> bool:
     name = config["doctor"]["service_name"]
     windows.start_service(name)
     return wait_until(lambda: windows.service_state(name) == "RUNNING", seconds=30)
+
+
+START_SCRIPT_NAME = "Start data server.cmd"
+
+
+def start_script_path():
+    return doctor_config.report_dir() / START_SCRIPT_NAME
+
+
+def write_start_script(config):
+    """Write a file staff can double-click to start the service. It asks Windows for admin rights."""
+    name = config["doctor"]["service_name"]
+    path = start_script_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        "@echo off\r\n"
+        f"powershell -NoProfile -Command \"Start-Process sc.exe -ArgumentList 'start {name}' -Verb RunAs\"\r\n"
+        "echo Starting the data server. Run vsdata-doctor again in a minute.\r\n"
+        "pause\r\n"
+    )
+    return path
+
+
+def start_service_as_admin(config) -> bool:
+    """Open the start script (Windows asks 'Do you want to allow this?') and wait for the service."""
+    windows.open_file(write_start_script(config))
+    name = config["doctor"]["service_name"]
+    return wait_until(lambda: windows.service_state(name) == "RUNNING", seconds=60)

@@ -40,3 +40,24 @@ def test_start_service_gives_up(monkeypatch):
     monkeypatch.setattr(windows, "start_service", lambda name: None)
     monkeypatch.setattr(windows, "service_state", lambda name: "STOPPED")
     assert fixes.start_service(config.defaults()) is False
+
+
+def test_write_start_script_names_the_service_and_asks_for_admin(monkeypatch, tmp_path):
+    monkeypatch.setattr(config, "report_dir", lambda: tmp_path)
+    cfg = config.defaults()
+    cfg["doctor"]["service_name"] = "MyService"
+    path = fixes.write_start_script(cfg)
+    assert path.parent == tmp_path and path.suffix == ".cmd"
+    text = path.read_text()
+    assert "MyService" in text and "RunAs" in text
+
+
+def test_start_service_as_admin_opens_the_script_and_waits(monkeypatch, tmp_path):
+    monkeypatch.setattr(config, "report_dir", lambda: tmp_path)
+    opened = []
+    states = iter(["STOPPED", "RUNNING"])
+    monkeypatch.setattr(windows, "open_file", opened.append)
+    monkeypatch.setattr(windows, "service_state", lambda name: next(states))
+    assert fixes.start_service_as_admin(config.defaults()) is True
+    assert opened == [fixes.start_script_path()]
+    assert opened[0].exists()

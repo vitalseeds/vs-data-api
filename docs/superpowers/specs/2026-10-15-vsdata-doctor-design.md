@@ -166,8 +166,11 @@ depending on whether the fix worked.
 
 - These run only after `Shall I try? [y/N]`.
 - Starting the service needs admin rights. If the doctor isn't running as
-  admin, it says "Close me, right-click vsdata-doctor and choose *Run as
-  administrator*". It does not relaunch itself elevated.
+  admin, it writes `Start data server.cmd` next to the saved reports and shows
+  its path, so staff can double-click it themselves. The fix opens that same
+  file for them, Windows asks "Do you want to allow this?", and the doctor
+  waits for the service to come up. The doctor doesn't relaunch itself
+  elevated.
 - After a fix, the main loop re-runs that one check and reports whether the fix
   worked.
 - Any extra steps a fix needs, such as waiting for the service to come up,

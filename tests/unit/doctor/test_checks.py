@@ -70,15 +70,18 @@ def test_check_filemaker_odbc(cfg, monkeypatch):
     assert checks.check_filemaker_odbc(cfg).message == "FileMaker isn't sharing wc_link over ODBC."
 
 
-def test_check_server_running(cfg, on_windows, monkeypatch):
+def test_check_server_running(cfg, on_windows, monkeypatch, tmp_path):
     monkeypatch.setattr(windows, "service_state", lambda name: "RUNNING")
     assert checks.check_server_running(cfg).status == "ok"
     monkeypatch.setattr(windows, "service_state", lambda name: None)
     assert "can't find the data server" in checks.check_server_running(cfg).message
     monkeypatch.setattr(windows, "service_state", lambda name: "STOPPED")
     monkeypatch.setattr(windows, "is_admin", lambda: False)
+    monkeypatch.setattr(config, "report_dir", lambda: tmp_path)
     result = checks.check_server_running(cfg)
-    assert result.fix is None and "Run as administrator" in result.advice
+    assert result.fix is fixes.start_service_as_admin
+    assert str(fixes.start_script_path()) in result.advice  # a file staff can double-click
+    assert fixes.start_script_path().exists()
     monkeypatch.setattr(windows, "is_admin", lambda: True)
     assert checks.check_server_running(cfg).fix is fixes.start_service
 

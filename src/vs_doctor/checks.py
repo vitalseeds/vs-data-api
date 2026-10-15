@@ -75,9 +75,11 @@ def check_server_running(config):
     if state is None:
         return fail(f"I can't find the data server ({name}) on this computer.", advice="It may not be installed here.")
     if not windows.is_admin():
+        script = fixes.write_start_script(config)
         return fail(
             "The data server is switched off.",
-            advice="Close me, right-click vsdata-doctor and choose Run as administrator, then I can start it.",
+            advice=f"I can start it, but Windows will ask you to allow it. Or double-click this file yourself: {script}",
+            fix=fixes.start_service_as_admin,
         )
     return fail("The data server is switched off.", advice="Start it.", fix=fixes.start_service)
 
