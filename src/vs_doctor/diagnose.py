@@ -133,6 +133,11 @@ def explain_http_error(error) -> dict:
                 "message": "The website rejected our key.",
                 "advice": "The WooCommerce key in the settings file may have been changed or removed.",
             }
+        if error.code == 404:
+            return {
+                "message": "I can't find the shop at the website address in the settings file.",
+                "advice": "The wc_url setting may be wrong.",
+            }
         if error.code >= 500:
             return {
                 "message": f"The website is having problems (error {error.code}).",

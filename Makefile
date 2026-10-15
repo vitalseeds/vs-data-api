@@ -56,3 +56,6 @@ test: ## Run the tests that need no FileMaker or WooCommerce
 
 smoke: ## Run the smoke tests (every endpoint and CLI command starts)
 	uv run --extra test pytest tests/smoke
+
+doctor: ## Run vsdata-doctor locally (Windows-only checks are skipped elsewhere)
+	uv run python -m vs_doctor
