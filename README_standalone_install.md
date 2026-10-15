@@ -309,6 +309,22 @@ Get-Content "C:\Program Files\VSData\logs\stderr.log" -Tail 50
 
 ---
 
+## First-line debugging: vsdata-doctor
+
+`vsdata-doctor.exe` is attached to each release next to `vsdata-server.exe`.
+Copy it to `C:\Program Files\VSData\` and put a shortcut on the desktop. When
+something stops working, staff double-click it. It checks FileMaker, the data
+server and the website, explains any problem in plain English, offers to fix a
+few safe ones, and saves a report to `%LOCALAPPDATA%\VSData\`.
+
+It reads the same `config.ini`. Add a `[doctor]` section (see
+`config/config.ini.example`): `fm_files` (the FileMaker files, one per line) is
+required, while `service_name`, `log_file`, `contact` and `docs_url` are
+optional. To start the service it needs to be run as administrator
+(right-click, *Run as administrator*).
+
+---
+
 ## Configuration Reference
 
 ### Config File Location

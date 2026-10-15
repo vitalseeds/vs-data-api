@@ -5,6 +5,13 @@
 - `make test` runs the default suite (no FileMaker or WooCommerce needed) and must pass on a clean checkout. See #113 for the testing strategy.
 - Tests needing FileMaker or WooCommerce carry the `fmdb` or `wcapi` marker and are excluded by default.
 
+## vsdata-doctor
+
+`src/vs_doctor` is a standalone debugger for office staff (#118). It relies on
+parts of the app: config keys, `/health`, the service name, log path, port and
+release assets. They're listed in `src/vs_doctor/CLAUDE.md`. When a change
+touches any of them, update the doctor and that list in the same change.
+
 ## Project board
 
 Testing and related work (#113 and the issues linked from it) is tracked on project 5: https://github.com/orgs/vitalseeds/projects/5 (owner `vitalseeds`). WooCommerce HPOS work is tracked on project 15: https://github.com/orgs/vitalseeds/projects/15 (#116, #117 and the issues it needs: #111, #107).

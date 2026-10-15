@@ -22,11 +22,16 @@ jobs:
       - name: Build executable
         run: uv run python deploy/build.py --clean
 
+      - name: Build vsdata-doctor
+        run: uv run pyinstaller vsdata-doctor.spec
+
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: vsdata-server-windows
-          path: dist/vsdata-server.exe
+          path: |
+            dist/vsdata-server.exe
+            dist/vsdata-doctor.exe
           retention-days: 30
 
   # Optional: Create a release with executables when a tag is pushed
@@ -48,5 +53,7 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: vsdata-server.exe
+          files: |
+            vsdata-server.exe
+            vsdata-doctor.exe
           generate_release_notes: true
