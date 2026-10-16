@@ -1321,12 +1321,12 @@ WILTED = r"""
 
 HAPPY_QUIPS = [
     "Everything is growing nicely.",
-    "Clean bill of health. Back to the seeds!",
+    "Clean bill of health!",
     "Nothing wrong here. Have a biscuit.",
 ]
 
 SAD_QUIPS = [
-    "Don't worry, it's not the seeds' fault.",
+    "Bloomin technology eh",
     "Every gardener has a bad day.",
     "We'll have this blooming again soon.",
 ]
