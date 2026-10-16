@@ -38,3 +38,18 @@ port = 8432
 [logging]
 ; Logging level: DEBUG, INFO, WARNING, ERROR
 vs_data_logging_level = INFO
+
+[doctor]
+; Settings for vsdata-doctor, the first-line debugger (see README_standalone_install.md)
+; FileMaker files that must be open, one per line (required)
+fm_files =
+    C:\path\to\vs_db.fmp12
+    C:\path\to\wc_link.fmp12
+; Name of the Windows service that runs the data server
+service_name = VSDataAPI
+; Server error log, scanned for recent errors
+log_file = C:\Program Files\VSData\logs\stderr.log
+; Who to ask for help: shown at the end of the report when something is still failing
+contact = Call or WhatsApp Tom.
+; Vital Seeds documentation site, suggested while waiting to hear back (optional)
+; docs_url = https://...
