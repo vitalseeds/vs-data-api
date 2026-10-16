@@ -7,6 +7,7 @@
 #   make vm-restart VM_DIR=~/somewhere/windows10-vm
 VM_DIR   ?= ../windows10-vm
 SERVICE  ?= vs_data_api
+STANDALONE ?= VSDataAPI
 VM_URL   ?= http://127.0.0.1:8080
 LOG_LINES ?= 40
 
@@ -14,7 +15,7 @@ LOG_LINES ?= 40
 WINRM = cd "$(VM_DIR)" && vagrant winrm -c
 
 .DEFAULT_GOAL := help
-.PHONY: help vm-up vm-halt vm-status vm-restart vm-logs vm-out vm-health vm-ports vm-env run test smoke
+.PHONY: help vm-up vm-halt vm-status vm-restart vm-logs vm-out vm-health vm-ports vm-standalone-on vm-standalone-off vm-env run test smoke
 
 help: ## List the available tasks
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "} {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
@@ -44,6 +45,12 @@ vm-health: ## Call /health on the VM's API (FileMaker, link db and WooCommerce);
 	  echo "VM API not reachable at $(VM_URL) (is the VM up and the service running? make vm-status)"; rm -f "$$tmp"; exit 1; }; \
 	python3 -m json.tool "$$tmp" 2>/dev/null || cat "$$tmp"; rm -f "$$tmp"; \
 	[ "$$code" = "200" ] || { echo "HTTP $$code: degraded"; exit 1; }
+
+vm-standalone-off: ## Stop the standalone service (VSDataAPI) and stop it starting at boot
+	@$(WINRM) 'nssm stop $(STANDALONE); nssm set $(STANDALONE) Start SERVICE_DISABLED'
+
+vm-standalone-on: ## Enable the standalone service (VSDataAPI) at boot and start it
+	@$(WINRM) 'nssm set $(STANDALONE) Start SERVICE_AUTO_START; nssm start $(STANDALONE)'
 
 vm-ports: ## Show the VM's forwarded ports
 	@cd "$(VM_DIR)" && vagrant port
