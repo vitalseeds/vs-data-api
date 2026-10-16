@@ -33,6 +33,16 @@ def fail(message, advice="", fix=None):
 
 
 def check_config(config):
+    env_file = doctor_config.env_file_used(config)
+    if env_file:
+        missing = doctor_config.missing_settings(config)
+        if missing:
+            return fail(f"Using developer settings from {env_file}, which is missing: {', '.join(missing)}.")
+        return Result(
+            "warn",
+            f"Using developer settings from {env_file}, because there is no settings file.",
+            "That is the developer .env, not the office config.ini.",
+        )
     path = doctor_config.config_path()
     if not path.exists():
         return fail(f"I can't find the settings file at {path}.", advice="It needs setting up before anything else will work.")

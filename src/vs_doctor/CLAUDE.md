@@ -15,6 +15,7 @@ same change.
 
 | What | Defined in the app | Used by |
 |---|---|---|
+| Developer settings: `.env` found as in `vs_data_api.env` (`VSDATA_ENV_FILE`, repo root, cwd), used only when there is no config.ini; `VSDATA_<KEY>` for the `[vsdata]` keys, `VSDATA_PORT`, and doctor-only `VSDATA_DOCTOR_<KEY>` | `vs_data_api.env`, `.env.example` | `config.py`, `checks.check_config` |
 | Config file location | `vs_data_api.config.get_config_dir` (copied; parity test) | `config.py` |
 | `[vsdata]` keys `fm_connection_string`, `fm_link_connection_string`, `wc_url`, `wc_key`, `wc_secret`, optional `wc_verify_ssl` (default true) | `config/config.ini.example`, `vs_data_api.config.load_ini_config` | `config.py`, `checks.py` |
 | `[server] port` (default 8432) | `vs_data_api.standalone` | `checks.check_server_health` |

@@ -67,3 +67,58 @@ def test_report_dir_prefers_localappdata(monkeypatch, tmp_path):
     assert config.report_dir() == tmp_path / "VSData"
     monkeypatch.delenv("LOCALAPPDATA")
     assert config.report_dir() == config.get_config_dir()
+
+
+# --- developer settings (.env) ---
+
+
+def write_env(tmp_path, text):
+    return write(tmp_path / ".env", text)
+
+
+def test_parse_env_file(tmp_path):
+    path = write_env(
+        tmp_path,
+        '# comment\nexport VSDATA_WC_URL="https://shop"\nVSDATA_WC_KEY=ck # note\nEMPTY=\nVSDATA_PWD="a=b"\njunk\n',
+    )
+    assert config.parse_env_file(path) == {
+        "VSDATA_WC_URL": "https://shop",
+        "VSDATA_WC_KEY": "ck",
+        "EMPTY": "",
+        "VSDATA_PWD": "a=b",
+    }
+
+
+def test_read_config_falls_back_to_the_env_file(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "get_config_dir", lambda: tmp_path / "no-ini-here")
+    for name in ("VSDATA_WC_URL", "VSDATA_PORT"):
+        monkeypatch.delenv(name, raising=False)
+    path = write_env(
+        tmp_path,
+        "VSDATA_WC_URL=https://dev\nVSDATA_WC_VERIFY_SSL=false\nVSDATA_PORT=8080\nVSDATA_DOCTOR_SERVICE_NAME=vs_data_api\n",
+    )
+    monkeypatch.setenv("VSDATA_ENV_FILE", str(path))
+    cfg = config.read_config()
+    assert config.env_file_used(cfg) == path
+    assert cfg["vsdata"]["wc_url"] == "https://dev"
+    assert cfg["vsdata"]["wc_verify_ssl"] == "false"
+    assert cfg["server"]["port"] == "8080"
+    assert cfg["doctor"]["service_name"] == "vs_data_api"
+    assert "fm_files in [doctor]" not in config.missing_settings(cfg)
+
+
+def test_real_environment_beats_the_env_file(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "get_config_dir", lambda: tmp_path / "no-ini-here")
+    path = write_env(tmp_path, "VSDATA_WC_URL=https://file\n")
+    monkeypatch.setenv("VSDATA_ENV_FILE", str(path))
+    monkeypatch.setenv("VSDATA_WC_URL", "https://env")
+    assert config.read_config()["vsdata"]["wc_url"] == "https://env"
+
+
+def test_config_ini_wins_over_the_env_file(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "get_config_dir", lambda: tmp_path)
+    write(tmp_path / "config.ini", "[vsdata]\nwc_url = https://ini\n")
+    monkeypatch.setenv("VSDATA_ENV_FILE", str(write_env(tmp_path, "VSDATA_WC_URL=https://dev\n")))
+    cfg = config.read_config()
+    assert config.env_file_used(cfg) is None
+    assert cfg["vsdata"]["wc_url"] == "https://ini"

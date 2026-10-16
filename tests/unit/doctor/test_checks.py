@@ -47,6 +47,16 @@ def test_check_config(cfg, monkeypatch, tmp_path):
     assert "wc_url in [vsdata]" in checks.check_config(config.defaults()).message
 
 
+def test_check_config_flags_developer_settings(cfg, tmp_path):
+    cfg.read_dict({"source": {"env_file": str(tmp_path / ".env")}})
+    result = checks.check_config(cfg)
+    assert result.status == "warn"
+    assert "developer settings" in result.message and ".env" in result.message
+    cfg["vsdata"]["wc_url"] = ""
+    result = checks.check_config(cfg)
+    assert result.status == "fail" and "wc_url in [vsdata]" in result.message
+
+
 def test_windows_only_checks_skip_elsewhere(cfg, monkeypatch):
     monkeypatch.setattr(windows, "is_windows", lambda: False)
     assert checks.check_filemaker_open(cfg).status == "skip"
