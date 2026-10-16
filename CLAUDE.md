@@ -5,13 +5,6 @@
 - `make test` runs the default suite (no FileMaker or WooCommerce needed) and must pass on a clean checkout. See #113 for the testing strategy.
 - Tests needing FileMaker or WooCommerce carry the `fmdb` or `wcapi` marker and are excluded by default.
 
-## Branches
-
-Work on a feature branch, never directly on `main`. When the work is based on a
-GitHub issue, name the branch `feature/N-issue-title`, where `N` is the issue
-number and `issue-title` is the issue title in lowercase, hyphenated (e.g.
-`feature/51-tenacity-for-wc-retries`).
-
 ## vsdata-doctor
 
 `src/vs_doctor` is a standalone debugger for office staff (#118). It relies on
