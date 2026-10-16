@@ -101,7 +101,7 @@ def check_website(config):
     error = diagnose.try_website(url, config["vsdata"].get("wc_key", ""), config["vsdata"].get("wc_secret", ""))
     if error is None:
         return ok("The website answers.")
-    return Result("fail", **diagnose.explain_http_error(error))
+    return Result("fail", **diagnose.explain_http_error(error, url))
 
 
 def check_server_log(config):

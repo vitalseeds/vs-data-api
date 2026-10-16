@@ -142,6 +142,8 @@ def test_explain_http_error():
     explain = diagnose.explain_http_error
     assert explain(urllib.error.HTTPError("u", 401, "no", {}, None))["message"] == "The website rejected our key."
     assert "address in the settings file" in explain(urllib.error.HTTPError("u", 404, "nf", {}, None))["message"]
+    rejected = explain(urllib.error.HTTPError("u", 401, "no", {}, None), "https://shop/")
+    assert "https://shop/wp-admin/admin.php?page=wc-settings&tab=advanced&section=keys" in rejected["advice"]
     assert "error 502" in explain(urllib.error.HTTPError("u", 502, "bad", {}, None))["message"]
     assert explain(urllib.error.URLError(socket.gaierror()))["message"] == "I can't find the website."
     assert "too long" in explain(urllib.error.URLError(TimeoutError()))["message"]

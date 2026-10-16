@@ -126,12 +126,13 @@ def try_website(url: str, key: str, secret: str):
     return None
 
 
-def explain_http_error(error) -> dict:
+def explain_http_error(error, url: str = "") -> dict:
     if isinstance(error, urllib.error.HTTPError):
         if error.code in (401, 403):
             return {
                 "message": "The website rejected our key.",
-                "advice": "The WooCommerce key in the settings file may have been changed or removed.",
+                "advice": "The WooCommerce key in the settings file may have been changed or removed."
+                + (f" Keys are managed at {url.rstrip('/')}/wp-admin/admin.php?page=wc-settings&tab=advanced&section=keys" if url else ""),
             }
         if error.code == 404:
             return {
