@@ -4,4 +4,4 @@
 # Start-Sleep -Seconds 1.5
 cd $env:VSDATA_API_ROOT
 git pull
-pip install -r requirements.txt
+uv sync
