@@ -69,7 +69,7 @@ def get_data_dir() -> Path:
         return Path(xdg_data) / "vsdata"
 
 
-def load_config_file() -> dict:
+def load_config_file() -> dict:  # noqa: C901
     """Load configuration from INI file if it exists."""
     config_path = get_config_dir() / "config.ini"
     config = {}
@@ -163,7 +163,7 @@ def print_startup_info(host: str, port: int, ssl_enabled: bool):
     print("=" * 50)
 
 
-def main():
+def main():  # noqa: PLR0915
     """Main entry point for standalone server."""
     try:
         # Load config file and apply to environment (env vars take precedence)

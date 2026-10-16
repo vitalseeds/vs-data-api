@@ -15,7 +15,7 @@ REPORT_CSV_DIR = f"{TMP_DIR}/exports"
 REPORT_CSV_FILE_PATH = f"{REPORT_CSV_DIR}/report.csv"
 
 
-def _debug_data(vs_stock_pd, vs_all_stock, wc_product_stock_pd, wc_variations_stock_pd, wc_all_stock, report):
+def _debug_data(vs_stock_pd, vs_all_stock, wc_product_stock_pd, wc_variations_stock_pd, wc_all_stock, report):  # noqa: PLR0913
     """
     Throwaway debug function to display some pandas data in the cli.
     """
@@ -80,7 +80,7 @@ def get_acq_join_stock(connection):
     # return [dict(zip(columns, r)) for r in rows]
 
 
-def compare_wc_fm_stock(fmdb, wcapi, cli: bool = False, csv: bool = False, uncache=False, variations=True):
+def compare_wc_fm_stock(fmdb, wcapi, cli: bool = False, csv: bool = False, uncache=False, variations=True):  # noqa: C901, PLR0913, PLR0915
     """
     Query both fm and wc for stock values.
 

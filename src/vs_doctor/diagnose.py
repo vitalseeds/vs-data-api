@@ -127,7 +127,7 @@ def try_website(url: str, key: str, secret: str, verify_ssl: bool = True):
     return None
 
 
-def explain_http_error(error, url: str = "") -> dict:
+def explain_http_error(error, url: str = "") -> dict:  # noqa: PLR0911
     if isinstance(error, urllib.error.HTTPError):
         if error.code in (401, 403):
             return {

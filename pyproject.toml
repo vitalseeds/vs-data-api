@@ -157,7 +157,7 @@ line-length = 120
 skip-string-normalization = true
 
 [tool.ruff]
-target-version = "py37"
+target-version = "py39"
 line-length = 120
 select = [
   "A",
@@ -193,8 +193,6 @@ ignore = [
   "FBT003",
   # Ignore checks for possible passwords
   "S105", "S106", "S107",
-  # Ignore complexity
-  "C901", "PLR0911", "PLR0912", "PLR0913", "PLR0915",
 ]
 unfixable = [
   # Don't touch unused imports
@@ -206,6 +204,9 @@ profile = "black"
 line_length = 120
 known_first_party = ["vs_data_api", "vs_data"]
 
+[tool.ruff.mccabe]
+max-complexity = 10
+
 [tool.ruff.isort]
 known-first-party = ["vs_data_api", "vs_data"]
 
@@ -214,8 +215,10 @@ ban-relative-imports = "all"
 
 [tool.ruff.per-file-ignores]
 # Tests can use magic values, assertions, and relative imports
-"tests/**/*" = ["PLR2004", "S101", "TID252"]
+"tests/**/*" = ["PLR0913", "PLR2004", "S101", "TID252"]
 "**/__init__.py" = ["F401"]
+# click commands take one argument per option
+"src/vs_data_api/cli/__init__.py" = ["PLR0913"]
 
 [tool.coverage.run]
 source_pkgs = ["vs_data_api", "tests"]
