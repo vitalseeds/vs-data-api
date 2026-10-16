@@ -226,6 +226,7 @@ def test_connections_default_to_settings(runner, connections):
         vsdata_wc_url="https://wc.settings",
         vsdata_wc_key="ck",
         vsdata_wc_secret="cs",
+        vsdata_wc_verify_ssl=False,
     )
     with (
         patch.object(vs, "get_settings", return_value=settings),
@@ -235,4 +236,4 @@ def test_connections_default_to_settings(runner, connections):
 
     assert result.exit_code == 0, result.output
     assert upload.call_args.args == (connections["DSN=fm_settings"], sentinel.wcapi)
-    vs.api.get_api.assert_called_once_with("https://wc.settings", "ck", "cs", check_status=False)
+    vs.api.get_api.assert_called_once_with("https://wc.settings", "ck", "cs", check_status=False, verify_ssl=False)

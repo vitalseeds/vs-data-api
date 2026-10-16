@@ -5,7 +5,7 @@ from woocommerce import API
 from vs_data_api.vs_data import log
 
 
-def get_api(url, key, secret, check_status=False):
+def get_api(url, key, secret, check_status=False, verify_ssl=True):
     """
     Return a wcapi api instance (official simple wrapper library).
 
@@ -17,6 +17,7 @@ def get_api(url, key, secret, check_status=False):
         consumer_secret=secret,
         version="wc/v3",
         timeout=300,
+        verify_ssl=verify_ssl,
     )
     if check_status:
         log.info(f"Testing WC API connection: {url}")

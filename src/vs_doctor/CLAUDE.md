@@ -16,7 +16,7 @@ same change.
 | What | Defined in the app | Used by |
 |---|---|---|
 | Config file location | `vs_data_api.config.get_config_dir` (copied; parity test) | `config.py` |
-| `[vsdata]` keys `fm_connection_string`, `fm_link_connection_string`, `wc_url`, `wc_key`, `wc_secret` | `config/config.ini.example`, `vs_data_api.config.load_ini_config` | `config.py`, `checks.py` |
+| `[vsdata]` keys `fm_connection_string`, `fm_link_connection_string`, `wc_url`, `wc_key`, `wc_secret`, optional `wc_verify_ssl` (default true) | `config/config.ini.example`, `vs_data_api.config.load_ini_config` | `config.py`, `checks.py` |
 | `[server] port` (default 8432) | `vs_data_api.standalone` | `checks.check_server_health` |
 | `GET /health`: 200 ok or 503 degraded, body `{"status", "checks": {"filemaker", "filemaker_link", "woocommerce": {"ok", "error"}}}` | `vs_data_api.health.run_checks`, `main.get_health` (contract test) | `diagnose.get_health`, `diagnose.explain_health` |
 | http or https on localhost (https when certificates exist) | `vs_data_api.standalone.get_ssl_paths` | `diagnose.get_health` |

@@ -53,6 +53,7 @@ class Connections(dict):
                 self._option_or_setting("wc_key", "vsdata_wc_key"),
                 self._option_or_setting("wc_secret", "vsdata_wc_secret"),
                 check_status=False,
+                verify_ssl=get_settings().vsdata_wc_verify_ssl,
             )
         else:
             raise KeyError(key)

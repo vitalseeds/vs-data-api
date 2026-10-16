@@ -18,6 +18,8 @@ fm_link_connection_string = Driver={FileMaker ODBC};Server=localhost;Database=wc
 wc_url = https://example.com
 wc_key = ck_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 wc_secret = cs_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+; Set to false only for a local/staging site with a self-signed certificate
+; wc_verify_ssl = true
 
 [server]
 ; Server binding configuration

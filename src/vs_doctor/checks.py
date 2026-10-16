@@ -98,7 +98,10 @@ def check_website(config):
     url = config["vsdata"].get("wc_url", "")
     if not url:
         return fail("The website address is missing from the settings file.")
-    error = diagnose.try_website(url, config["vsdata"].get("wc_key", ""), config["vsdata"].get("wc_secret", ""))
+    verify_ssl = config["vsdata"].get("wc_verify_ssl", "true").strip().lower() not in ("0", "false", "no", "off")
+    error = diagnose.try_website(
+        url, config["vsdata"].get("wc_key", ""), config["vsdata"].get("wc_secret", ""), verify_ssl
+    )
     if error is None:
         return ok("The website answers.")
     return Result("fail", **diagnose.explain_http_error(error, url))

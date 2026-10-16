@@ -52,11 +52,11 @@ def check_fm(connection_string: str) -> dict:
     return result
 
 
-def check_wc(url: str, key: str, secret: str) -> dict:
+def check_wc(url: str, key: str, secret: str, verify_ssl: bool = True) -> dict:
     """Request the WooCommerce REST API root, with a short timeout."""
 
     def request():
-        api = wc_api.get_api(url, key, secret)
+        api = wc_api.get_api(url, key, secret, verify_ssl=verify_ssl)
         api.timeout = WC_TIMEOUT_SECONDS
         api.get("").raise_for_status()
 
@@ -70,7 +70,9 @@ def run_checks(settings) -> dict:
     checks = {
         "filemaker": check_fm(settings.fm_connection_string),
         "filemaker_link": check_fm(settings.fm_link_connection_string),
-        "woocommerce": check_wc(settings.vsdata_wc_url, settings.vsdata_wc_key, settings.vsdata_wc_secret),
+        "woocommerce": check_wc(
+            settings.vsdata_wc_url, settings.vsdata_wc_key, settings.vsdata_wc_secret, settings.vsdata_wc_verify_ssl
+        ),
     }
     status = "ok" if all(c["ok"] for c in checks.values()) else "degraded"
     return {"status": status, "checks": checks}

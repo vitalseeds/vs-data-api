@@ -1,6 +1,7 @@
 import io
 import json
 import socket
+import ssl
 import sys
 import types
 import urllib.error
@@ -142,6 +143,8 @@ def test_explain_http_error():
     explain = diagnose.explain_http_error
     assert explain(urllib.error.HTTPError("u", 401, "no", {}, None))["message"] == "The website rejected our key."
     assert "address in the settings file" in explain(urllib.error.HTTPError("u", 404, "nf", {}, None))["message"]
+    cert = explain(urllib.error.URLError(ssl.SSLCertVerificationError()))
+    assert "certificate" in cert["message"] and "wc_verify_ssl" in cert["advice"]
     rejected = explain(urllib.error.HTTPError("u", 401, "no", {}, None), "https://shop/")
     assert "https://shop/wp-admin/admin.php?page=wc-settings&tab=advanced&section=keys" in rejected["advice"]
     assert "error 502" in explain(urllib.error.HTTPError("u", 502, "bad", {}, None))["message"]

@@ -113,14 +113,15 @@ def explain_health(report: dict) -> list:
 # --- the website ---
 
 
-def try_website(url: str, key: str, secret: str):
+def try_website(url: str, key: str, secret: str, verify_ssl: bool = True):
     """Make one small authenticated WooCommerce request. Returns the error, or None if it worked."""
     request = urllib.request.Request(f"{url.rstrip('/')}/wp-json/wc/v3/products?per_page=1&_fields=id")
     token = base64.b64encode(f"{key}:{secret}".encode()).decode()
     request.add_header("Authorization", f"Basic {token}")
     request.add_header("User-Agent", "vsdata-doctor")
     try:
-        urllib.request.urlopen(request, timeout=WEBSITE_TIMEOUT).close()
+        context = None if verify_ssl else ssl._create_unverified_context()
+        urllib.request.urlopen(request, timeout=WEBSITE_TIMEOUT, context=context).close()
     except (OSError, http.client.HTTPException) as error:
         return error
     return None
@@ -146,6 +147,11 @@ def explain_http_error(error, url: str = "") -> dict:
             }
         return unexpected(error)
     reason = getattr(error, "reason", error)
+    if isinstance(reason, ssl.SSLCertVerificationError):
+        return {
+            "message": "The website's security certificate isn't trusted.",
+            "advice": "If this is a test site, add wc_verify_ssl = false to the settings file. Otherwise the certificate needs fixing.",
+        }
     if isinstance(reason, socket.gaierror):
         return {
             "message": "I can't find the website.",

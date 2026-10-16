@@ -96,9 +96,9 @@ def test_check_server_health(cfg, monkeypatch):
 
 
 def test_check_website(cfg, monkeypatch):
-    monkeypatch.setattr(diagnose, "try_website", lambda url, key, secret: None)
+    monkeypatch.setattr(diagnose, "try_website", lambda url, key, secret, verify_ssl: None)
     assert checks.check_website(cfg).status == "ok"
-    monkeypatch.setattr(diagnose, "try_website", lambda url, key, secret: TimeoutError())
+    monkeypatch.setattr(diagnose, "try_website", lambda url, key, secret, verify_ssl: TimeoutError())
     assert "too long" in checks.check_website(cfg).message
     cfg["vsdata"]["wc_url"] = ""
     assert "missing" in checks.check_website(cfg).message
