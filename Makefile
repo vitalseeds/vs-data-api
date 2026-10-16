@@ -15,7 +15,7 @@ LOG_LINES ?= 40
 WINRM = cd "$(VM_DIR)" && vagrant winrm -c
 
 .DEFAULT_GOAL := help
-.PHONY: help vm-up vm-halt vm-status vm-restart vm-logs vm-out vm-health vm-ports vm-standalone-on vm-standalone-off vm-env run test smoke
+.PHONY: help vm-up vm-halt vm-status vm-restart vm-logs vm-out vm-health vm-ports vm-standalone-on vm-standalone-off vm-env run test cov lint smoke
 
 help: ## List the available tasks
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "} {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
@@ -60,6 +60,13 @@ run: ## Run the API locally on :8000 (needs a working local FileMaker, see READM
 
 test: ## Run the tests that need no FileMaker or WooCommerce
 	uv run --extra test pytest
+
+cov: ## Run the tests with a coverage report
+	uv run --extra test pytest --cov --cov-report=term-missing
+
+lint: ## Check code complexity (ruff) and scan for secrets (gitleaks)
+	uv run --with ruff ruff check src tests --select C901,PLR0911,PLR0912,PLR0913,PLR0915,E9
+	gitleaks detect --no-banner
 
 smoke: ## Run the smoke tests (every endpoint and CLI command starts)
 	uv run --extra test pytest tests/smoke

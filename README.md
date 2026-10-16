@@ -324,6 +324,7 @@ run at any time:
 uv sync --extra test
 make test                             # everything that runs without external systems
 make smoke                            # just the smoke tests
+make cov                              # with a coverage report
 uv run pytest --fmdb --wcapi         # also end to end, against FileMaker and WooCommerce
 ```
 
@@ -345,6 +346,18 @@ FileMaker ODBC only works inside the Windows VM, so run them there.
 
 `tests/integration/fm_mock/` (SQLite over ODBC in place of FileMaker) is
 switched off and needs the [sqliteodbc driver](http://www.ch-werner.de/sqliteodbc/).
+
+### Checks before committing
+
+`make lint` checks code complexity (ruff) and scans for committed secrets
+(gitleaks). To run the same checks on every commit:
+
+```sh
+uv run --extra dev pre-commit install
+```
+
+CI runs the tests and these checks on every pull request
+(`.github/workflows/test.yml`).
 
 # VS-data
 
