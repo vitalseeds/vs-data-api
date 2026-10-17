@@ -174,7 +174,7 @@ def wc_regular_product_update_stock(wcapi, products, stock_increments):
 # TODO: improve performance of lookups from returned data?
 # TODO: add tests
 # TODO: split large_variation logic out then review duplication
-def update_wc_stock_for_new_batches(connection, wcapi=None, product_variation=None):
+def update_wc_stock_for_new_batches(connection, wcapi=None, product_variation=None):  # noqa: C901, PLR0912, PLR0915
     """
     Update WooCommerce stock from newly packeted batches.
 
