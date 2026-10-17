@@ -331,6 +331,7 @@ uv run pytest --fmdb --wcapi         # also end to end, against FileMaker and Wo
 |---|---|
 | `tests/smoke/` | Every API endpoint and `vs` command starts and calls the right thing. New endpoints and commands must be added here (a test fails otherwise) |
 | `tests/unit/` | Complex logic: stock corrections, batch upload, order status, variation prices |
+| `tests/integration/wc/` | WooCommerce order calls against a local site (marked `wcapi`, skipped by default; no FileMaker needed) |
 | `tests/integration/fm/` | End to end against a real FileMaker database and WooCommerce site (marked `fmdb` / `wcapi`, skipped by default) |
 
 FileMaker is replaced by `tests/fakes.py:FakeConnection`, which records SQL and
@@ -342,6 +343,19 @@ End-to-end tests (`fmdb`, `wcapi`) use the `VSDATA_TEST_*` settings from the
 environment or `.env`. They connect to a real FileMaker database and
 WooCommerce site, so point these at **test** copies, never production.
 FileMaker ODBC only works inside the Windows VM, so run them there.
+
+### WooCommerce tests against LocalWP
+
+`make test-wc` runs the order tests in `tests/integration/wc/` against the
+site in `VSDATA_TEST_WC_*` (a LocalWP site such as `http://vitalseeds.local`
+with a read/write REST key and permalinks other than "Plain"). It runs on the
+Mac with no VM. Each test creates its own throw-away order and deletes it, and
+every test is skipped unless the host is `localhost`, `127.0.0.1`, `::1` or `*.local`/`*.localhost` (set
+`VSDATA_TEST_WC_ALLOW_REMOTE=1` to use another site such as staging).
+
+To check HPOS (#116), run it once with HPOS off, switch HPOS on in
+WooCommerce > Settings > Advanced > Features, and run it again. The output
+prints `HPOS enabled: True/False`.
 
 `tests/integration/fm_mock/` (SQLite over ODBC in place of FileMaker) is
 switched off and needs the [sqliteodbc driver](http://www.ch-werner.de/sqliteodbc/).
