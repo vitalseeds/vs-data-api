@@ -15,7 +15,7 @@ LOG_LINES ?= 40
 WINRM = cd "$(VM_DIR)" && vagrant winrm -c
 
 .DEFAULT_GOAL := help
-.PHONY: help vm-up vm-halt vm-status vm-restart vm-logs vm-out vm-health vm-ports vm-standalone-on vm-standalone-off vm-env run test cov lint smoke doctor test-wc
+.PHONY: help vm-up vm-halt vm-status vm-restart vm-logs vm-out vm-health vm-sync vm-ports vm-standalone-on vm-standalone-off vm-env run test cov lint smoke doctor test-wc
 
 help: ## List the available tasks
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "} {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
@@ -41,10 +41,13 @@ vm-out: ## Tail the service stdout log in the VM
 
 vm-health: ## Call /health on the VM's API (FileMaker, link db and WooCommerce); non-zero if degraded
 	@tmp=$$(mktemp); \
-	code=$$(curl -sS -m 60 -o "$$tmp" -w '%{http_code}' "$(VM_URL)/health") || { \
+	code=$$(curl -sS --connect-timeout 5 -m 60 -o "$$tmp" -w '%{http_code}' "$(VM_URL)/health") || { \
 	  echo "VM API not reachable at $(VM_URL) (is the VM up and the service running? make vm-status)"; rm -f "$$tmp"; exit 1; }; \
 	python3 -m json.tool "$$tmp" 2>/dev/null || cat "$$tmp"; rm -f "$$tmp"; \
 	[ "$$code" = "200" ] || { echo "HTTP $$code: degraded"; exit 1; }
+
+vm-sync: ## Install dependencies in the VM's uv venv (uv sync --frozen), then restart the service
+	@$(WINRM) '$$env:UV_PROJECT_ENVIRONMENT="C:\venvs\vs-data-api"; $$env:UV_PYTHON_INSTALL_DIR="C:\uv\python"; cd C:\vagrant\vs-data-api; uv sync --frozen; nssm restart $(SERVICE)'
 
 vm-standalone-off: ## Stop the standalone service (VSDataAPI) and stop it starting at boot
 	@$(WINRM) 'nssm stop $(STANDALONE); nssm set $(STANDALONE) Start SERVICE_DISABLED'
