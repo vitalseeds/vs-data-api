@@ -22,6 +22,7 @@ for name, value in DUMMY_SETTINGS.items():
 
 import pytest  # noqa: E402
 import responses  # noqa: E402
+from tenacity import wait_none  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
 
 from vs_data_api.config import TestSettings  # noqa: E402
@@ -97,3 +98,9 @@ def mocked_responses():
 @pytest.fixture
 def client():
     return fastapi_client
+
+
+@pytest.fixture(autouse=True)
+def no_retry_wait(monkeypatch):
+    """Retry WooCommerce requests straight away, so tests do not sleep."""
+    monkeypatch.setattr(api, "RETRY_WAIT", wait_none())
