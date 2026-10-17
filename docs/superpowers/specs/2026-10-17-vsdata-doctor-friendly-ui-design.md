@@ -1,6 +1,6 @@
 # vsdata-doctor friendly UI (#131)
 
-Status: draft for approval. Follows the doctor design in `2026-10-15-vsdata-doctor-design.md` (#118).
+Status: draft for approval; builder check done, my calls are marked below. Follows the doctor design in `2026-10-15-vsdata-doctor-design.md` (#118).
 
 ## Intent
 
@@ -41,6 +41,15 @@ A small sv-ttk window with a worker thread feeding a queue was built with PyInst
 - Tk callbacks and widgets are touched only from the main thread; workers post results through a queue polled with `after`.
 - Keep the last-resort handler: if the GUI crashes, show the error in a message box and fall back to the console flow, saving the report either way.
 
+## Calls made after the builder check (my calls, for you to check)
+
+- **Fix order:** the GUI runs all checks first, then shows a "Fix" button on each failed row. (The console keeps its ask-after-each-failure order.) Both front ends share one run loop in a new module; the builder picks its shape.
+- **Fixes in progress:** the row shows a busy state and its button is disabled. Fixes can take up to 60s (FileMaker open, UAC prompt), so the window can't be closed mid-fix and checks don't run at the same time as a fix. After a fix, that one check reruns.
+- **Fallback boundary:** if the window fails before the first check runs, start the console flow. If it fails later, show the error and rerun everything in the console from scratch. Both front ends feed the same report recorder, so the saved report has the same name and format either way. `report.py` needs a recording part separate from its printing.
+- **Entry point and exit codes:** `main` stays the entry point. The GUI returns the same exit codes (1 on any failure, 2 if the doctor itself broke). `--no-pause` only affects the console. `--console` is new.
+- **Windows verification:** the CI Windows build gets a smoke step, and the owner checks the exe once on an office PC. If sv-ttk fails when frozen on Windows, drop sv-ttk and use the built-in `vista` theme rather than abandoning the window.
+- **Dependency:** add sv-ttk to the same dependency group the build job installs, not to the app's runtime dependencies. The GUI test skips cleanly if sv-ttk or a display is missing, so `make test` still passes on a clean checkout.
+
 ## Left to the builder
 
 - Layout, wording and colours; whether to follow the system light/dark setting.
@@ -50,5 +59,6 @@ A small sv-ttk window with a worker thread feeding a queue was built with PyInst
 
 ## Open questions for the user
 
+- Is a second release asset acceptable (a console exe next to the windowed `vsdata-doctor.exe`)? If not, the build uses one exe with a hidden console, which may flash briefly on double-click. This changes `build.yml`, the release file list and `src/vs_doctor/CLAUDE.md`.
 - Does sv-ttk match the package you remember?
 - Windows 10 vs 11 on the office machines (sv-ttk mimics Windows 11 either way).
