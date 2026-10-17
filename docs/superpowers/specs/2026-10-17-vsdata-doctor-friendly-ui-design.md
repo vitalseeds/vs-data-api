@@ -1,6 +1,6 @@
 # vsdata-doctor friendly UI (#131)
 
-Status: draft for approval; builder check done, my calls are marked below. Follows the doctor design in `2026-10-15-vsdata-doctor-design.md` (#118).
+Status: ready for approval; builder check done, my calls are marked below. Follows the doctor design in `2026-10-15-vsdata-doctor-design.md` (#118).
 
 ## Intent
 
@@ -57,8 +57,7 @@ A small sv-ttk window with a worker thread feeding a queue was built with PyInst
 - How the console is kept available in the windowed build.
 - Tests: logic stays unit-tested through the existing modules; the GUI gets a smoke test (construct the window, run checks with fakes, then destroy it) that is skipped if no display is available.
 
-## Open questions for the user
+## Decisions from the user
 
-- Is a second release asset acceptable (a console exe next to the windowed `vsdata-doctor.exe`)? If not, the build uses one exe with a hidden console, which may flash briefly on double-click. This changes `build.yml`, the release file list and `src/vs_doctor/CLAUDE.md`.
-- Does sv-ttk match the package you remember?
-- Windows 10 vs 11 on the office machines (sv-ttk mimics Windows 11 either way).
+- Decided: sv-ttk is fine, whether or not it is the package from the podcast.
+- Decided: ship a single `vsdata-doctor.exe`. The console fallback uses a console that is hidden when the window opens, so `build.yml`, the release file list and the asset name stay as they are. A brief console flash on double-click is accepted.
