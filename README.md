@@ -160,6 +160,7 @@ make vm-status    # VM and service state
 make vm-restart   # nssm restart vs_data_api (after changing .env or dependencies)
 make vm-logs      # tail the uvicorn log in the VM (LOG_LINES=100 for more)
 make vm-health    # call /health, exits non-zero if degraded
+make vm-sync      # uv sync in the VM, then restart (after changing dependencies)
 ```
 
 Logs are in `C:\logs\` in the VM.
@@ -294,7 +295,8 @@ VSDATA_ENV_FILE=.env-test uv run vs import-wc-product-ids
 | `ValidationError ... Field required` on start or any `vs` command | one of the five required variables is not set for that process |
 | Changed `.env`, behaviour unchanged | the process keeps what it read at start: `nssm restart vs_data_api` (or restart `uvicorn` locally). Also check a stale NSSM environment or shell variable is not overriding the file: real environment variables win |
 | Code changes do not show up | the service must be running the clone you are editing (`windows10-vm/vs-data-api`). `--reload` on a shared folder can miss file changes; `nssm restart vs_data_api` |
-| New dependency missing in the VM | the service uses the VM's global Python: `pip install ...` (or `pip install -e .`) in the VM, then restart |
+| New dependency missing in the VM | the service runs from a uv venv at `C:\venvs\vs-data-api` (outside the shared folder), not the global Python: `make vm-sync` (uv sync, then restart) |
+| `make vm-health` times out but the service is `SERVICE_RUNNING` | the app crashed on start (NSSM and the port forward stay up): `make vm-logs`. If the log is clean and it answers inside the VM, check the firewall rule matches the real interpreter (`vagrant/firewall_rules.ps1`) |
 | `Can't open lib 'FileMaker ODBC' : file not found` or a `unixodbc` warning (Mac) | `brew uninstall unixodbc && brew install libiodbc`, reinstall the FileMaker ODBC driver |
 | `TypeError: Client.__init__() got an unexpected keyword argument 'app'` in tests | `httpx` >= 0.28 with the pinned starlette. The `test` extra now pins `httpx<0.28`; re-run `uv sync --extra test` |
 
