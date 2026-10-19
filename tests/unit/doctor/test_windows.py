@@ -32,3 +32,9 @@ def test_service_state_none_when_not_installed(monkeypatch):
 def test_is_admin_false_off_windows():
     if not windows.is_windows():
         assert windows.is_admin() is False
+
+
+def test_hide_and_show_console_do_nothing_off_windows(monkeypatch):
+    monkeypatch.setattr(windows, "is_windows", lambda: False)
+    assert windows.hide_console() is None
+    assert windows.show_console() is None

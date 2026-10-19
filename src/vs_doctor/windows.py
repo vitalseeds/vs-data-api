@@ -46,3 +46,20 @@ def start_service(name) -> None:
 def open_file(path) -> None:
     """Open a file with its default app, as a double-click would (FileMaker for .fmp12)."""
     os.startfile(str(path))
+
+
+def _show_console_window(command) -> None:
+    if not is_windows():
+        return
+    hwnd = ctypes.windll.kernel32.GetConsoleWindow()
+    if hwnd:
+        ctypes.windll.user32.ShowWindow(hwnd, command)
+
+
+def hide_console() -> None:
+    """Hide the console the exe was started in, while the window is up."""
+    _show_console_window(0)  # SW_HIDE
+
+
+def show_console() -> None:
+    _show_console_window(5)  # SW_SHOW

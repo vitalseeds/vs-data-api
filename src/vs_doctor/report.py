@@ -1,6 +1,7 @@
 """Everything the user sees: the art, a line per check, the summary, and the saved report."""
 
 import datetime
+import io
 import random
 from textwrap import indent
 
@@ -9,6 +10,23 @@ from rich.text import Text
 
 # record=True keeps a copy of everything printed, for save()
 console = Console(record=True, safe_box=True, emoji=False, highlight=False)
+
+
+
+def mute():
+    """Keep recording but print nothing (the window shows the results instead)."""
+    console.file = io.StringIO()
+
+
+def unmute():
+    """Go back to printing on the real console."""
+    console.file = None  # rich then uses sys.stdout again
+
+
+def reset():
+    """Forget everything recorded so far."""
+    console.export_text(clear=True)
+
 
 SEEDLING = r"""
       _
@@ -83,9 +101,10 @@ def summary(results, config):
     console.print(Text(random.choice(SAD_QUIPS), style="italic"))
 
 
-def save(folder):
+def save(folder, path=None):
+    """Save the recording. Pass the path from an earlier save to overwrite that report."""
     folder.mkdir(parents=True, exist_ok=True)
-    path = folder / f"doctor-{datetime.datetime.now():%Y-%m-%d-%H%M%S}.txt"
+    path = path or folder / f"doctor-{datetime.datetime.now():%Y-%m-%d-%H%M%S}.txt"
     console.save_text(str(path), clear=False)
     return path
 

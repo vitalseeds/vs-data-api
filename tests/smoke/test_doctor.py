@@ -23,7 +23,7 @@ def test_doctor_runs_end_to_end_and_saves_a_report(monkeypatch, tmp_path):
     )
 
     run = subprocess.run(
-        [sys.executable, "-m", "vs_doctor", "--no-pause"], capture_output=True, text=True, timeout=180, env=os.environ
+        [sys.executable, "-m", "vs_doctor", "--console", "--no-pause"], capture_output=True, text=True, timeout=180, env=os.environ
     )
 
     assert "Traceback" not in run.stdout + run.stderr

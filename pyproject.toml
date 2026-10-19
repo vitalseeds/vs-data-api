@@ -48,6 +48,7 @@ dev = [
     "pre-commit",
     "objexplore",
     "pyinstaller>=6.0",
+    "sv-ttk",
 ]
 test = [
     "pytest",

@@ -4,26 +4,15 @@ import configparser
 import sys
 import traceback
 
-from vs_doctor import checks, report
+from vs_doctor import checks, gui, report, runner, windows
 from vs_doctor import config as doctor_config
-
-
-def run_check(check, config):
-    try:
-        return check(config)
-    except Exception as error:  # noqa: BLE001 - the doctor must keep going
-        return checks.fail(f"I tripped over my own feet checking {check.__name__}: {error}")
 
 
 def offer_fix(check, result, config):
     if not report.ask_fix():
         return result
-    try:
-        worked = result.fix(config)
-    except Exception:  # noqa: BLE001 - a failed fix is reported, not raised
-        worked = False
-    report.fix_outcome(worked)
-    result = run_check(check, config)
+    report.fix_outcome(runner.run_fix(result, config))
+    result = runner.run_check(check, config)
     report.check_line(result)
     return result
 
@@ -35,13 +24,11 @@ def load_config():
         return doctor_config.defaults()  # check_config reports the mistake
 
 
-def main(argv=None) -> int:
-    argv = sys.argv[1:] if argv is None else argv
-    config = load_config()
+def run_console(config, argv) -> int:
     report.header()
     results = []
     for check in checks.CHECKS:
-        result = run_check(check, config)
+        result = runner.run_check(check, config)
         report.check_line(result)
         if result.status == "fail" and result.fix:
             result = offer_fix(check, result, config)
@@ -50,7 +37,24 @@ def main(argv=None) -> int:
     report.saved(report.save(doctor_config.report_dir()))
     if "--no-pause" not in argv:
         report.pause()
-    return 1 if any(result.status == "fail" for result in results) else 0
+    return runner.exit_code(results)
+
+
+def main(argv=None) -> int:
+    argv = sys.argv[1:] if argv is None else argv
+    if "--selftest" in argv:
+        return gui.selftest()
+    config = load_config()
+    if "--console" not in argv:
+        windows.hide_console()
+        report.mute()
+        try:
+            return runner.exit_code(gui.run(config))
+        except Exception:  # noqa: BLE001 - any window trouble: do it all again in the console
+            windows.show_console()
+            report.unmute()
+            report.reset()
+    return run_console(config, argv)
 
 
 if __name__ == "__main__":

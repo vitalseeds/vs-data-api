@@ -53,7 +53,7 @@ class Settings(BaseSettings):
     vsdata_wc_url: str = Field(..., validation_alias="vsdata_wc_url")
     vsdata_wc_key: str = Field(..., validation_alias="vsdata_wc_key")
     vsdata_wc_secret: str = Field(..., validation_alias="vsdata_wc_secret")
-    vsdata_wc_verify_ssl: bool = True
+    vsdata_wc_verify_ssl: bool = Field(True, validation_alias="vsdata_wc_verify_ssl")
     _wcapi: wc_api = PrivateAttr()
 
     def __init__(self, *args, **kwargs):

@@ -25,6 +25,15 @@ jobs:
       - name: Build vsdata-doctor
         run: uv run pyinstaller vsdata-doctor.spec
 
+      - name: Smoke-test the vsdata-doctor window
+        # Opens and closes the Tk window to prove Tk and the sv-ttk theme are bundled.
+        # Kept non-blocking in case a runner has no desktop session; check the result when it fails.
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $p = Start-Process dist/vsdata-doctor.exe -ArgumentList "--selftest" -Wait -PassThru
+          exit $p.ExitCode
+
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:

@@ -5,7 +5,11 @@ release. It must always run, so it never imports `vs_data_api` (a test enforces
 this). Spec: docs/superpowers/specs/2026-10-15-vsdata-doctor-design.md (#118).
 
 Keep it simple: one job per module (config, windows, diagnose, fixes, checks,
-report, __main__). Deeper logic goes in `diagnose.py` or `fixes.py`, not in
+runner, report, gui, __main__). `gui.py` is the Tkinter window (sv-ttk theme);
+`__main__` falls back to the rich console flow if the window can't start or
+breaks. `--console` forces the console, `--selftest` opens and closes the window
+(used by CI), `--no-pause` affects only the console. Spec:
+docs/superpowers/specs/2026-10-17-vsdata-doctor-friendly-ui-design.md (#131). Deeper logic goes in `diagnose.py` or `fixes.py`, not in
 `checks.py`.
 
 ## Surface area: what the doctor relies on
@@ -25,4 +29,5 @@ same change.
 | Log file `C:\Program Files\VSData\logs\stderr.log` | `deploy/windows/install-service.ps1` (NSSM `AppStderr`) | `[doctor] log_file` default |
 | WooCommerce REST: `GET /wp-json/wc/v3/products` with basic auth | `vs_data_api.vs_data.wc` | `diagnose.try_website` |
 | FileMaker process name starts with `FileMaker`; ODBC error texts | FileMaker Pro and its ODBC driver | `windows.filemaker_running`, `diagnose.explain_odbc_error` |
-| Release asset `vsdata-doctor.exe` | `.github/workflows/build.yml`, `vsdata-doctor.spec` | — |
+| Release asset `vsdata-doctor.exe`, which `update.ps1` also downloads into the install folder next to `vsdata-server.exe` | `.github/workflows/build.yml`, `vsdata-doctor.spec`, `deploy/windows/update.ps1` | — |
+| Tk and `sv-ttk` bundled in that exe (`sv-ttk` in the `dev` extra, its data files collected in the spec) | `pyproject.toml`, `vsdata-doctor.spec`, the CI `--selftest` step | `gui.py` |

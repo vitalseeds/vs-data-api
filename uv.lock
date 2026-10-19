@@ -2557,6 +2557,37 @@ wheels = [
 ]
 
 [[package]]
+name = "sv-ttk"
+version = "2.6.0"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version < '3.9'",
+]
+sdist = { url = "https://files.pythonhosted.org/packages/40/da/6ad667a4bad4d66ec2d15206c1a1ad81d572679e516aae078824a6f35870/sv_ttk-2.6.0.tar.gz", hash = "sha256:3fd440396c95e30e88f686fcf28be425480f7320d6bf346f9cea5d6f56702cc2", size = 47214, upload-time = "2024-01-28T17:33:29.49Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0f/3d/be0abc3202e90f282ad465f4e7c6e41bc8dce810ce5d1611566a1e7dfba8/sv_ttk-2.6.0-py3-none-any.whl", hash = "sha256:4319c52edf2e14732fe84bdc9788e26f9e9a1ad79451ec0f89f0120ffc8105d9", size = 49097, upload-time = "2024-01-28T17:33:27.974Z" },
+]
+
+[[package]]
+name = "sv-ttk"
+version = "2.6.1"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version >= '3.14' and sys_platform == 'win32'",
+    "python_full_version >= '3.14' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version >= '3.11' and python_full_version < '3.14' and sys_platform == 'win32'",
+    "python_full_version >= '3.11' and python_full_version < '3.14' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.11' and python_full_version < '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.10.*'",
+    "python_full_version == '3.9.*'",
+]
+sdist = { url = "https://files.pythonhosted.org/packages/4e/ca/9625914e7a7e58ce9f0d8d6a5eb29975bab077ce58a36cf86f863d188cd3/sv_ttk-2.6.1.tar.gz", hash = "sha256:47589d5e20398cf404e8362f24f3ed48f3830cd0ace056d83354fa25d8e4fe48", size = 49640, upload-time = "2025-06-08T16:14:21.333Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5b/36/32629d8bab9bccd54a36716a960ba1148fca4c1fd453370dba0b42d712ea/sv_ttk-2.6.1-py3-none-any.whl", hash = "sha256:8ca5944f95431a911986b00c54e7f44608f3f811382cd985fd14bb3e65f95d97", size = 50076, upload-time = "2025-06-08T16:14:20.402Z" },
+]
+
+[[package]]
 name = "svcs"
 version = "24.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2904,6 +2935,8 @@ dev = [
     { name = "pre-commit", version = "4.5.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
     { name = "pudb" },
     { name = "pyinstaller" },
+    { name = "sv-ttk", version = "2.6.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
+    { name = "sv-ttk", version = "2.6.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
 ]
 test = [
     { name = "httpx" },
@@ -2942,6 +2975,7 @@ requires-dist = [
     { name = "python-dotenv" },
     { name = "responses", marker = "extra == 'test'" },
     { name = "rich", specifier = "==13.3.1" },
+    { name = "sv-ttk", marker = "extra == 'dev'" },
     { name = "svcs" },
     { name = "tenacity" },
     { name = "toml", marker = "extra == 'test'" },
