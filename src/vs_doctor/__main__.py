@@ -4,26 +4,15 @@ import configparser
 import sys
 import traceback
 
-from vs_doctor import checks, report
+from vs_doctor import checks, report, runner
 from vs_doctor import config as doctor_config
-
-
-def run_check(check, config):
-    try:
-        return check(config)
-    except Exception as error:  # noqa: BLE001 - the doctor must keep going
-        return checks.fail(f"I tripped over my own feet checking {check.__name__}: {error}")
 
 
 def offer_fix(check, result, config):
     if not report.ask_fix():
         return result
-    try:
-        worked = result.fix(config)
-    except Exception:  # noqa: BLE001 - a failed fix is reported, not raised
-        worked = False
-    report.fix_outcome(worked)
-    result = run_check(check, config)
+    report.fix_outcome(runner.run_fix(result, config))
+    result = runner.run_check(check, config)
     report.check_line(result)
     return result
 
@@ -41,7 +30,7 @@ def main(argv=None) -> int:
     report.header()
     results = []
     for check in checks.CHECKS:
-        result = run_check(check, config)
+        result = runner.run_check(check, config)
         report.check_line(result)
         if result.status == "fail" and result.fix:
             result = offer_fix(check, result, config)
@@ -50,7 +39,7 @@ def main(argv=None) -> int:
     report.saved(report.save(doctor_config.report_dir()))
     if "--no-pause" not in argv:
         report.pause()
-    return 1 if any(result.status == "fail" for result in results) else 0
+    return runner.exit_code(results)
 
 
 if __name__ == "__main__":
