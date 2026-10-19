@@ -58,3 +58,26 @@ def test_save_writes_the_report(tmp_path):
     path = report.save(tmp_path / "VSData")
     assert path.name.startswith("doctor-") and path.suffix == ".txt"
     assert "Fine." in path.read_text()
+
+
+def test_muted_console_still_saves_what_was_printed(tmp_path):
+    report.mute()
+    report.check_line(checks.ok("Fine."))
+    path = report.save(tmp_path)
+    assert "Fine." in path.read_text()
+
+
+def test_mute_works_when_stdout_is_none(monkeypatch):
+    monkeypatch.setattr("sys.stdout", None)
+    report.mute()
+    report.check_line(checks.ok("Fine."))
+
+
+def test_reset_forgets_earlier_output(tmp_path):
+    report.mute()
+    report.check_line(checks.ok("First."))
+    report.reset()
+    report.check_line(checks.ok("Second."))
+    path = report.save(tmp_path)
+    assert "First." not in path.read_text()
+    assert "Second." in path.read_text()
