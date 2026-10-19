@@ -4,7 +4,7 @@ import configparser
 import sys
 import traceback
 
-from vs_doctor import checks, report, runner
+from vs_doctor import checks, gui, report, runner, windows
 from vs_doctor import config as doctor_config
 
 
@@ -24,9 +24,7 @@ def load_config():
         return doctor_config.defaults()  # check_config reports the mistake
 
 
-def main(argv=None) -> int:
-    argv = sys.argv[1:] if argv is None else argv
-    config = load_config()
+def run_console(config, argv) -> int:
     report.header()
     results = []
     for check in checks.CHECKS:
@@ -40,6 +38,23 @@ def main(argv=None) -> int:
     if "--no-pause" not in argv:
         report.pause()
     return runner.exit_code(results)
+
+
+def main(argv=None) -> int:
+    argv = sys.argv[1:] if argv is None else argv
+    if "--selftest" in argv:
+        return gui.selftest()
+    config = load_config()
+    if "--console" not in argv:
+        windows.hide_console()
+        report.mute()
+        try:
+            return runner.exit_code(gui.run(config))
+        except Exception:  # noqa: BLE001 - any window trouble: do it all again in the console
+            windows.show_console()
+            report.unmute()
+            report.reset()
+    return run_console(config, argv)
 
 
 if __name__ == "__main__":

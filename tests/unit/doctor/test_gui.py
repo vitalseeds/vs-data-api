@@ -60,3 +60,13 @@ def test_fix_one_reports_a_failed_fix(events):
     new = gui.fix_one(0, lambda cfg: broken, broken, {}, events.append)
     assert ("fixed", 0, False) in events
     assert new is broken
+
+
+def test_window_smoke():
+    pytest.importorskip("sv_ttk")
+    tkinter = pytest.importorskip("tkinter")
+    try:
+        tkinter.Tk().destroy()
+    except tkinter.TclError:
+        pytest.skip("no display available")
+    assert gui.selftest() == 0

@@ -101,9 +101,10 @@ def summary(results, config):
     console.print(Text(random.choice(SAD_QUIPS), style="italic"))
 
 
-def save(folder):
+def save(folder, path=None):
+    """Save the recording. Pass the path from an earlier save to overwrite that report."""
     folder.mkdir(parents=True, exist_ok=True)
-    path = folder / f"doctor-{datetime.datetime.now():%Y-%m-%d-%H%M%S}.txt"
+    path = path or folder / f"doctor-{datetime.datetime.now():%Y-%m-%d-%H%M%S}.txt"
     console.save_text(str(path), clear=False)
     return path
 
