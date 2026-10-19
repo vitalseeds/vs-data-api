@@ -29,5 +29,5 @@ same change.
 | Log file `C:\Program Files\VSData\logs\stderr.log` | `deploy/windows/install-service.ps1` (NSSM `AppStderr`) | `[doctor] log_file` default |
 | WooCommerce REST: `GET /wp-json/wc/v3/products` with basic auth | `vs_data_api.vs_data.wc` | `diagnose.try_website` |
 | FileMaker process name starts with `FileMaker`; ODBC error texts | FileMaker Pro and its ODBC driver | `windows.filemaker_running`, `diagnose.explain_odbc_error` |
-| Release asset `vsdata-doctor.exe` | `.github/workflows/build.yml`, `vsdata-doctor.spec` | — |
+| Release asset `vsdata-doctor.exe`, which `update.ps1` also downloads into the install folder next to `vsdata-server.exe` | `.github/workflows/build.yml`, `vsdata-doctor.spec`, `deploy/windows/update.ps1` | — |
 | Tk and `sv-ttk` bundled in that exe (`sv-ttk` in the `dev` extra, its data files collected in the spec) | `pyproject.toml`, `vsdata-doctor.spec`, the CI `--selftest` step | `gui.py` |

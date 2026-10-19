@@ -1,8 +1,9 @@
 # update.ps1
 # Updates the installed VS Data API to the latest GitHub release.
 #
-# Steps: download latest vsdata-server.exe -> stop server -> back up install
-#        -> replace exe -> start server -> health check (rollback on failure)
+# Steps: download latest vsdata-server.exe (and vsdata-doctor.exe) -> stop server
+#        -> back up install -> replace exe -> start server -> health check
+#        (rollback on failure) -> replace the doctor exe
 #
 # Handles the server running as a Windows service (NSSM), as a plain
 # process, or not running at all.
@@ -23,6 +24,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $ExeName = "vsdata-server.exe"
+$DoctorName = "vsdata-doctor.exe"
 $ProcessName = [IO.Path]::GetFileNameWithoutExtension($ExeName)
 
 # Re-launch elevated if needed (Program Files requires admin)
@@ -97,6 +99,23 @@ try {
     Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $newExe -UseBasicParsing
     if ((Get-Item $newExe).Length -lt 1MB) { throw "Downloaded file looks too small; aborting." }
 
+    # The doctor ships in the same release. A missing or failed download only warns.
+    $newDoctor = $null
+    $doctorAsset = $release.assets | Where-Object { $_.name -eq $DoctorName } | Select-Object -First 1
+    if ($doctorAsset) {
+        try {
+            $newDoctor = Join-Path $tmp $DoctorName
+            Write-Host "Downloading $($doctorAsset.browser_download_url)"
+            Invoke-WebRequest -Uri $doctorAsset.browser_download_url -OutFile $newDoctor -UseBasicParsing
+            if ((Get-Item $newDoctor).Length -lt 1MB) { throw "Downloaded file looks too small." }
+        } catch {
+            Write-Warning "Could not download $DoctorName ($($_.Exception.Message)); it will not be updated."
+            $newDoctor = $null
+        }
+    } else {
+        Write-Warning "Release $($release.tag_name) has no $DoctorName asset; it will not be updated."
+    }
+
     # What is running now?
     $script:service = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
     $script:process = $null
@@ -132,6 +151,17 @@ try {
             Copy-Item -Path (Join-Path $backupPath $ExeName) -Destination $exePath -Force
             Start-Server
             throw "Update to $($release.tag_name) failed; previous version restored (backup kept at $backupPath)."
+        }
+    }
+
+    # Replace the doctor only after the server update is known good, so a rollback leaves a matching pair
+    if ($newDoctor) {
+        $doctorPath = Join-Path $InstallPath $DoctorName
+        try {
+            Copy-Item -Path $newDoctor -Destination $doctorPath -Force
+            Write-Host "Replaced $DoctorName"
+        } catch {
+            Write-Warning "Could not replace $DoctorName (is it open?): $($_.Exception.Message)"
         }
     }
 
