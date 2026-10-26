@@ -160,8 +160,11 @@ async def update_status_selected_orders(target_status: str, settings: config.Set
     - updates status and deselects orders in link database
     """
     fmlinkdb = db.connection(settings.fm_link_connection_string)
-    with fmlinkdb:
-        updated_orders = orders.update_packed_orders_status(fmlinkdb, settings.wcapi, target_status=target_status)
+    try:
+        with fmlinkdb:
+            updated_orders = orders.update_packed_orders_status(fmlinkdb, settings.wcapi, target_status=target_status)
+    except orders.OrderUpdateFailed as e:
+        return {"orders": e.updated, "message": str(e)}
 
     if updated_orders and isinstance(updated_orders, list):
         num_orders = len(updated_orders)

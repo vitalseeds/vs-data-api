@@ -43,7 +43,8 @@ def expect_batch_update(wc, order_ids, target_status, date_completed="2023-02-14
 def test_no_selected_orders_does_nothing(wcapi, mocked_responses):
     linkdb = link_db()
 
-    assert status.update_packed_orders_status(linkdb, wcapi) is None
+    with pytest.raises(status.OrderUpdateFailed, match="none are selected"):
+        status.update_packed_orders_status(linkdb, wcapi)
     assert linkdb.statements("^UPDATE") == []
 
 
@@ -88,8 +89,48 @@ def test_link_db_is_not_changed_if_woocommerce_fails(wcapi, mocked_responses):
     mocked_responses.post(f"{WC}/orders/batch", status=500, json={"code": "error"})
     linkdb = link_db(46011)
 
-    assert status.update_packed_orders_status(linkdb, wcapi) is None
+    with pytest.raises(status.OrderUpdateFailed, match="couldn't process the update"):
+        status.update_packed_orders_status(linkdb, wcapi)
     assert linkdb.statements("^UPDATE") == []
+
+
+def test_no_selected_orders_is_logged(wcapi, mocked_responses, caplog):
+    with pytest.raises(status.OrderUpdateFailed):
+        status.update_packed_orders_status(link_db(), wcapi)
+
+    assert "No orders are selected" in caplog.text
+
+
+def test_woocommerce_error_status_is_logged_with_its_body(wcapi, mocked_responses, caplog):
+    mocked_responses.post(f"{WC}/orders/batch", status=401, json={"code": "woocommerce_rest_cannot_create"})
+
+    with pytest.raises(status.OrderUpdateFailed, match="login or permissions"):
+        status.update_packed_orders_status(link_db(46011), wcapi)
+
+    assert "401" in caplog.text
+    assert "woocommerce_rest_cannot_create" in caplog.text
+
+
+def test_orders_woocommerce_rejects_in_a_200_response_are_reported_and_left_selected(wcapi, mocked_responses, caplog):
+    mocked_responses.post(
+        f"{WC}/orders/batch",
+        json={
+            "update": [
+                {"id": 46011, "status": "completed", "date_completed": "2023-02-14T13:47:24"},
+                {"id": 46012, "error": {"code": "woocommerce_rest_shop_order_invalid_id", "message": "Invalid ID."}},
+            ]
+        },
+    )
+    linkdb = link_db(46011, 46012)
+
+    with pytest.raises(status.OrderUpdateFailed) as failure:
+        status.update_packed_orders_status(linkdb, wcapi)
+
+    assert "1 of 2 orders were updated" in str(failure.value)
+    assert "46012" in str(failure.value)
+    assert [order["id"] for order in failure.value.updated] == [46011]
+    assert "46012" in caplog.text
+    assert len(linkdb.statements("^UPDATE")) == 1
 
 
 def test_orders_are_sent_in_batches_of_100(wcapi, mocked_responses):
