@@ -13,6 +13,9 @@ dt{color:#555;font-size:.9rem;margin-top:.8rem}dd{margin:0;font-weight:600;overf
 input{font-size:1.1rem;padding:.5rem;margin:.3rem 0;width:100%;box-sizing:border-box}
 .missing{color:#999;font-weight:400}
 h2{font-size:1.2rem;margin:1.5rem 0 .5rem}
+.notes-link{display:inline-block;width:1.5rem;height:1.5rem;line-height:1.5rem;text-align:center;border-radius:50%;background:#fff;color:#333;text-decoration:none;font-weight:600}
+dialog{max-width:90vw;border:0;border-radius:.5rem;padding:1rem}dialog::backdrop{background:rgba(0,0,0,.4)}
+#notes-text{white-space:pre-wrap;margin:0 0 1rem}
 .germination{background:#eee;border-radius:.5rem;padding:.1rem 1rem .5rem;margin-top:1.5rem}
 .germination h2{margin-top:.8rem}
 table{width:100%;border-collapse:collapse}
@@ -26,6 +29,14 @@ td.date{white-space:nowrap}
 # Looks the lot up once typing pauses and swaps in just the result, so the box keeps focus.
 # Without JavaScript the form still works: it submits to /lot, which redirects.
 _SEARCH_SCRIPT = """
+const notes = document.getElementById('notes');
+document.addEventListener('click', (event) => {
+  const link = event.target.closest('[data-notes]');
+  if (!link) return;
+  event.preventDefault();
+  document.getElementById('notes-text').textContent = link.dataset.notes;
+  notes.showModal();
+});
 const box = document.querySelector('[name=lot_number]');
 let timer;
 box.addEventListener('input', () => {
@@ -61,6 +72,7 @@ def _page(title: str, body: str, lot_number: str = "") -> str:
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
         f"<title>{escape(title)}</title><style>{_STYLE}</style></head>"
         f'<body>{_search_box(lot_number)}<div id="result">{body}</div>'
+        '<dialog id="notes"><p id="notes-text"></p><form method="dialog"><input type="submit" value="Close"></form></dialog>'
         f"<script>{_SEARCH_SCRIPT}</script></body></html>"
     )
 
@@ -77,12 +89,18 @@ def format_result(percent: float | None) -> str:
     return f"{percent:g}%"
 
 
+def _notes_link(notes: str | None) -> str:
+    if not notes:
+        return ""
+    return f'<a href="#" class="notes-link" data-notes="{escape(notes)}" aria-label="Show notes" title="Show notes">?</a>'
+
+
 def _test_row(test) -> str:
     when = "no date" if test.date is None else test.date.strftime("%d / %m / %y")
     result = "in progress" if test.result is None else format_result(test.result)
     return (
         f'<tr><td class="date">{when}</td><td>{escape(test.seed_count or "")}</td>'
-        f'<td>{escape(test.notes or "")}</td><td class="num">{escape(result)}</td></tr>'
+        f'<td>{_notes_link(test.notes)}</td><td class="num">{escape(result)}</td></tr>'
     )
 
 

@@ -155,3 +155,25 @@ def test_germination_tests_are_a_table_with_result_right_aligned():
 def test_no_table_when_there_are_no_tests():
     html = lot_page.render_lot(summary(germ_tests=[]))
     assert "<table" not in html and "No germination tests yet" in html
+
+
+def test_notes_are_a_link_that_opens_a_dialog_not_text_in_the_table():
+    html = lot_page.render_lot(summary(germ_tests=[germ(date(2026, 3, 1), 91, notes="Slow to start")]))
+    assert 'data-notes="Slow to start"' in html and ">?</a>" in html and 'aria-label="Show notes"' in html
+    assert "<dialog" in html and "showModal()" in html
+    assert "<td>Slow to start</td>" not in html
+
+
+def test_no_notes_link_when_a_test_has_no_notes():
+    html = lot_page.render_lot(summary(germ_tests=[germ(date(2026, 3, 1), 91, notes=None)]))
+    assert 'data-notes="' not in html and 'class="notes-link"' not in html
+
+
+def test_notes_with_quotes_and_markup_are_escaped_in_the_attribute():
+    html = lot_page.render_lot(summary(germ_tests=[germ(date(2026, 3, 1), 91, notes='say "hi" <b>')]))
+    assert 'data-notes="say &quot;hi&quot; &lt;b&gt;"' in html
+
+
+def test_dialog_is_outside_the_swapped_result_so_it_survives_a_new_lookup():
+    html = lot_page.render_lot(summary())
+    assert '</div><dialog id="notes"' in html  # the result div has closed before the dialog starts
