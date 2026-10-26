@@ -186,5 +186,7 @@ def test_sku_value_is_bigger_than_the_other_values():
     assert "dd.big{font-size:1.8rem" in html
 
 
-def test_sku_is_serif():
-    assert "dd.big{font-size:1.8rem;line-height:1.2;font-family:Georgia,serif}" in lot_page.render_lot(summary())
+def test_sku_is_not_serif():
+    html = lot_page.render_lot(summary())
+    assert "dd.big{font-size:1.8rem;line-height:1.2}" in html
+    assert "Georgia" not in html and "serif" not in html.replace("sans-serif", "")
