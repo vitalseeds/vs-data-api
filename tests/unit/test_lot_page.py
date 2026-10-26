@@ -58,7 +58,7 @@ def test_render_lot_shows_result_and_lists_tests_newest_first():
     tests = [germ(date(2026, 3, 1), 91), germ(date(2025, 1, 2), 80)]
     html = lot_page.render_lot(summary(germ_result=91, germ_tests=tests))
     assert "91%" in html
-    assert html.index("2026-03-01") < html.index("2025-01-02")
+    assert html.index("01/03/2026") < html.index("02/01/2025")
 
 
 def test_in_progress_when_no_result():
@@ -77,6 +77,33 @@ def test_no_tests_message():
 
 
 def test_test_text_is_escaped_and_missing_date_labelled():
-    html = lot_page.render_lot(summary(germ_tests=[germ(None, 50, seed_count="<i>", notes="<script>")]))
-    assert "<script>" not in html and "&lt;script&gt;" in html and "&lt;i&gt;" in html
+    html = lot_page.render_lot(summary(germ_tests=[germ(None, 50, seed_count="<i>", notes="<b>bold")]))
+    assert "<b>bold" not in html and "&lt;b&gt;bold" in html and "&lt;i&gt;" in html
     assert "no date" in html
+
+
+def test_dates_are_day_month_year():
+    html = lot_page.render_lot(summary(germ_tests=[germ(date(2026, 3, 9), 90)]))
+    assert "09/03/2026" in html and "2026-03-09" not in html
+
+
+def test_search_box_is_above_the_lot_and_prefilled():
+    html = lot_page.render_lot(summary())
+    assert 'name="lot_number"' in html and 'value="3538"' in html
+    assert html.index('name="lot_number"') < html.index("<h1>")
+    assert 'id="result"' in html and "fetch(" in html
+
+
+def test_germination_section_is_marked_for_grey_background():
+    html = lot_page.render_lot(summary())
+    assert 'class="germination"' in html and ".germination{background:" in html
+
+
+def test_message_page_keeps_the_search_box_with_what_was_typed():
+    html = lot_page.render_message("Not a lot number", "Use a whole number.", lot_number='<b>x')
+    assert 'value="&lt;b&gt;x"' in html and "<b>x" not in html
+
+
+def test_form_page_has_search_box_and_no_result():
+    html = lot_page.render_form()
+    assert 'name="lot_number"' in html and 'id="result"' in html

@@ -24,11 +24,11 @@ def _wants_json(request: Request) -> bool:
     return request.query_params.get("format") == "json" or "application/json" in request.headers.get("accept", "")
 
 
-def _message(request: Request, status_code: int, title: str, message: str):
+def _message(request: Request, status_code: int, title: str, message: str, lot_number: str = ""):
     """A plain-English error, as JSON or HTML to match what was asked for."""
     if _wants_json(request):
         return JSONResponse(status_code=status_code, content={"message": message})
-    return HTMLResponse(lot_page.render_message(title, message), status_code=status_code)
+    return HTMLResponse(lot_page.render_message(title, message, lot_number), status_code=status_code)
 
 
 def _parse_lot_number(raw: str) -> int | None:
@@ -56,7 +56,7 @@ async def get_lot(lot_number: str, request: Request, settings: config.Settings =
     """
     number = _parse_lot_number(lot_number)
     if number is None:
-        return _message(request, 422, "Not a lot number", f"'{lot_number}' is not a lot number. Use a whole number.")
+        return _message(request, 422, "Not a lot number", f"'{lot_number}' is not a lot number. Use a whole number.", lot_number)
 
     try:
         connection = db.connection(settings.fm_connection_string)
@@ -64,13 +64,13 @@ async def get_lot(lot_number: str, request: Request, settings: config.Settings =
             summary = get_lot_summary(connection, number)
     except ValidationError as e:
         log.error(f"Lot {number} has a value in FileMaker that could not be read: {e}")
-        return _message(request, 500, "Lot can't be shown", unreadable_value(number))
+        return _message(request, 500, "Lot can't be shown", unreadable_value(number), str(number))
     except Exception as e:
         log.error(f"Lot summary for {number} failed: {e!r}")
-        return _message(request, 503, "FileMaker unavailable", FILEMAKER_DOWN)
+        return _message(request, 503, "FileMaker unavailable", FILEMAKER_DOWN, str(number))
 
     if summary is None:
-        return _message(request, 404, "Lot not found", f"Lot {number} not found.")
+        return _message(request, 404, "Lot not found", f"Lot {number} not found.", str(number))
     if _wants_json(request):
         return summary.model_dump()
     return HTMLResponse(lot_page.render_lot(summary))
