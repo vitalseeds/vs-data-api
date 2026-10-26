@@ -184,3 +184,7 @@ def test_sku_value_is_bigger_than_the_other_values():
     assert '<dd class="big">CAR-1</dd>' in html
     assert html.count('class="big"') == 1
     assert "dd.big{font-size:1.8rem" in html
+
+
+def test_sku_is_serif():
+    assert "dd.big{font-size:1.8rem;line-height:1.2;font-family:Georgia,serif}" in lot_page.render_lot(summary())

@@ -23,7 +23,7 @@ th{color:#555;font-size:.9rem;font-weight:400;text-align:left}
 th,td{padding:.4rem .5rem .4rem 0;border-top:1px solid #ccc;vertical-align:top}
 .num{text-align:right;padding-right:0}td.num{font-weight:600;white-space:nowrap}
 td.date{white-space:nowrap}
-dd.big{font-size:1.8rem;line-height:1.2}
+dd.big{font-size:1.8rem;line-height:1.2;font-family:Georgia,serif}
 """
 
 
