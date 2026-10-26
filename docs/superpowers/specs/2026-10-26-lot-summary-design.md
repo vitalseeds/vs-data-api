@@ -50,12 +50,23 @@ from FileMaker.
 
 ## Data
 
-Source and final weight are fields on the `seed_lots` table (confirmed). The
-`SeedLots` class in `vs_data/fm/vs_tables.py` maps only `lot_number` and `sku`,
-so the field names need finding (the introspection CLI in
-`vs_data_api/cli/introspection.py` is the obvious way) and mapping. If they are
-not exposed through the ODBC connection, exposing them in FileMaker is part of
-this work.
+Source and final weight are fields on the `seed_lots` table (confirmed). From
+the database design report, the FileMaker field names are:
+
+| Page label | FileMaker field |
+|---|---|
+| Lot number | `lot_number` |
+| SKU | `sku` |
+| Source | `Source` |
+| Final weight | `Original weight` (confirmed: FileMaker has no field called "final weight") |
+
+The `SeedLots` class in `vs_data/fm/vs_tables.py` maps only `lot_number` and
+`sku`, so it needs `Source` and `Original weight` added (the repo's
+convention is to rename awkward FileMaker fields in the database over time; the
+builder can follow it or map the names as they are). If they are not exposed
+through the ODBC connection, exposing them in FileMaker is part of this work.
+For later steps, germination tests are in `Germ_tests` (`Lot_numberFK`, `Date`,
+`Result`, `Seed count`, `test_number`, `Notes`); `seed_lots` also has `Notes`.
 
 - `lot_number` is unique in `seed_lots` (confirmed), so the lookup returns at
   most one row.
