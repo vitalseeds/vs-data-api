@@ -7,7 +7,7 @@ NOT_RECORDED = "not recorded"
 _STYLE = """
 body{font-family:system-ui,sans-serif;margin:0;padding:1rem;font-size:1.1rem;line-height:1.4}
 form{margin-bottom:1rem}
-h1{font-size:1.5rem;margin:0 0 1rem}
+h1{font-size:clamp(2.5rem,14vw,4rem);line-height:1.1;margin:0 0 1rem}
 dl.fields{display:grid;grid-template-columns:1fr 1fr;gap:.2rem 1rem;margin:0}
 dt{color:#555;font-size:.9rem;margin-top:.8rem}dd{margin:0;font-weight:600;overflow-wrap:anywhere}
 input,button{font-size:1.1rem;padding:.5rem;margin:.3rem .3rem .3rem 0}
@@ -16,7 +16,7 @@ button{line-height:0}
 h2{font-size:1.2rem;margin:1.5rem 0 .5rem}
 .germination{background:#eee;border-radius:.5rem;padding:.1rem 1rem .5rem;margin-top:1.5rem}
 .germination h2{margin-top:.8rem}
-.test{border-top:1px solid #ccc;padding:.5rem 0}.test small{color:#555;display:block;font-weight:400}
+.test{border-top:1px solid #ccc;padding:.5rem 0}.test strong{margin-right:1rem;white-space:nowrap}.test small{color:#555;display:block;font-weight:400}
 """
 
 
@@ -81,7 +81,7 @@ def format_result(percent: float | None) -> str:
 
 
 def _test_line(test) -> str:
-    when = "no date" if test.date is None else test.date.strftime("%d/%m/%Y")
+    when = "no date" if test.date is None else test.date.strftime("%d / %m / %y")
     result = "in progress" if test.result is None else format_result(test.result)
     details = [f"{escape(test.seed_count)} seeds"] if test.seed_count else []
     if test.notes:

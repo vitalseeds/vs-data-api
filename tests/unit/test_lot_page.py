@@ -58,7 +58,7 @@ def test_render_lot_shows_result_and_lists_tests_newest_first():
     tests = [germ(date(2026, 3, 1), 91), germ(date(2025, 1, 2), 80)]
     html = lot_page.render_lot(summary(germ_result=91, germ_tests=tests))
     assert "91%" in html
-    assert html.index("01/03/2026") < html.index("02/01/2025")
+    assert html.index("01 / 03 / 26") < html.index("02 / 01 / 25")
 
 
 def test_in_progress_when_no_result():
@@ -84,7 +84,7 @@ def test_test_text_is_escaped_and_missing_date_labelled():
 
 def test_dates_are_day_month_year():
     html = lot_page.render_lot(summary(germ_tests=[germ(date(2026, 3, 9), 90)]))
-    assert "09/03/2026" in html and "2026-03-09" not in html
+    assert "09 / 03 / 26" in html and "2026-03-09" not in html
 
 
 def test_search_box_is_above_the_lot_and_prefilled():
@@ -130,3 +130,12 @@ def test_title_and_heading_are_the_lot_number_with_a_hash():
 
 def test_there_is_space_below_the_search_form():
     assert "form{margin-bottom:1rem}" in lot_page.render_lot(summary())
+
+
+def test_date_has_room_before_the_result():
+    html = lot_page.render_lot(summary(germ_tests=[germ(date(2026, 3, 9), 90)]))
+    assert ".test strong{" in html and "margin-right:" in html
+
+
+def test_lot_number_heading_is_large():
+    assert "h1{font-size:clamp(2.5rem,14vw,4rem)" in lot_page.render_lot(summary())
