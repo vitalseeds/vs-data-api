@@ -50,7 +50,7 @@ ENDPOINTS = [
         "vs_data_api.vs_data.orders.update_packed_orders_status",
         [{"id": 1}, {"id": 2}],
         LINK,
-        {"message": "2 orders were updated on WooCommerce"},
+        {"success": True, "orders": [{"id": 1}, {"id": 2}], "message": "2 orders were updated on WooCommerce"},
     ),
     (
         "/products/variations/update-wc-price",
@@ -183,7 +183,7 @@ def test_failed_order_update_returns_a_readable_message(client, connections):
     with patch("vs_data_api.vs_data.orders.update_packed_orders_status", autospec=True, side_effect=failure):
         response = client.get("/orders/selected/update/status/completed")
 
-    assert response.json() == {"orders": [], "message": "None are selected."}
+    assert response.json() == {"success": False, "orders": [], "message": "None are selected."}
 
 
 def test_stock_report_is_a_csv_download(client, connections, tmp_path):

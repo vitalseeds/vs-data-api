@@ -164,13 +164,13 @@ async def update_status_selected_orders(target_status: str, settings: config.Set
         with fmlinkdb:
             updated_orders = orders.update_packed_orders_status(fmlinkdb, settings.wcapi, target_status=target_status)
     except orders.OrderUpdateFailed as e:
-        return {"orders": e.updated, "message": str(e)}
+        return {"success": False, "orders": e.updated, "message": str(e)}
 
     if updated_orders and isinstance(updated_orders, list):
         num_orders = len(updated_orders)
-        return {"orders": updated_orders, "message": f"{num_orders} orders were updated on WooCommerce"}
+        return {"success": True, "orders": updated_orders, "message": f"{num_orders} orders were updated on WooCommerce"}
 
-    return {"message": "No orders were updated on WooCommerce."}
+    return {"success": False, "message": "No orders were updated on WooCommerce."}
 
 
 @app.get("/products/variations/update-wc-price")
