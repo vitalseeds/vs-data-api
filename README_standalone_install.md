@@ -298,6 +298,8 @@ Get-Content "C:\Program Files\VSData\logs\stdout.log" -Tail 50
 Get-Content "C:\Program Files\VSData\logs\stderr.log" -Tail 50
 ```
 
+To capture more detail while chasing a problem, double-click `deploy\windows\debug-logging.cmd` (sets `DEBUG` and restarts the service), then `normal-logging.cmd` to put it back to `INFO`.
+
 ### Quick Test Checklist
 
 | Test | Command | Expected Result |

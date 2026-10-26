@@ -15,6 +15,7 @@ from fastapi.testclient import TestClient
 
 from tests.fakes import FakeConnection
 from vs_data_api import main
+from vs_data_api.vs_data.orders import OrderUpdateFailed
 
 FM = "fm"
 LINK = "link"
@@ -175,6 +176,14 @@ def test_order_status_is_passed_through(client, connections):
         client.get("/orders/selected/update/status/processing")
 
     assert update.call_args.kwargs["target_status"] == "processing"
+
+
+def test_failed_order_update_returns_a_readable_message(client, connections):
+    failure = OrderUpdateFailed("None are selected.", updated=[])
+    with patch("vs_data_api.vs_data.orders.update_packed_orders_status", autospec=True, side_effect=failure):
+        response = client.get("/orders/selected/update/status/completed")
+
+    assert response.json() == {"orders": [], "message": "None are selected."}
 
 
 def test_stock_report_is_a_csv_download(client, connections, tmp_path):

@@ -200,7 +200,10 @@ def update_order_status(ctx, status):
     fmlinkdb = ctx.parent.obj["fmlinkdb"]
     wcapi = ctx.parent.obj.get("wcapi") or exit(1)
 
-    orders.update_packed_orders_status(fmlinkdb, wcapi, cli=True, target_status=status)
+    try:
+        orders.update_packed_orders_status(fmlinkdb, wcapi, cli=True, target_status=status)
+    except orders.OrderUpdateFailed as e:
+        raise click.ClickException(str(e))
 
 
 @cli.command()
