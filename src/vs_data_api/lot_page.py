@@ -39,7 +39,7 @@ def render_lot(summary) -> str:
         f"<h1>Lot {summary.lot_number}</h1><dl>"
         + _row("SKU", summary.sku)
         + _row("Source", summary.source)
-        + _row("Final weight", weight)
+        + _row("Weight", weight)
         + '</dl><p><a href="/lot">Look up another lot</a></p>'
     )
     return _page(f"Lot {summary.lot_number}", body)

@@ -104,3 +104,29 @@ HTML. A test marked `fmdb` can check the real field names against FileMaker.
 
 HTML templating approach (inline string, Jinja, etc.), URL details beyond
 `/lot/{lot_number}`, module names, and how to word the plain-English messages.
+
+## Step 2: germination result and test list
+
+**Status:** draft. Step 1 above is built and tested by hand.
+
+Add to the lot page and JSON:
+
+- **Germination result**: the `Result` of the lot's **latest test that has a
+  result**. [My guess at "result (if known)"; the user confirmed `Result` on
+  `Germ_tests` is the field.] "not recorded" when no test has a result.
+- **Germination tests**: a list, newest first by `Date`, one line per test with
+  date, result, seed count and notes. A test with no `Result` shows "in
+  progress"; a lot with no tests shows "No germination tests yet", which is the
+  cue to count out seeds for a test.
+
+Data (`Germ_tests` table, from the database design report): `Lot_numberFK`
+(the lot number), `Date`, `Result` (number), `Seed count` (text), `Notes`.
+`test_number` breaks ties on equal dates. Read-only, no new route.
+
+- Result is shown as a percentage, e.g. "85%". [My guess: the unit is not
+  stated; confirm against real data before building the display.]
+- Pass / Borderline / Fail (`Germ_tests.status`) is **out of scope** here. It
+  is a calculated field using per-crop thresholds in another table.
+- A bad value in one test row (e.g. text in `Result`) is the same case as step
+  1: it gives the "can't be read" error, not a half-page.
+- Notes on the lot itself (`seed_lots.Notes`) stay a later step.
