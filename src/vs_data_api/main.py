@@ -1,20 +1,16 @@
 from datetime import datetime
-from functools import lru_cache
 
 from fastapi import Depends, FastAPI
 from starlette.responses import FileResponse
 
-from vs_data_api import config, health
+from vs_data_api import config, health, lot_routes
+from vs_data_api.settings import get_settings
 from vs_data_api.vs_data import orders, stock
 from vs_data_api.vs_data.fm import db
 from vs_data_api.vs_data.products import import_wc_product_ids_from_linkdb
 
 app = FastAPI(title="VS Data API")
-
-
-@lru_cache()
-def get_settings():
-    return config.Settings()
+app.include_router(lot_routes.router)
 
 
 # def has_settings(func):
@@ -241,9 +237,3 @@ async def import_wc_product_ids(settings: config.Settings = Depends(get_settings
             f"{len(variations)} variation skus imported."
         )
     }
-
-
-# Included last: lot_routes imports get_settings from this module
-from vs_data_api import lot_routes  # noqa: E402
-
-app.include_router(lot_routes.router)

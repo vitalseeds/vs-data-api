@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 
 from vs_data_api import config, lot_page
-from vs_data_api.main import get_settings
+from vs_data_api.settings import get_settings
 from vs_data_api.vs_data import log
 from vs_data_api.vs_data.fm import db
 from vs_data_api.vs_data.lots import get_lot_summary
