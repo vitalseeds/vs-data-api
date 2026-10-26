@@ -68,7 +68,6 @@ class GermTests(FilemakerTable):
     date: str = "Date"
     result: float = "Result"
     seed_count: str = "Seed count"
-    test_number: int = "test_number"
     notes: str = "Notes"
 
 

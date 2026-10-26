@@ -122,7 +122,7 @@ Add to the lot page and JSON:
 
 Data (`Germ_tests` table, from the database design report): `Lot_numberFK`
 (the lot number), `Date`, `Result` (number), `Seed count` (text), `Notes`.
-`test_number` breaks ties on equal dates. Read-only, no new route.
+Not every database has a `test_number` column (the test copy does not), so it is not used; tests on the same date are ordered by FileMaker's record order, later record first. Read-only, no new route.
 
 - Result is shown as a percentage, e.g. "85%". [My guess: the unit is not
   stated; confirm against real data before building the display.]

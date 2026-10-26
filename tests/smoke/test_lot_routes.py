@@ -97,7 +97,7 @@ def test_json_includes_germination(client):
 
     results = {
         r'FROM "seed_lots"': [LOT_ROW],
-        r'FROM "Germ_tests"': [(date(2026, 1, 5), 88.5, "50", 1, "good")],
+        r'FROM "Germ_tests"': [(date(2026, 1, 5), 88.5, "50", "good")],
     }
     with patch.object(main.db, "connection", side_effect=lambda cs: FakeConnection(results)):
         body = client.get("/lot/3538?format=json").json()
@@ -106,7 +106,7 @@ def test_json_includes_germination(client):
 
 
 def test_unreadable_germ_result_is_500_not_503(client):
-    results = {r'FROM "seed_lots"': [LOT_ROW], r'FROM "Germ_tests"': [(None, "approx 80", "", 1, "")]}
+    results = {r'FROM "seed_lots"': [LOT_ROW], r'FROM "Germ_tests"': [(None, "approx 80", "", "")]}
     with patch.object(main.db, "connection", side_effect=lambda cs: FakeConnection(results)):
         response = client.get("/lot/3538")
     assert response.status_code == 500 and "be read" in response.text

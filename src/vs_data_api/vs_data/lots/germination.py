@@ -24,10 +24,12 @@ def get_germ_tests(connection, lot_number: int) -> list[GermTest]:
     rows = db.select(
         connection,
         "germ_tests",
-        ["date", "result", "seed_count", "test_number", "notes"],
+        ["date", "result", "seed_count", "notes"],
         where=f"Lot_numberFK = {int(lot_number)}",
     )
-    rows.sort(key=lambda r: (r["date"] is not None, r["date"] or date.min, r["test_number"] or 0), reverse=True)
+    # Not every database has a test number, so for tests on the same date the later record comes first
+    rows.reverse()
+    rows.sort(key=lambda r: (r["date"] is not None, r["date"] or date.min), reverse=True)
     return [
         GermTest(
             date=_blank_to_none(r["date"]),
