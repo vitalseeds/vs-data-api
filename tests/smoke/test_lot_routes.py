@@ -72,3 +72,14 @@ def test_form_redirects_to_lot_page(client):
     response = client.get("/lot?lot_number=3538", follow_redirects=False)
     assert response.status_code == 303
     assert response.headers["location"] == "/lot/3538"
+
+
+def test_unreadable_value_in_filemaker_is_not_reported_as_down(client):
+    results = {r"lot_number\s*=\s*3538": [(3538, "CAR-1", "Seeds Ltd", "approx 100")]}
+    with patch.object(main.db, "connection", side_effect=lambda cs: FakeConnection(results)):
+        html = client.get("/lot/3538")
+        js = client.get("/lot/3538?format=json")
+    assert html.status_code == 500 and js.status_code == 500
+    assert "Lot 3538" in html.text and "be read" in html.text
+    assert "unavailable" not in html.text.lower()
+    assert "can't be read" in js.json()["message"]

@@ -2,6 +2,7 @@
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+from pydantic import ValidationError
 
 from vs_data_api import config, lot_page
 from vs_data_api.settings import get_settings
@@ -13,6 +14,10 @@ router = APIRouter()
 
 MAX_LOT_NUMBER = 2147483647
 FILEMAKER_DOWN = "Can't reach FileMaker right now. Check that FileMaker is open on the office PC."
+
+
+def unreadable_value(number: int) -> str:
+    return f"Lot {number} has a value in FileMaker that can't be read (for example text in the weight). Fix it in FileMaker."
 
 
 def _wants_json(request: Request) -> bool:
@@ -57,6 +62,9 @@ async def get_lot(lot_number: str, request: Request, settings: config.Settings =
         connection = db.connection(settings.fm_connection_string)
         with connection:
             summary = get_lot_summary(connection, number)
+    except ValidationError as e:
+        log.error(f"Lot {number} has a value in FileMaker that could not be read: {e}")
+        return _message(request, 500, "Lot can't be shown", unreadable_value(number))
     except Exception as e:
         log.error(f"Lot summary for {number} failed: {e!r}")
         return _message(request, 503, "FileMaker unavailable", FILEMAKER_DOWN)
