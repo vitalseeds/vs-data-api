@@ -10,8 +10,7 @@ form{margin-bottom:1rem}
 h1{font-size:clamp(2.5rem,14vw,4rem);line-height:1.1;margin:0 0 1rem}
 dl.fields{display:grid;grid-template-columns:1fr 1fr;gap:.2rem 1rem;margin:0}
 dt{color:#555;font-size:.9rem;margin-top:.8rem}dd{margin:0;font-weight:600;overflow-wrap:anywhere}
-input,button{font-size:1.1rem;padding:.5rem;margin:.3rem .3rem .3rem 0}
-button{line-height:0}
+input{font-size:1.1rem;padding:.5rem;margin:.3rem 0;width:100%;box-sizing:border-box}
 .missing{color:#999;font-weight:400}
 h2{font-size:1.2rem;margin:1.5rem 0 .5rem}
 .germination{background:#eee;border-radius:.5rem;padding:.1rem 1rem .5rem;margin-top:1.5rem}
@@ -47,18 +46,12 @@ box.addEventListener('input', () => {
 """
 
 
-_SEARCH_ICON = (
-    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" '
-    'stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>'
-)
-
-
 def _search_box(lot_number: str = "") -> str:
     return (
         '<form action="/lot" method="get">'
         '<input name="lot_number" type="search" inputmode="numeric" placeholder="Lot number" '
         f'value="{escape(lot_number)}" autocomplete="off">'
-        f'<button aria-label="Show lot">{_SEARCH_ICON}</button></form>'
+        "</form>"
     )
 
 

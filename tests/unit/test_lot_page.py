@@ -109,10 +109,10 @@ def test_form_page_has_search_box_and_no_result():
     assert 'name="lot_number"' in html and 'id="result"' in html
 
 
-def test_search_button_is_an_icon_with_an_accessible_name():
+def test_no_search_button_because_the_page_refreshes_itself():
     html = lot_page.render_form()
-    assert '<button aria-label="Show lot"' in html and "<svg" in html
-    assert ">Show lot<" not in html
+    assert "<button" not in html and "<svg" not in html
+    assert 'type="search"' in html  # Enter or the keyboard's search key still submits the form
 
 
 def test_fields_are_in_a_two_column_grid_sku_source_first():
