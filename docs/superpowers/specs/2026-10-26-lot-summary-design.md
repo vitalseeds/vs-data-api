@@ -111,9 +111,10 @@ HTML templating approach (inline string, Jinja, etc.), URL details beyond
 
 Add to the lot page and JSON:
 
-- **Germination result**: the `Result` of the lot's **latest test that has a
-  result**. [My guess at "result (if known)"; the user confirmed `Result` on
-  `Germ_tests` is the field.] "not recorded" when no test has a result.
+- **Germination result**: the `Result` of the lot's **latest test** (confirmed:
+  "the last one"; `Result` on `Germ_tests` is the field). "not recorded" when
+  there are no tests or the latest has no result yet (it shows "in progress" in
+  the list). An older result is never shown as the lot's result.
 - **Germination tests**: a list, newest first by `Date`, one line per test with
   date, result, seed count and notes. A test with no `Result` shows "in
   progress"; a lot with no tests shows "No germination tests yet", which is the

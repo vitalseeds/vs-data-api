@@ -10,6 +10,8 @@ h1{font-size:1.5rem;margin:0 0 1rem}
 dl{margin:0}dt{color:#555;font-size:.9rem;margin-top:.8rem}dd{margin:0;font-weight:600}
 input,button{font-size:1.1rem;padding:.5rem;margin:.3rem .3rem .3rem 0}
 .missing{color:#999;font-weight:400}
+h2{font-size:1.2rem;margin:1.5rem 0 .5rem}
+.test{border-top:1px solid #ddd;padding:.5rem 0}.test small{color:#555;display:block;font-weight:400}
 """
 
 
@@ -28,6 +30,27 @@ def format_weight(grams: float | None) -> str:
     return f"{grams:g} g"
 
 
+def format_result(percent: float | None) -> str:
+    if percent is None:
+        return NOT_RECORDED
+    return f"{percent:g}%"
+
+
+def _test_line(test) -> str:
+    when = "no date" if test.date is None else test.date.isoformat()
+    result = "in progress" if test.result is None else format_result(test.result)
+    details = [f"{escape(test.seed_count)} seeds"] if test.seed_count else []
+    if test.notes:
+        details.append(escape(test.notes))
+    extra = f"<small>{' · '.join(details)}</small>" if details else ""
+    return f'<div class="test"><strong>{when}</strong> {escape(result)}{extra}</div>'
+
+
+def _germ_tests(tests) -> str:
+    lines = "".join(_test_line(t) for t in tests) or "<p>No germination tests yet</p>"
+    return f"<h2>Germination tests</h2>{lines}"
+
+
 def _row(label: str, value: str | None) -> str:
     shown = f'<span class="missing">{NOT_RECORDED}</span>' if value is None else escape(value)
     return f"<dt>{escape(label)}</dt><dd>{shown}</dd>"
@@ -40,7 +63,10 @@ def render_lot(summary) -> str:
         + _row("SKU", summary.sku)
         + _row("Source", summary.source)
         + _row("Weight", weight)
-        + '</dl><p><a href="/lot">Look up another lot</a></p>'
+        + _row("Germination result", None if summary.germ_result is None else format_result(summary.germ_result))
+        + "</dl>"
+        + _germ_tests(summary.germ_tests)
+        + '<p><a href="/lot">Look up another lot</a></p>'
     )
     return _page(f"Lot {summary.lot_number}", body)
 

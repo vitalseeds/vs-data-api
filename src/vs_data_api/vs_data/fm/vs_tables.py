@@ -61,6 +61,17 @@ class SeedLots(FilemakerTable):
     original_weight: float = "Original weight"  # grams; used as the final weight
 
 
+class GermTests(FilemakerTable):
+    table_name: ClassVar = "Germ_tests"
+
+    lot_number: int = "Lot_numberFK"
+    date: str = "Date"
+    result: float = "Result"
+    seed_count: str = "Seed count"
+    test_number: int = "test_number"
+    notes: str = "Notes"
+
+
 class Stock(FilemakerTable):
     table_name: ClassVar = "stock"
 

@@ -28,7 +28,14 @@ def test_html_found(client, fm):
 def test_json_found_via_query(client, fm):
     response = client.get("/lot/3538?format=json")
     assert response.status_code == 200
-    assert response.json() == {"lot_number": 3538, "sku": "CAR-1", "source": "Seeds Ltd", "final_weight_g": 125.5}
+    assert response.json() == {
+        "lot_number": 3538,
+        "sku": "CAR-1",
+        "source": "Seeds Ltd",
+        "final_weight_g": 125.5,
+        "germ_result": None,
+        "germ_tests": [],
+    }
 
 
 def test_json_found_via_accept_header(client, fm):
@@ -83,3 +90,23 @@ def test_unreadable_value_in_filemaker_is_not_reported_as_down(client):
     assert "Lot 3538" in html.text and "be read" in html.text
     assert "unavailable" not in html.text.lower()
     assert "can't be read" in js.json()["message"]
+
+
+def test_json_includes_germination(client):
+    from datetime import date
+
+    results = {
+        r'FROM "seed_lots"': [LOT_ROW],
+        r'FROM "Germ_tests"': [(date(2026, 1, 5), 88.5, "50", 1, "good")],
+    }
+    with patch.object(main.db, "connection", side_effect=lambda cs: FakeConnection(results)):
+        body = client.get("/lot/3538?format=json").json()
+    assert body["germ_result"] == 88.5
+    assert body["germ_tests"] == [{"date": "2026-01-05", "result": 88.5, "seed_count": "50", "notes": "good"}]
+
+
+def test_unreadable_germ_result_is_500_not_503(client):
+    results = {r'FROM "seed_lots"': [LOT_ROW], r'FROM "Germ_tests"': [(None, "approx 80", "", 1, "")]}
+    with patch.object(main.db, "connection", side_effect=lambda cs: FakeConnection(results)):
+        response = client.get("/lot/3538")
+    assert response.status_code == 500 and "be read" in response.text

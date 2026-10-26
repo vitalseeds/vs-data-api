@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- Result = `Result` of the latest test (by `Date`, ties by `test_number`) that has one; blank, `None` or `""` is no result. A `Result` of 0 is a real result (unlike weight).
+- Result = `Result` of the latest test (by `Date`, ties by `test_number`); if that test has none, the lot result is "not recorded" (never an older test's); blank, `None` or `""` is no result. A `Result` of 0 is a real result (unlike weight).
 - Test list newest first; test with no `Result` shows "in progress"; no tests shows "No germination tests yet".
 - Result displays as a percentage ("85%", "87.5%"); this unit is a guess, confirmed in Task 2.
 - Read-only; Pass/Borderline/Fail and `seed_lots.Notes` are out of scope.
@@ -23,7 +23,7 @@
 ## Review Focus
 
 - Lot with no tests: "No germination tests yet", result "not recorded", no error.
-- Tests exist but none has a result: result "not recorded", all rows "in progress".
+- Latest test has no result but an older one does: result "not recorded", the older result only in the list.
 - Result of 0 and of 100: shown as "0%" / "100%", not "not recorded".
 - Two tests on the same date: stable order (by `test_number`), latest result picked deterministically.
 - Test with no `Date`: listed last, shown as "no date", never crashes sorting.
@@ -43,10 +43,10 @@
 - `GermTests` fields: `lot_number = "Lot_numberFK"`, `date = "Date"`, `result = "Result"`, `seed_count = "Seed count"`, `test_number = "test_number"`, `notes = "Notes"`.
 - Produces: `GermTest` (pydantic): `date: datetime.date | None`, `result: float | None`, `seed_count: str | None`, `notes: str | None`.
 - Produces: `get_germ_tests(connection, lot_number: int) -> list[GermTest]`, newest first (no date last, then `test_number` descending), blank values as `None`.
-- Produces: `latest_result(tests: list[GermTest]) -> float | None`: result of the first test with a non-`None` result.
+- Produces: `latest_result(tests: list[GermTest]) -> float | None`: the first test's result (tests are newest first), `None` for no tests.
 - `LotSummary` gains `germ_tests: list[GermTest]` and `germ_result: float | None`; `get_lot_summary` fills both only when the lot exists (one extra query).
 
-- [ ] **Step 1: Write failing tests** with `FakeConnection({r'FROM "Germ_tests"': rows, r'FROM "seed_lots"': [...]})`: `test_tests_newest_first`; `test_no_date_sorts_last`; `test_same_date_ordered_by_test_number`; `test_blank_result_is_none_but_zero_is_kept`; `test_latest_result_skips_tests_without_result`; `test_latest_result_none_when_no_results`; `test_summary_includes_tests_and_result`; `test_missing_lot_makes_no_germ_query` (only one SQL statement executed). Row order must match the selected column list.
+- [ ] **Step 1: Write failing tests** with `FakeConnection({r'FROM "Germ_tests"': rows, r'FROM "seed_lots"': [...]})`: `test_tests_newest_first`; `test_no_date_sorts_last`; `test_same_date_ordered_by_test_number`; `test_blank_result_is_none_but_zero_is_kept`; `test_latest_result_is_none_when_latest_test_has_no_result` (an older test has one); `test_latest_result_none_when_no_tests`; `test_summary_includes_tests_and_result`; `test_missing_lot_makes_no_germ_query` (only one SQL statement executed). Row order must match the selected column list.
 - [ ] **Step 2: Run** `uv run --extra test pytest tests/unit/test_lot_germination.py tests/unit/test_lot_summary.py -q`. Expected: FAIL (import errors).
 - [ ] **Step 3: Implement** the mapping, `get_germ_tests` (`db.select` with `where=f"Lot_numberFK = {int(lot_number)}"`, sort in Python so ordering rules are testable), `latest_result`, and the `LotSummary` fields. Keep existing step 1 tests passing (their fake has no `Germ_tests` rows, so the list is empty).
 - [ ] **Step 4: Run** the same command plus `tests/unit/test_fmdb_constants.py`. Expected: PASS.
