@@ -120,3 +120,13 @@ def test_fields_are_in_a_two_column_grid_sku_source_first():
     assert 'class="fields"' in html and "grid-template-columns:1fr 1fr" in html
     order = [html.index(f">{label}</dt>") for label in ("SKU", "Source", "Weight", "Germination result")]
     assert order == sorted(order)
+
+
+def test_title_and_heading_are_the_lot_number_with_a_hash():
+    html = lot_page.render_lot(summary())
+    assert "<title>#3538</title>" in html and "<h1>#3538</h1>" in html
+    assert "Lot 3538" not in html
+
+
+def test_there_is_space_below_the_search_form():
+    assert "form{margin-bottom:1rem}" in lot_page.render_lot(summary())

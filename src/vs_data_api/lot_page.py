@@ -6,6 +6,7 @@ NOT_RECORDED = "not recorded"
 
 _STYLE = """
 body{font-family:system-ui,sans-serif;margin:0;padding:1rem;font-size:1.1rem;line-height:1.4}
+form{margin-bottom:1rem}
 h1{font-size:1.5rem;margin:0 0 1rem}
 dl.fields{display:grid;grid-template-columns:1fr 1fr;gap:.2rem 1rem;margin:0}
 dt{color:#555;font-size:.9rem;margin-top:.8rem}dd{margin:0;font-weight:600;overflow-wrap:anywhere}
@@ -102,7 +103,7 @@ def _row(label: str, value: str | None) -> str:
 def render_lot(summary) -> str:
     weight = None if summary.final_weight_g is None else format_weight(summary.final_weight_g)
     body = (
-        f'<h1>Lot {summary.lot_number}</h1><dl class="fields">'
+        f'<h1>#{summary.lot_number}</h1><dl class="fields">'
         + _row("SKU", summary.sku)
         + _row("Source", summary.source)
         + _row("Weight", weight)
@@ -110,7 +111,7 @@ def render_lot(summary) -> str:
         + "</dl>"
         + _germ_tests(summary.germ_tests)
     )
-    return _page(f"Lot {summary.lot_number}", body, str(summary.lot_number))
+    return _page(f"#{summary.lot_number}", body, str(summary.lot_number))
 
 
 def render_form() -> str:
