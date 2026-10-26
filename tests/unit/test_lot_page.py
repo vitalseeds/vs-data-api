@@ -134,8 +134,24 @@ def test_there_is_space_below_the_search_form():
 
 def test_date_has_room_before_the_result():
     html = lot_page.render_lot(summary(germ_tests=[germ(date(2026, 3, 9), 90)]))
-    assert ".test strong{" in html and "margin-right:" in html
+    assert "th,td{padding:.4rem .5rem .4rem 0" in html and "td.date{white-space:nowrap}" in html
 
 
 def test_lot_number_heading_is_large():
     assert "h1{font-size:clamp(2.5rem,14vw,4rem)" in lot_page.render_lot(summary())
+
+
+def test_germination_tests_are_a_table_with_result_right_aligned():
+    tests = [germ(date(2026, 3, 1), 91, notes="ok"), germ(date(2025, 1, 2), None)]
+    html = lot_page.render_lot(summary(germ_tests=tests))
+    assert "<table" in html and html.count("<tr") == 3  # header + 2 tests
+    for heading in ("Date", "Seeds", "Notes", "Result"):
+        assert f">{heading}</th>" in html
+    assert html.index(">Notes</th>") < html.index(">Result</th>")  # result is the right-most column
+    assert ".num{text-align:right" in html
+    assert '<td class="num">91%</td>' in html and '<td class="num">in progress</td>' in html
+
+
+def test_no_table_when_there_are_no_tests():
+    html = lot_page.render_lot(summary(germ_tests=[]))
+    assert "<table" not in html and "No germination tests yet" in html

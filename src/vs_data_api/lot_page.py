@@ -16,7 +16,11 @@ button{line-height:0}
 h2{font-size:1.2rem;margin:1.5rem 0 .5rem}
 .germination{background:#eee;border-radius:.5rem;padding:.1rem 1rem .5rem;margin-top:1.5rem}
 .germination h2{margin-top:.8rem}
-.test{border-top:1px solid #ccc;padding:.5rem 0}.test strong{margin-right:1rem;white-space:nowrap}.test small{color:#555;display:block;font-weight:400}
+table{width:100%;border-collapse:collapse}
+th{color:#555;font-size:.9rem;font-weight:400;text-align:left}
+th,td{padding:.4rem .5rem .4rem 0;border-top:1px solid #ccc;vertical-align:top}
+.num{text-align:right;padding-right:0}td.num{font-weight:600;white-space:nowrap}
+td.date{white-space:nowrap}
 """
 
 
@@ -80,19 +84,22 @@ def format_result(percent: float | None) -> str:
     return f"{percent:g}%"
 
 
-def _test_line(test) -> str:
+def _test_row(test) -> str:
     when = "no date" if test.date is None else test.date.strftime("%d / %m / %y")
     result = "in progress" if test.result is None else format_result(test.result)
-    details = [f"{escape(test.seed_count)} seeds"] if test.seed_count else []
-    if test.notes:
-        details.append(escape(test.notes))
-    extra = f"<small>{' · '.join(details)}</small>" if details else ""
-    return f'<div class="test"><strong>{when}</strong> {escape(result)}{extra}</div>'
+    return (
+        f'<tr><td class="date">{when}</td><td>{escape(test.seed_count or "")}</td>'
+        f'<td>{escape(test.notes or "")}</td><td class="num">{escape(result)}</td></tr>'
+    )
 
 
 def _germ_tests(tests) -> str:
-    lines = "".join(_test_line(t) for t in tests) or "<p>No germination tests yet</p>"
-    return f'<div class="germination"><h2>Germination tests</h2>{lines}</div>'
+    if not tests:
+        table = "<p>No germination tests yet</p>"
+    else:
+        head = '<tr><th>Date</th><th>Seeds</th><th>Notes</th><th class="num">Result</th></tr>'
+        table = f"<table>{head}{''.join(_test_row(t) for t in tests)}</table>"
+    return f'<div class="germination"><h2>Germination tests</h2>{table}</div>'
 
 
 def _row(label: str, value: str | None) -> str:
