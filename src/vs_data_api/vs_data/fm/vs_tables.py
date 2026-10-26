@@ -57,6 +57,8 @@ class SeedLots(FilemakerTable):
 
     lot_number: int = "lot_number"
     sku: str = "sku"  # previously 'SKUFK'
+    source: str = "Source"
+    original_weight: float = "Original weight"  # grams; used as the final weight
 
 
 class Stock(FilemakerTable):
