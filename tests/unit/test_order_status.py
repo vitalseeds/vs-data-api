@@ -73,15 +73,59 @@ def test_completed_order_without_a_completion_date_uses_now(wcapi, mocked_respon
     assert re.search(r"DateCompleted=TIMESTAMP '\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}'", update)
 
 
-def test_other_statuses_are_set_on_all_selected_orders(wcapi, mocked_responses):
-    expect_batch_update(mocked_responses, [46011], "processing")
-    linkdb = link_db(46011)
+def test_other_statuses_are_set_only_on_orders_woocommerce_confirmed(wcapi, mocked_responses):
+    expect_batch_update(mocked_responses, [46011, 46012], "packing")
+    linkdb = link_db(46011, 46012)
 
-    status.update_packed_orders_status(linkdb, wcapi, target_status="processing")
+    status.update_packed_orders_status(linkdb, wcapi, target_status="packing")
 
     assert linkdb.statements("^UPDATE") == [
-        "UPDATE \"Orders\" SET selected='', order_status='processing' WHERE selected='yes' OR selected='Yes'"
+        f"UPDATE \"Orders\" SET selected='', order_status='packing' WHERE \"_kf_WooCommerceID\" = {order_id}"
+        for order_id in (46011, 46012)
     ]
+
+
+def test_rejected_orders_stay_selected_with_their_old_status(wcapi, mocked_responses):
+    mocked_responses.post(
+        f"{WC}/orders/batch",
+        json={
+            "update": [
+                {"id": 46011, "status": "packing"},
+                {"id": 46012, "error": {"code": "rest_invalid_param", "message": "Invalid status."}},
+            ]
+        },
+    )
+    linkdb = link_db(46011, 46012)
+
+    with pytest.raises(status.OrderUpdateFailed, match="46012"):
+        status.update_packed_orders_status(linkdb, wcapi, target_status="packing")
+
+    [update] = linkdb.statements("^UPDATE")
+    assert "46011" in update and "46012" not in update
+
+
+def test_order_woocommerce_leaves_in_another_status_is_not_counted_as_updated(wcapi, mocked_responses, caplog):
+    mocked_responses.post(f"{WC}/orders/batch", json={"update": [{"id": 46011, "status": "on-hold"}]})
+    linkdb = link_db(46011)
+
+    with pytest.raises(status.OrderUpdateFailed, match="didn't update any"):
+        status.update_packed_orders_status(linkdb, wcapi, target_status="packing")
+
+    assert linkdb.statements("^UPDATE") == []
+    assert "on-hold" in caplog.text
+
+
+def test_a_failed_later_batch_keeps_earlier_batches_results(wcapi, mocked_responses):
+    order_ids = list(range(1, 151))
+    expect_batch_update(mocked_responses, order_ids[:100], "packing")
+    mocked_responses.post(f"{WC}/orders/batch", status=500, json={"code": "error"})
+    linkdb = link_db(*order_ids)
+
+    with pytest.raises(status.OrderUpdateFailed, match="100 of 150") as failure:
+        status.update_packed_orders_status(linkdb, wcapi, target_status="packing")
+
+    assert len(failure.value.updated) == 100
+    assert len(linkdb.statements("^UPDATE")) == 100
 
 
 def test_link_db_is_not_changed_if_woocommerce_fails(wcapi, mocked_responses):
