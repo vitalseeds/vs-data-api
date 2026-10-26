@@ -7,8 +7,10 @@ NOT_RECORDED = "not recorded"
 _STYLE = """
 body{font-family:system-ui,sans-serif;margin:0;padding:1rem;font-size:1.1rem;line-height:1.4}
 h1{font-size:1.5rem;margin:0 0 1rem}
-dl{margin:0}dt{color:#555;font-size:.9rem;margin-top:.8rem}dd{margin:0;font-weight:600}
+dl.fields{display:grid;grid-template-columns:1fr 1fr;gap:.2rem 1rem;margin:0}
+dt{color:#555;font-size:.9rem;margin-top:.8rem}dd{margin:0;font-weight:600;overflow-wrap:anywhere}
 input,button{font-size:1.1rem;padding:.5rem;margin:.3rem .3rem .3rem 0}
+button{line-height:0}
 .missing{color:#999;font-weight:400}
 h2{font-size:1.2rem;margin:1.5rem 0 .5rem}
 .germination{background:#eee;border-radius:.5rem;padding:.1rem 1rem .5rem;margin-top:1.5rem}
@@ -40,12 +42,18 @@ box.addEventListener('input', () => {
 """
 
 
+_SEARCH_ICON = (
+    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" '
+    'stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>'
+)
+
+
 def _search_box(lot_number: str = "") -> str:
     return (
         '<form action="/lot" method="get">'
         '<input name="lot_number" type="search" inputmode="numeric" placeholder="Lot number" '
         f'value="{escape(lot_number)}" autocomplete="off">'
-        "<button>Show lot</button></form>"
+        f'<button aria-label="Show lot">{_SEARCH_ICON}</button></form>'
     )
 
 
@@ -88,13 +96,13 @@ def _germ_tests(tests) -> str:
 
 def _row(label: str, value: str | None) -> str:
     shown = f'<span class="missing">{NOT_RECORDED}</span>' if value is None else escape(value)
-    return f"<dt>{escape(label)}</dt><dd>{shown}</dd>"
+    return f"<div><dt>{escape(label)}</dt><dd>{shown}</dd></div>"
 
 
 def render_lot(summary) -> str:
     weight = None if summary.final_weight_g is None else format_weight(summary.final_weight_g)
     body = (
-        f"<h1>Lot {summary.lot_number}</h1><dl>"
+        f'<h1>Lot {summary.lot_number}</h1><dl class="fields">'
         + _row("SKU", summary.sku)
         + _row("Source", summary.source)
         + _row("Weight", weight)

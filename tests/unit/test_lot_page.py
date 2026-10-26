@@ -107,3 +107,16 @@ def test_message_page_keeps_the_search_box_with_what_was_typed():
 def test_form_page_has_search_box_and_no_result():
     html = lot_page.render_form()
     assert 'name="lot_number"' in html and 'id="result"' in html
+
+
+def test_search_button_is_an_icon_with_an_accessible_name():
+    html = lot_page.render_form()
+    assert '<button aria-label="Show lot"' in html and "<svg" in html
+    assert ">Show lot<" not in html
+
+
+def test_fields_are_in_a_two_column_grid_sku_source_first():
+    html = lot_page.render_lot(summary())
+    assert 'class="fields"' in html and "grid-template-columns:1fr 1fr" in html
+    order = [html.index(f">{label}</dt>") for label in ("SKU", "Source", "Weight", "Germination result")]
+    assert order == sorted(order)
