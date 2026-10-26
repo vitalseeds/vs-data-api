@@ -241,3 +241,9 @@ async def import_wc_product_ids(settings: config.Settings = Depends(get_settings
             f"{len(variations)} variation skus imported."
         )
     }
+
+
+# Included last: lot_routes imports get_settings from this module
+from vs_data_api import lot_routes  # noqa: E402
+
+app.include_router(lot_routes.router)

@@ -93,6 +93,8 @@ COVERED = {path for path, *_ in ENDPOINTS} | {
     "/stock/report/all",
     "/products/import-wc-product-ids",
     "/orders/selected/update/status/{target_status}",
+    "/lot",  # tests/smoke/test_lot_routes.py
+    "/lot/{lot_number}",
 }
 COVERED.discard("/orders/selected/update/status/completed")
 
