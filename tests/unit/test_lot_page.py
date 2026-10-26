@@ -177,3 +177,10 @@ def test_notes_with_quotes_and_markup_are_escaped_in_the_attribute():
 def test_dialog_is_outside_the_swapped_result_so_it_survives_a_new_lookup():
     html = lot_page.render_lot(summary())
     assert '</div><dialog id="notes"' in html  # the result div has closed before the dialog starts
+
+
+def test_sku_value_is_bigger_than_the_other_values():
+    html = lot_page.render_lot(summary())
+    assert '<dd class="big">CAR-1</dd>' in html
+    assert html.count('class="big"') == 1
+    assert "dd.big{font-size:1.8rem" in html

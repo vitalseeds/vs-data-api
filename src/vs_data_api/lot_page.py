@@ -23,6 +23,7 @@ th{color:#555;font-size:.9rem;font-weight:400;text-align:left}
 th,td{padding:.4rem .5rem .4rem 0;border-top:1px solid #ccc;vertical-align:top}
 .num{text-align:right;padding-right:0}td.num{font-weight:600;white-space:nowrap}
 td.date{white-space:nowrap}
+dd.big{font-size:1.8rem;line-height:1.2}
 """
 
 
@@ -113,16 +114,17 @@ def _germ_tests(tests) -> str:
     return f'<div class="germination"><h2>Germination tests</h2>{table}</div>'
 
 
-def _row(label: str, value: str | None) -> str:
+def _row(label: str, value: str | None, big: bool = False) -> str:
     shown = f'<span class="missing">{NOT_RECORDED}</span>' if value is None else escape(value)
-    return f"<div><dt>{escape(label)}</dt><dd>{shown}</dd></div>"
+    css = ' class="big"' if big else ""
+    return f"<div><dt>{escape(label)}</dt><dd{css}>{shown}</dd></div>"
 
 
 def render_lot(summary) -> str:
     weight = None if summary.final_weight_g is None else format_weight(summary.final_weight_g)
     body = (
         f'<h1>#{summary.lot_number}</h1><dl class="fields">'
-        + _row("SKU", summary.sku)
+        + _row("SKU", summary.sku, big=True)
         + _row("Source", summary.source)
         + _row("Weight", weight)
         + _row("Germination result", None if summary.germ_result is None else format_result(summary.germ_result))
