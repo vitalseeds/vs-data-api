@@ -59,6 +59,8 @@ class SeedLots(FilemakerTable):
     sku: str = "sku"  # previously 'SKUFK'
     source: str = "Source"
     original_weight: float = "Original weight"  # grams; used as the final weight
+    current_weight: float = "Current weight"  # calculated in FileMaker; may come back as text like "350g"
+    date_received: str = "Date received"
 
 
 class GermTests(FilemakerTable):

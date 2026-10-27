@@ -20,3 +20,13 @@ def test_germ_tests_fields_exist(vsdb_connection):
     assert rows, "Germ_tests has no rows to check"
     tests = get_germ_tests(vsdb_connection, rows[0]["lot_number"])
     assert tests
+
+
+@pytest.mark.fmdb
+def test_sku_lots_fields_exist_and_current_weight_is_readable(vsdb_connection):
+    from vs_data_api.vs_data.lots import get_sku_lots
+
+    rows = db.select(vsdb_connection, "seed_lots", ["sku"], where="\"sku\" IS NOT NULL")
+    assert rows, "seed_lots has no SKUs to check"
+    result = get_sku_lots(vsdb_connection, rows[0]["sku"].lower())  # also checks case insensitivity
+    assert result and result.sku == rows[0]["sku"]

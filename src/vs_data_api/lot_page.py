@@ -1,6 +1,7 @@
 """HTML for the lot summary page. Small and phone-friendly, no templating dependency."""
 
 from html import escape
+from urllib.parse import quote
 
 NOT_RECORDED = "not recorded"
 
@@ -24,6 +25,12 @@ th,td{padding:.4rem .5rem .4rem 0;border-top:1px solid #ccc;vertical-align:top}
 .num{text-align:right;padding-right:0}td.num{font-weight:600;white-space:nowrap}
 td.date{white-space:nowrap}
 dd.big{font-size:1.8rem;line-height:1.2}
+.search{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+.search form{flex:1;margin:0}
+dd a{color:inherit}
+.switch{white-space:nowrap;color:#333;text-decoration:none}
+.switch s{color:#999}
+.used td{text-decoration:line-through;color:#777}
 """
 
 
@@ -38,7 +45,8 @@ document.addEventListener('click', (event) => {
   document.getElementById('notes-text').textContent = link.dataset.notes;
   notes.showModal();
 });
-const box = document.querySelector('[name=lot_number]');
+const prefix = '__PREFIX__';
+const box = document.querySelector('.search input');
 let timer;
 box.addEventListener('input', () => {
   clearTimeout(timer);
@@ -46,10 +54,10 @@ box.addEventListener('input', () => {
   if (!lot) return;
   timer = setTimeout(async () => {
     try {
-      const page = new DOMParser().parseFromString(await (await fetch('/lot/' + encodeURIComponent(lot))).text(), 'text/html');
+      const page = new DOMParser().parseFromString(await (await fetch(prefix + '/' + encodeURIComponent(lot))).text(), 'text/html');
       document.getElementById('result').innerHTML = page.getElementById('result').innerHTML;
       document.title = page.title;
-      history.replaceState(null, '', '/lot/' + encodeURIComponent(lot));
+      history.replaceState(null, '', prefix + '/' + encodeURIComponent(lot));
     } catch (e) {
       document.getElementById('result').textContent = "Couldn't look that up. Check the connection and try again.";
     }
@@ -58,23 +66,47 @@ box.addEventListener('input', () => {
 """
 
 
-def _search_box(lot_number: str = "") -> str:
+class _Search:
+    """What differs between the lot search and the SKU search: where it goes and what it takes."""
+
+    def __init__(self, route: str, field: str, placeholder: str, inputmode: str, other: str):
+        self.route, self.field, self.placeholder, self.inputmode, self.other = route, field, placeholder, inputmode, other
+
+    @property
+    def name(self) -> str:
+        return self.route.lstrip("/")
+
+
+LOT = _Search("/lot", "lot_number", "Lot number", "numeric", "/sku")
+SKU = _Search("/sku", "sku", "SKU", "text", "/lot")
+
+
+def _switch(search: _Search) -> str:
+    """`lot / sku` link to the other search. The word for the current page is bold, the other struck through."""
+    lot, sku = ("<b>lot</b>", "<s>sku</s>") if search is LOT else ("<s>lot</s>", "<b>sku</b>")
+    return f'<a class="switch" href="{search.other}" title="Switch search">{lot} / {sku}</a>'
+
+
+def _search_box(search: _Search, value: str = "") -> str:
+    extra = ' autocapitalize="off" spellcheck="false"' if search is SKU else ""
     return (
-        '<form action="/lot" method="get">'
-        '<input name="lot_number" type="search" inputmode="numeric" placeholder="Lot number" '
-        f'value="{escape(lot_number)}" autocomplete="off">'
+        '<div class="search">'
+        f'<form action="{search.route}" method="get">'
+        f'<input name="{search.field}" type="search" inputmode="{search.inputmode}" placeholder="{search.placeholder}" '
+        f'value="{escape(value)}" autocomplete="off"{extra}>'
         "</form>"
+        f"{_switch(search)}</div>"
     )
 
 
-def _page(title: str, body: str, lot_number: str = "") -> str:
+def _page(title: str, body: str, value: str = "", search: _Search = LOT) -> str:
     return (
         '<!doctype html><html lang="en"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
         f"<title>{escape(title)}</title><style>{_STYLE}</style></head>"
-        f'<body>{_search_box(lot_number)}<div id="result">{body}</div>'
+        f'<body>{_search_box(search, value)}<div id="result">{body}</div>'
         '<dialog id="notes"><p id="notes-text"></p><form method="dialog"><input type="submit" value="Close"></form></dialog>'
-        f"<script>{_SEARCH_SCRIPT}</script></body></html>"
+        f"<script>{_SEARCH_SCRIPT.replace('__PREFIX__', search.route)}</script></body></html>"
     )
 
 
@@ -114,17 +146,20 @@ def _germ_tests(tests) -> str:
     return f'<div class="germination"><h2>Germination tests</h2>{table}</div>'
 
 
-def _row(label: str, value: str | None, big: bool = False) -> str:
+def _row(label: str, value: str | None, big: bool = False, href: str | None = None) -> str:
     shown = f'<span class="missing">{NOT_RECORDED}</span>' if value is None else escape(value)
+    if href and value is not None:
+        shown = f'<a href="{escape(href)}">{shown}</a>'
     css = ' class="big"' if big else ""
     return f"<div><dt>{escape(label)}</dt><dd{css}>{shown}</dd></div>"
 
 
 def render_lot(summary) -> str:
     weight = None if summary.final_weight_g is None else format_weight(summary.final_weight_g)
+    sku_href = None if summary.sku is None else "/sku/" + quote(summary.sku, safe="")
     body = (
         f'<h1>#{summary.lot_number}</h1><dl class="fields">'
-        + _row("SKU", summary.sku, big=True)
+        + _row("SKU", summary.sku, big=True, href=sku_href)
         + _row("Source", summary.source)
         + _row("Weight", weight)
         + _row("Germination result", None if summary.germ_result is None else format_result(summary.germ_result))
@@ -134,10 +169,27 @@ def render_lot(summary) -> str:
     return _page(f"#{summary.lot_number}", body, str(summary.lot_number))
 
 
-def render_form() -> str:
-    return _page("Find a lot", "")
+def render_form(search: _Search = LOT) -> str:
+    return _page("Find a lot" if search is LOT else "Find a SKU", "", search=search)
 
 
-def render_message(title: str, message: str, lot_number: str = "") -> str:
+def render_message(title: str, message: str, value: str = "", search: _Search = LOT) -> str:
     body = f"<h1>{escape(title)}</h1><p>{escape(message)}</p>"
-    return _page(title, body, lot_number)
+    return _page(title, body, value, search)
+
+
+def _sku_row(lot) -> str:
+    when = "no date" if lot.date_received is None else lot.date_received.strftime("%d / %m / %y")
+    current = NOT_RECORDED if lot.current_weight_g is None else format_weight(lot.current_weight_g)
+    initial = NOT_RECORDED if lot.initial_weight_g is None else format_weight(lot.initial_weight_g)
+    used = ' class="used"' if lot.current_weight_g == 0 else ""  # 0 is used up; unknown is not
+    return (
+        f'<tr{used}><td><a href="/lot/{lot.lot_number}">#{lot.lot_number}</a></td>'
+        f'<td class="date">{when}</td><td class="num">{escape(current)} / {escape(initial)}</td></tr>'
+    )
+
+
+def render_sku(sku_lots) -> str:
+    head = '<tr><th>Lot</th><th>Received</th><th class="num">Current / initial</th></tr>'
+    body = f"<h1>{escape(sku_lots.sku)}</h1><table>{head}{''.join(_sku_row(lot) for lot in sku_lots.lots)}</table>"
+    return _page(sku_lots.sku, body, sku_lots.sku, SKU)

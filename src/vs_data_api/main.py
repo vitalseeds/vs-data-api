@@ -3,7 +3,7 @@ from datetime import datetime
 from fastapi import Depends, FastAPI
 from starlette.responses import FileResponse
 
-from vs_data_api import config, health, lot_routes
+from vs_data_api import config, health, lot_routes, sku_routes
 from vs_data_api.settings import get_settings
 from vs_data_api.vs_data import orders, stock
 from vs_data_api.vs_data.fm import db
@@ -11,6 +11,7 @@ from vs_data_api.vs_data.products import import_wc_product_ids_from_linkdb
 
 app = FastAPI(title="VS Data API")
 app.include_router(lot_routes.router)
+app.include_router(sku_routes.router)
 
 
 # def has_settings(func):

@@ -100,7 +100,7 @@ def test_germination_section_is_marked_for_grey_background():
 
 
 def test_message_page_keeps_the_search_box_with_what_was_typed():
-    html = lot_page.render_message("Not a lot number", "Use a whole number.", lot_number='<b>x')
+    html = lot_page.render_message("Not a lot number", "Use a whole number.", value="<b>x")
     assert 'value="&lt;b&gt;x"' in html and "<b>x" not in html
 
 
@@ -181,7 +181,7 @@ def test_dialog_is_outside_the_swapped_result_so_it_survives_a_new_lookup():
 
 def test_sku_value_is_bigger_than_the_other_values():
     html = lot_page.render_lot(summary())
-    assert '<dd class="big">CAR-1</dd>' in html
+    assert '<dd class="big"><a href="/sku/CAR-1">CAR-1</a></dd>' in html
     assert html.count('class="big"') == 1
     assert "dd.big{font-size:1.8rem" in html
 
@@ -190,3 +190,7 @@ def test_sku_is_not_serif():
     html = lot_page.render_lot(summary())
     assert "dd.big{font-size:1.8rem;line-height:1.2}" in html
     assert "Georgia" not in html and "serif" not in html.replace("sans-serif", "")
+
+
+def test_sku_links_to_the_sku_list_and_is_url_quoted():
+    assert 'href="/sku/A%20B%2FC"' in lot_page.render_lot(summary(sku="A B/C"))
