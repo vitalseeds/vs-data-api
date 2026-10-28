@@ -19,7 +19,7 @@ dialog{max-width:90vw;border:0;border-radius:.5rem;padding:1rem}dialog::backdrop
 #notes-text{white-space:pre-wrap;margin:0 0 1rem}
 .germination{background:#eee;border-radius:.5rem;padding:.1rem 1rem .5rem;margin-top:1.5rem}
 .germination h2{margin-top:.8rem}
-table{width:100%;border-collapse:collapse}
+table{width:100%;max-width:850px;border-collapse:collapse}
 th{color:#555;font-size:.9rem;font-weight:400;text-align:left}
 th,td{padding:.4rem .5rem .4rem 0;border-top:1px solid #ccc;vertical-align:top}
 .num{text-align:right;padding-right:0}td.num{font-weight:600;white-space:nowrap}
