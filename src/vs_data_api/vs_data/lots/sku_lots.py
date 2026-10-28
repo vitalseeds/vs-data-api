@@ -61,7 +61,7 @@ def _quote(text: str) -> str:
 
 def _crop_and_variety(connection, sku: str) -> tuple[str | None, str | None]:
     """From the SKU's `acquisitions` record. Both None if it has none, or they are blank."""
-    rows = db.select(connection, "acquisitions", ["crop", "variety"], where=f"\"sku\" = '{_quote(sku)}'")
+    rows = db.select(connection, "acquisitions", ["crop", "variety"], where=f"UPPER(\"sku\") = '{_quote(sku.upper())}'")
     if not rows:
         return None, None
     return tuple((rows[0][c] or "").strip() or None for c in ("crop", "variety"))
