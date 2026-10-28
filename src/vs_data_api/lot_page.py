@@ -29,10 +29,11 @@ dd.big{font-size:1.8rem;line-height:1.2}
 h1+.sub{margin:-.6rem 0 1rem;font-size:1.1rem;font-weight:400;color:#555}
 .search{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
 .search form{flex:1;margin:0}
+a{text-decoration:none}
 dd a{color:inherit}
 .switch{white-space:nowrap;color:#333;text-decoration:none}
 .switch i{color:#999}
-.used td{color:#999;font-style:italic}
+.used td{color:#999;font-style:italic;background:aliceblue}
 """
 
 

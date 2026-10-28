@@ -47,10 +47,14 @@ def test_no_heading_when_the_sku_has_no_crop_or_variety(client):
         assert 'class="sub"' not in client.get("/sku/OnWl").text
 
 
+def test_links_are_not_underlined(client, fm):
+    assert "a{text-decoration:none}" in client.get("/sku/OnWl").text
+
+
 def test_only_zero_current_weight_is_grey_italic_not_struck_through(client, fm):
     html = client.get("/sku/OnWl").text
     assert html.count('class="used"') == 1
-    assert ".used td{color:#999;font-style:italic}" in html and "line-through" not in html
+    assert ".used td{color:#999;font-style:italic;background:aliceblue}" in html and "line-through" not in html
     assert html.index('class="used"') < html.index('href="/lot/11"') < html.index('href="/lot/10"')
 
 
