@@ -29,7 +29,9 @@ def test_html_lists_lots_with_links_newest_first(client, fm):
     assert "<h1>OnWl</h1>" in html
     assert html.index('href="/lot/11"') < html.index('href="/lot/10"') < html.index('href="/lot/12"')
     assert "01 / 02 / 26" in html and "no date" in html
-    assert "120 g / 500 g" in html and "not recorded / 250 g" in html
+    assert '<td class="num">500 g</td><td class="num">120 g</td>' in html
+    assert '<td class="num">250 g</td><td class="num">not recorded</td>' in html
+    assert html.index(">Initial</th>") < html.index(">Current</th>")
 
 
 def test_only_zero_current_weight_is_struck_through(client, fm):

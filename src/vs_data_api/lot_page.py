@@ -24,6 +24,7 @@ th{color:#555;font-size:.9rem;font-weight:400;text-align:left}
 th,td{padding:.4rem .5rem .4rem 0;border-top:1px solid #ccc;vertical-align:top}
 .num{text-align:right;padding-right:0}td.num{font-weight:600;white-space:nowrap}
 td.date{white-space:nowrap}
+.num+.num{padding-left:1rem}
 dd.big{font-size:1.8rem;line-height:1.2}
 .search{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
 .search form{flex:1;margin:0}
@@ -185,11 +186,11 @@ def _sku_row(lot) -> str:
     used = ' class="used"' if lot.current_weight_g == 0 else ""  # 0 is used up; unknown is not
     return (
         f'<tr{used}><td><a href="/lot/{lot.lot_number}">#{lot.lot_number}</a></td>'
-        f'<td class="date">{when}</td><td class="num">{escape(current)} / {escape(initial)}</td></tr>'
+        f'<td class="date">{when}</td><td class="num">{escape(initial)}</td><td class="num">{escape(current)}</td></tr>'
     )
 
 
 def render_sku(sku_lots) -> str:
-    head = '<tr><th>Lot</th><th>Received</th><th class="num">Current / initial</th></tr>'
+    head = '<tr><th>Lot</th><th>Received</th><th class="num">Initial</th><th class="num">Current</th></tr>'
     body = f"<h1>{escape(sku_lots.sku)}</h1><table>{head}{''.join(_sku_row(lot) for lot in sku_lots.lots)}</table>"
     return _page(sku_lots.sku, body, sku_lots.sku, SKU)
