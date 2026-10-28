@@ -22,8 +22,8 @@ typing pauses, read-only, no login, LAN only.
   - lot number, as a link to `/lot/{lot_number}` (the lot page pre-filled);
   - **Date received**;
   - **current weight / initial weight**, e.g. `120 g / 500 g`.
-- A lot whose current weight is **0** is struck through. An *unknown* current
-  weight (blank) is not struck through and shows "not recorded" in place of the
+- A lot whose current weight is **0** is shown grey italic. An *unknown* current
+  weight (blank) is not grey italic and shows "not recorded" in place of the
   number.
 - JSON via `?format=json` or `Accept: application/json`, as for the lot page.
 
@@ -31,7 +31,7 @@ typing pauses, read-only, no login, LAN only.
 
 | Question | Decision |
 |---|---|
-| One search box or two | **Each page has its own box** (confirmed). `/lot/{lot}` takes lot numbers only, with the numeric keyboard; `/sku/{sku}` takes SKUs only, with a text keyboard. Neither guesses what was typed. Beside each box is one toggle link reading `lot / sku` that goes to the other search page. The word for the page you are on is bold, the other is struck through: on `/lot` it reads **lot** ~~sku~~, on `/sku` it reads ~~lot~~ **sku**. [My reading of "strikethrough the one that is not represented on the page".] |
+| One search box or two | **Each page has its own box** (confirmed). `/lot/{lot}` takes lot numbers only, with the numeric keyboard; `/sku/{sku}` takes SKUs only, with a text keyboard. Neither guesses what was typed. Beside each box is one toggle link reading `lot / sku` that goes to the other search page. The word for the page you are on is bold, the other is grey italic: on `/lot` it reads **lot** *sku*, on `/sku` it reads *lot* **sku**. [Originally strikethrough; changed to grey italic on request.] |
 | Unknown SKU | 404 "No lots found for SKU X" (same style as "Lot N not found"). A SKU with no lots in FileMaker is indistinguishable from a mistyped one, so one message covers both. |
 | No JavaScript | Each box submits to its own form route: the existing `GET /lot?lot_number=N` redirects to `/lot/N`, and the new `GET /sku?sku=X` redirects to `/sku/X`. An empty box shows the plain form. |
 | Errors | Reuse the lot page's: 503 plain-English when FileMaker is down, 500 "can't be read" for a bad value, JSON `{"message": ...}` when JSON was asked for. |
@@ -78,7 +78,7 @@ declared Number. Two things follow:
    That duplicates FileMaker logic, so prefer reading the field if it works.
    Also decide how to read a blank result (zero is a real value, blank is not).
 
-Whichever route, the display rule is: **0 is struck through, blank is not.**
+Whichever route, the display rule is: **0 is grey italic, blank is not.**
 Packed lots are the expected source of the zeros.
 
 ### Case-insensitive lookup
@@ -105,7 +105,7 @@ hard-code `/lot/`, the field name and a numeric keyboard; parameterise them
 
 Default suite, no FileMaker: route against a faked lookup covering found,
 case-insensitive match, none found, sort order (including undated last),
-zero weight struck through vs blank weight not, FileMaker down, bad value, JSON
+zero weight grey italic vs blank weight not, FileMaker down, bad value, JSON
 vs HTML, escaping of a SKU containing a quote. An `fmdb` test checks the real
 field names and what `Current weight` returns.
 

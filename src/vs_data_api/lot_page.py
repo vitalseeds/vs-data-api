@@ -31,8 +31,8 @@ h1+.sub{margin:-.6rem 0 1rem;font-size:1.1rem;font-weight:400;color:#555}
 .search form{flex:1;margin:0}
 dd a{color:inherit}
 .switch{white-space:nowrap;color:#333;text-decoration:none}
-.switch s{color:#999}
-.used td{text-decoration:line-through;color:#777}
+.switch i{color:#999}
+.used td{color:#999;font-style:italic}
 """
 
 
@@ -84,8 +84,8 @@ SKU = _Search("/sku", "sku", "SKU", "text", "/lot")
 
 
 def _switch(search: _Search) -> str:
-    """`lot / sku` link to the other search. The word for the current page is bold, the other struck through."""
-    lot, sku = ("<b>lot</b>", "<s>sku</s>") if search is LOT else ("<s>lot</s>", "<b>sku</b>")
+    """`lot / sku` link to the other search. The word for the current page is bold, the other grey italic."""
+    lot, sku = ("<b>lot</b>", "<i>sku</i>") if search is LOT else ("<i>lot</i>", "<b>sku</b>")
     return f'<a class="switch" href="{search.other}" title="Switch search">{lot} / {sku}</a>'
 
 

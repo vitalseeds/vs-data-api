@@ -17,7 +17,7 @@ ROWS = [
 
 @pytest.fixture
 def fm(client):
-    results = {r"UPPER\(\"sku\"\) = 'ONWL'": ROWS, r'FROM "acquisitions"': [("Spring onion", "White Lisbon")]}
+    results = {r'FROM "acquisitions"': [("Spring onion", "White Lisbon")], r"UPPER\(\"sku\"\) = 'ONWL'": ROWS}
     with patch.object(main.db, "connection", side_effect=lambda cs: FakeConnection(results)):
         yield
 
@@ -47,9 +47,10 @@ def test_no_heading_when_the_sku_has_no_crop_or_variety(client):
         assert 'class="sub"' not in client.get("/sku/OnWl").text
 
 
-def test_only_zero_current_weight_is_struck_through(client, fm):
+def test_only_zero_current_weight_is_grey_italic_not_struck_through(client, fm):
     html = client.get("/sku/OnWl").text
     assert html.count('class="used"') == 1
+    assert ".used td{color:#999;font-style:italic}" in html and "line-through" not in html
     assert html.index('class="used"') < html.index('href="/lot/11"') < html.index('href="/lot/10"')
 
 
@@ -57,12 +58,12 @@ def test_sku_page_has_its_own_box_and_toggle(client, fm):
     html = client.get("/sku/OnWl").text
     assert 'name="sku"' in html and 'action="/sku"' in html and 'value="OnWl"' in html
     assert 'inputmode="text"' in html and "const prefix = '/sku'" in html
-    assert '<a class="switch" href="/lot" title="Switch search"><s>lot</s> / <b>sku</b></a>' in html
+    assert '<a class="switch" href="/lot" title="Switch search"><i>lot</i> / <b>sku</b></a>' in html
 
 
 def test_lot_page_toggle_goes_to_sku_with_lot_bold(client):
     html = client.get("/lot").text
-    assert '<a class="switch" href="/sku" title="Switch search"><b>lot</b> / <s>sku</s></a>' in html
+    assert '<a class="switch" href="/sku" title="Switch search"><b>lot</b> / <i>sku</i></a>' in html
     assert 'inputmode="numeric"' in html and "const prefix = '/lot'" in html
 
 
