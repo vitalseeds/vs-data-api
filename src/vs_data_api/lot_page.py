@@ -19,13 +19,14 @@ dialog{max-width:90vw;border:0;border-radius:.5rem;padding:1rem}dialog::backdrop
 #notes-text{white-space:pre-wrap;margin:0 0 1rem}
 .germination{background:#eee;border-radius:.5rem;padding:.1rem 1rem .5rem;margin-top:1.5rem}
 .germination h2{margin-top:.8rem}
-table{width:100%;max-width:850px;border-collapse:collapse}
+table{width:100%;max-width:768px;border-collapse:collapse}
 th{color:#555;font-size:.9rem;font-weight:400;text-align:left}
 th,td{padding:.4rem .5rem .4rem 0;border-top:1px solid #ccc;vertical-align:top}
 .num{text-align:right;padding-right:0}td.num{font-weight:600;white-space:nowrap}
 td.date{white-space:nowrap}
 .num+.num{padding-left:1rem}
 dd.big{font-size:1.8rem;line-height:1.2}
+h1+.sub{margin:-.6rem 0 1rem;font-size:1.1rem;font-weight:400;color:#555}
 .search{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
 .search form{flex:1;margin:0}
 dd a{color:inherit}
@@ -192,5 +193,7 @@ def _sku_row(lot) -> str:
 
 def render_sku(sku_lots) -> str:
     head = '<tr><th>Lot</th><th>Received</th><th class="num">Initial</th><th class="num">Current</th></tr>'
-    body = f"<h1>{escape(sku_lots.sku)}</h1><table>{head}{''.join(_sku_row(lot) for lot in sku_lots.lots)}</table>"
+    what = " · ".join(part for part in (sku_lots.crop, sku_lots.variety) if part)
+    sub = f'<h2 class="sub">{escape(what)}</h2>' if what else ""
+    body = f"<h1>{escape(sku_lots.sku)}</h1>{sub}<table>{head}{''.join(_sku_row(lot) for lot in sku_lots.lots)}</table>"
     return _page(sku_lots.sku, body, sku_lots.sku, SKU)

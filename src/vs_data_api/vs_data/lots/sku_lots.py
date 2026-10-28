@@ -31,6 +31,8 @@ def _weight(value):
 
 class SkuLots(BaseModel):
     sku: str
+    crop: str | None = None
+    variety: str | None = None
     lots: list[SkuLot]
 
 
@@ -57,6 +59,14 @@ def _quote(text: str) -> str:
     return text.replace("'", "''")
 
 
+def _crop_and_variety(connection, sku: str) -> tuple[str | None, str | None]:
+    """From the SKU's `acquisitions` record. Both None if it has none, or they are blank."""
+    rows = db.select(connection, "acquisitions", ["crop", "variety"], where=f"\"sku\" = '{_quote(sku)}'")
+    if not rows:
+        return None, None
+    return tuple((rows[0][c] or "").strip() or None for c in ("crop", "variety"))
+
+
 def get_sku_lots(connection, sku: str) -> SkuLots | None:
     """
     The lots with this SKU, case insensitive, newest received first (undated last).
@@ -73,10 +83,13 @@ def get_sku_lots(connection, sku: str) -> SkuLots | None:
     if not rows:
         return None
     parsed = [_SkuLotRow(**row) for row in rows]
+    crop, variety = _crop_and_variety(connection, parsed[0].sku)
     # Undated lots last; for the same date the higher (later) lot number first
     parsed.sort(key=lambda r: (r.date_received is not None, r.date_received or date.min, r.lot_number), reverse=True)
     return SkuLots(
         sku=parsed[0].sku,
+        crop=crop,
+        variety=variety,
         lots=[
             SkuLot(
                 lot_number=r.lot_number,

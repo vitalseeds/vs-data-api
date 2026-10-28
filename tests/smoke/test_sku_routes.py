@@ -17,7 +17,7 @@ ROWS = [
 
 @pytest.fixture
 def fm(client):
-    results = {r"UPPER\(\"sku\"\) = 'ONWL'": ROWS}
+    results = {r"UPPER\(\"sku\"\) = 'ONWL'": ROWS, r'FROM "acquisitions"': [("Spring onion", "White Lisbon")]}
     with patch.object(main.db, "connection", side_effect=lambda cs: FakeConnection(results)):
         yield
 
@@ -32,6 +32,19 @@ def test_html_lists_lots_with_links_newest_first(client, fm):
     assert '<td class="num">500 g</td><td class="num">120 g</td>' in html
     assert '<td class="num">250 g</td><td class="num">not recorded</td>' in html
     assert html.index(">Initial</th>") < html.index(">Current</th>")
+
+
+def test_crop_and_variety_are_a_small_heading_under_the_sku(client, fm):
+    html = client.get("/sku/OnWl").text
+    assert '<h2 class="sub">Spring onion · White Lisbon</h2>' in html
+    assert html.index("<h1>OnWl</h1>") < html.index('class="sub"') < html.index("<table")
+    assert client.get("/sku/OnWl?format=json").json()["variety"] == "White Lisbon"
+
+
+def test_no_heading_when_the_sku_has_no_crop_or_variety(client):
+    results = {r'FROM "seed_lots"': ROWS, r'FROM "acquisitions"': [("", None)]}
+    with patch.object(main.db, "connection", side_effect=lambda cs: FakeConnection(results)):
+        assert 'class="sub"' not in client.get("/sku/OnWl").text
 
 
 def test_only_zero_current_weight_is_struck_through(client, fm):

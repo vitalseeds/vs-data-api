@@ -9,6 +9,7 @@ class Acquisitions(FilemakerTable):
 
     sku: str = "sku"
     crop: str = "crop"
+    variety: str = "Variety"
     wc_product_id: int = "wc_product_id"
     wc_variation_lg_id: int = "wc_variation_lg_id"
     wc_variation_regular_id: int = "wc_variation_regular_id"
