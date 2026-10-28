@@ -282,6 +282,15 @@ To run a command against a different settings file:
 VSDATA_ENV_FILE=.env-test uv run vs import-wc-product-ids
 ```
 
+## Lot and SKU pages
+
+Phone-friendly, read-only pages over the LAN (no login) showing what FileMaker holds:
+
+- `/lot/<lot number>`: one lot's SKU, source, weight and germination tests (#132).
+- `/sku/<SKU>`: the lots for a SKU (case insensitive), newest first, with initial and current weight, each linking to its lot page (#134).
+
+Each page has its own search box and a `lot / sku` link to switch. Add `?format=json` for JSON.
+
 ## Troubleshooting
 
 | Symptom | Likely cause and fix |
