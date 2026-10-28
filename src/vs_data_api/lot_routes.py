@@ -20,13 +20,13 @@ def unreadable_value(number: int) -> str:
     return f"Lot {number} has a value in FileMaker that can't be read (for example text in the weight). Fix it in FileMaker."
 
 
-def _wants_json(request: Request) -> bool:
+def wants_json(request: Request) -> bool:
     return request.query_params.get("format") == "json" or "application/json" in request.headers.get("accept", "")
 
 
 def _message(request: Request, status_code: int, title: str, message: str, lot_number: str = ""):
     """A plain-English error, as JSON or HTML to match what was asked for."""
-    if _wants_json(request):
+    if wants_json(request):
         return JSONResponse(status_code=status_code, content={"message": message})
     return HTMLResponse(lot_page.render_message(title, message, lot_number), status_code=status_code)
 
@@ -71,6 +71,6 @@ async def get_lot(lot_number: str, request: Request, settings: config.Settings =
 
     if summary is None:
         return _message(request, 404, "Lot not found", f"Lot {number} not found.", str(number))
-    if _wants_json(request):
+    if wants_json(request):
         return summary.model_dump()
     return HTMLResponse(lot_page.render_lot(summary))
